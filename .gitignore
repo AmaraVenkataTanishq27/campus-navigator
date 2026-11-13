@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Expo & Mobile Builds
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+*.tsbuildinfo
+
+# Python & Testing
+__pycache__/
+*/__pycache__/
+*/**/__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Environment & Secrets
+.env
+.env*.local
+
+# OS Files
+.DS_Store
+Thumbs.db

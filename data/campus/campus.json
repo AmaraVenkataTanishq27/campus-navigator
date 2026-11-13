@@ -1,0 +1,29 @@
+{
+  "campus": {
+    "id": "rit-main-campus",
+    "name": "RIT Main Campus",
+    "shortName": "RIT",
+    "tagline": "Find. Navigate. Reach.",
+    "subtitle": "Your complete campus navigation assistant.",
+    "description": "Comprehensive indoor and outdoor college navigation for students, faculty and visitors.",
+    "buildings": [
+      {
+        "id": "academic-block",
+        "code": "AB",
+        "name": "Academic Block",
+        "category": "Academic & Administration",
+        "totalFloors": 8,
+        "activeFloors": [
+          { "level": "G", "id": "AB_FLOOR_G", "name": "Ground Floor", "hasMap": false, "status": "pending_reference" },
+          { "level": "1", "id": "AB_FLOOR_1", "name": "1st Floor", "hasMap": false, "status": "pending_reference" },
+          { "level": "2", "id": "AB_FLOOR_2", "name": "2nd Floor (Administration)", "hasMap": true, "status": "pending_verification", "mapAsset": "administration-plan.jpeg" },
+          { "level": "3", "id": "AB_FLOOR_3", "name": "3rd Floor (MCA Block)", "hasMap": true, "status": "pending_verification", "mapAsset": "mca-plan.jpeg" },
+          { "level": "4", "id": "AB_FLOOR_4", "name": "4th Floor", "hasMap": false, "status": "pending_reference" },
+          { "level": "5", "id": "AB_FLOOR_5", "name": "5th Floor", "hasMap": true, "status": "verified", "mapAsset": "ab-5th-floor-plan.jpeg" },
+          { "level": "6", "id": "AB_FLOOR_6", "name": "6th Floor", "hasMap": true, "status": "verified", "mapAsset": "ab-6th-floor-plan.jpeg" },
+          { "level": "7", "id": "AB_FLOOR_7", "name": "7th Floor", "hasMap": true, "status": "verified", "mapAsset": "ab-7th-floor-plan.jpeg" }
+        ]
+      }
+    ]
+  }
+}
