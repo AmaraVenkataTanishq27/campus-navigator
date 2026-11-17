@@ -9,6 +9,7 @@ import { ArrivalModal } from './components/ArrivalModal';
 const graph = rawGraphData as unknown as CampusGraph;
 
 export const App: React.FC = () => {
+  const [theme, setTheme] = useState<'cyberpunk' | 'beige'>('cyberpunk');
   const [currentFloor, setCurrentFloor] = useState<number>(4);
   const [selectedStartId, setSelectedStartId] = useState<string | null>('R_AB_601');
   const [selectedEndId, setSelectedEndId] = useState<string | null>('R_AB_603');
@@ -18,6 +19,10 @@ export const App: React.FC = () => {
   const [currentMilestoneIndex, setCurrentMilestoneIndex] = useState<number>(0);
   const [arrivalModalOpen, setArrivalModalOpen] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+
+  const toggleTheme = useCallback(() => {
+    setTheme((t) => (t === 'cyberpunk' ? 'beige' : 'cyberpunk'));
+  }, []);
 
   // Compute Route
   const handleCalculateRoute = useCallback((overrideStart?: string, overrideEnd?: string) => {
@@ -135,7 +140,7 @@ export const App: React.FC = () => {
   const destNode = selectedEndId ? graph.nodes[selectedEndId] : null;
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-[#050811] text-[#F1F5F9] overflow-hidden font-sans">
+    <div className={`flex flex-col h-screen w-screen overflow-hidden font-sans transition-colors duration-300 ${theme === 'cyberpunk' ? 'bg-[#050811] text-[#F1F5F9]' : 'bg-[#F6F3ED] text-[#1E293B]'}`}>
       {/* Top Header */}
       <Header
         graph={graph}
@@ -147,6 +152,8 @@ export const App: React.FC = () => {
         onToggleVoice={() => setVoiceEnabled((v) => !v)}
         onResetRoute={handleClearRoute}
         hasActiveRoute={!!routeResult}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
       {/* Main Split Layout: Left Sidebar + Right Map */}
@@ -167,6 +174,7 @@ export const App: React.FC = () => {
         onPrevMilestone={handlePrevMilestone}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen((v) => !v)}
+        theme={theme}
       />
 
       {/* Arrival Modal */}
@@ -176,6 +184,7 @@ export const App: React.FC = () => {
           onClose={() => setArrivalModalOpen(false)}
           routeResult={routeResult}
           destLabel={destNode ? `${destNode.label} (Floor ${destNode.floor})` : 'Destination'}
+          theme={theme}
         />
       )}
     </div>

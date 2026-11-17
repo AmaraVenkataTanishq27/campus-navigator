@@ -136,3 +136,18 @@ body {
   transform-box: fill-box;
   transform-origin: center;
 }
+
+/* Directional Light Flow Along Navigation Path */
+@keyframes routePulseFlow {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.route-flow-line {
+  stroke-dasharray: 8 16;
+  animation: routePulseFlow 1.6s linear infinite;
+}

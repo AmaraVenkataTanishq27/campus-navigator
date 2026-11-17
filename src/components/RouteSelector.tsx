@@ -27,6 +27,7 @@ interface RouteSelectorProps {
   onSelectEnd: (id: string | null) => void;
   onCalculateRoute: (startId?: string, endId?: string) => void;
   onClearRoute: () => void;
+  theme?: 'cyberpunk' | 'beige';
 }
 
 export const RouteSelector: React.FC<RouteSelectorProps> = ({
@@ -36,8 +37,10 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   onSelectStart,
   onSelectEnd,
   onCalculateRoute,
-  onClearRoute
+  onClearRoute,
+  theme = 'cyberpunk'
 }) => {
+  const isCyber = theme === 'cyberpunk';
   const [startQuery, setStartQuery] = useState('');
   const [endQuery, setEndQuery] = useState('');
   const [activeDropdown, setActiveDropdown] = useState<'start' | 'end' | null>(null);
@@ -127,7 +130,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   };
 
   return (
-    <div className="relative bg-[#0B1120] border-b border-[#1E293B] p-4 space-y-3.5 z-30 shadow-[0_4px_25px_rgba(0,0,0,0.6)]">
+    <div className={`relative border-b p-4 space-y-3.5 z-30 transition-colors duration-200 ${
+      isCyber
+        ? 'bg-[#0B1120] border-[#1E293B] shadow-[0_4px_25px_rgba(0,0,0,0.6)]'
+        : 'bg-[#FAF8F5] border-[#E7E2DA] shadow-sm'
+    }`}>
       {/* Invisible backdrop to dismiss dropdown */}
       {activeDropdown && (
         <div
@@ -138,16 +145,24 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
       {/* Floor Filter Tabs */}
       <div className="flex items-center justify-between text-xs pb-1 relative z-20">
-        <span className="text-slate-400 font-bold uppercase tracking-wider text-[11px]">Filter Floor:</span>
-        <div className="flex items-center gap-1 bg-[#070B14] p-1 rounded-xl border border-[#1E293B]">
+        <span className={`font-bold uppercase tracking-wider text-[11px] ${
+          isCyber ? 'text-slate-400' : 'text-stone-500'
+        }`}>Filter Floor:</span>
+        <div className={`flex items-center gap-1 p-1 rounded-xl border ${
+          isCyber ? 'bg-[#070B14] border-[#1E293B]' : 'bg-[#F2EEE9] border-[#E2DDD5]'
+        }`}>
           {(['all', ...availableFloors] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilterFloor(f)}
               className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all ${
                 filterFloor === f
-                  ? 'bg-[#00F0FF] text-slate-950 font-black shadow-[0_0_12px_rgba(0,240,255,0.4)]'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  ? isCyber
+                    ? 'bg-[#00F0FF] text-slate-950 font-black shadow-[0_0_12px_rgba(0,240,255,0.4)]'
+                    : 'bg-[#1E40AF] text-white font-black shadow-sm'
+                  : isCyber
+                  ? 'text-slate-400 hover:text-white hover:bg-slate-800'
+                  : 'text-stone-600 hover:text-stone-900 hover:bg-[#EBE6DF]'
               }`}
             >
               {f === 'all' ? 'All' : f === 0 ? 'G' : `F${f}`}
@@ -163,11 +178,19 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           <div className={`relative ${activeDropdown === 'start' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('start')}
-              className="sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all bg-[#070B14] border border-[#1E293B]"
+              className={`sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all border ${
+                isCyber
+                  ? 'bg-[#070B14] border-[#1E293B]'
+                  : 'bg-[#F2EEE9] border-[#E2DDD5]'
+              }`}
             >
-              <span className="w-3 h-3 rounded-full bg-[#00F0FF] mr-2.5 flex-shrink-0 shadow-[0_0_8px_#00F0FF]" />
+              <span className={`w-3 h-3 rounded-full mr-2.5 flex-shrink-0 ${
+                isCyber ? 'bg-[#00F0FF] shadow-[0_0_8px_#00F0FF]' : 'bg-[#1E40AF]'
+              }`} />
               <div className="flex-1 flex flex-col min-w-0">
-                <span className="text-[10px] uppercase font-extrabold text-[#00F0FF] tracking-wider leading-tight">Start Room</span>
+                <span className={`text-[10px] uppercase font-extrabold tracking-wider leading-tight ${
+                  isCyber ? 'text-[#00F0FF]' : 'text-blue-700'
+                }`}>Start Room</span>
                 <input
                   type="text"
                   placeholder="Select or enter room..."
@@ -193,7 +216,9 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                       setActiveDropdown(null);
                     }
                   }}
-                  className="bg-transparent text-sm text-white font-bold placeholder-slate-500 w-full focus:outline-none pr-1 truncate"
+                  className={`bg-transparent text-sm font-bold w-full focus:outline-none pr-1 truncate ${
+                    isCyber ? 'text-white placeholder-slate-500' : 'text-stone-900 placeholder-stone-400'
+                  }`}
                 />
               </div>
               {startNode || startQuery ? (
@@ -206,7 +231,9 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                     setActiveDropdown('start');
                   }}
                   title="Clear start room"
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition flex-shrink-0"
+                  className={`p-1 rounded-lg transition flex-shrink-0 ${
+                    isCyber ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-stone-500 hover:text-stone-900 hover:bg-[#EBE6DF]'
+                  }`}
                 >
                   <X className="w-4 h-4 stroke-[2.5]" />
                 </button>
@@ -217,7 +244,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
             {/* Start Dropdown */}
             {activeDropdown === 'start' && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-[#0B1120] border border-[#1E293B] rounded-xl shadow-2xl z-50 divide-y divide-[#1E293B]">
+              <div className={`absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto rounded-xl shadow-2xl z-50 border divide-y ${
+                isCyber
+                  ? 'bg-[#0B1120] border-[#1E293B] divide-[#1E293B]'
+                  : 'bg-[#FAF8F5] border-[#E7E2DA] divide-[#E7E2DA]'
+              }`}>
                 {filteredStartRooms.length > 0 ? (
                   filteredStartRooms.map((room) => {
                     const isSelected = room.id === selectedStartId;
@@ -236,17 +267,21 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                         }}
                         className={`w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs font-semibold transition ${
                           isSelected
-                            ? 'bg-cyan-950/60 text-[#00F0FF] font-bold border-l-4 border-[#00F0FF]'
-                            : 'hover:bg-slate-800/70 text-slate-200'
+                            ? isCyber
+                              ? 'bg-cyan-950/60 text-[#00F0FF] font-bold border-l-4 border-[#00F0FF]'
+                              : 'bg-blue-50 text-blue-800 font-bold border-l-4 border-blue-600'
+                            : isCyber
+                            ? 'hover:bg-slate-800/70 text-slate-200'
+                            : 'hover:bg-[#F2EEE9] text-stone-800'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 min-w-0 pr-2">
-                          {isSelected && <Check className="w-4 h-4 text-[#00F0FF] flex-shrink-0 stroke-[2.5]" />}
-                          <span className={`truncate ${isSelected ? 'text-[#00F0FF] font-extrabold' : 'text-slate-100'}`}>
+                          {isSelected && <Check className={`w-4 h-4 flex-shrink-0 stroke-[2.5] ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`} />}
+                          <span className={`truncate ${isSelected ? (isCyber ? 'text-[#00F0FF] font-extrabold' : 'text-blue-900 font-extrabold') : (isCyber ? 'text-slate-100' : 'text-stone-800')}`}>
                             {room.label}
                           </span>
                           {showSecondary && (
-                            <span className="text-slate-400 text-[11px] flex-shrink-0">
+                            <span className={`text-[11px] flex-shrink-0 ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>
                               (Room {room.roomNumber})
                             </span>
                           )}
@@ -260,7 +295,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                               </span>
                             );
                           })()}
-                          <span className="px-2 py-0.5 rounded-full bg-[#070B14] text-slate-300 font-mono font-bold text-[10px] border border-[#1E293B]">
+                          <span className={`px-2 py-0.5 rounded-full font-mono font-bold text-[10px] border ${
+                            isCyber
+                              ? 'bg-[#070B14] text-slate-300 border-[#1E293B]'
+                              : 'bg-[#F2EEE9] text-stone-700 border-[#E2DDD5]'
+                          }`}>
                             {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
                           </span>
                         </div>
@@ -268,7 +307,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                     );
                   })
                 ) : (
-                  <div className="p-3.5 text-center text-xs text-slate-400 font-semibold">No rooms found matching "{startQuery}"</div>
+                  <div className={`p-3.5 text-center text-xs font-semibold ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>No rooms found matching "{startQuery}"</div>
                 )}
               </div>
             )}
@@ -278,11 +317,19 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           <div className={`relative ${activeDropdown === 'end' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('end')}
-              className="sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all bg-[#070B14] border border-[#1E293B]"
+              className={`sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all border ${
+                isCyber
+                  ? 'bg-[#070B14] border-[#1E293B]'
+                  : 'bg-[#F2EEE9] border-[#E2DDD5]'
+              }`}
             >
-              <MapPin className="w-4 h-4 text-[#FF007F] mr-2.5 flex-shrink-0 stroke-[2.2] drop-shadow-[0_0_6px_#FF007F]" />
+              <MapPin className={`w-4 h-4 mr-2.5 flex-shrink-0 stroke-[2.2] ${
+                isCyber ? 'text-[#FF007F] drop-shadow-[0_0_6px_#FF007F]' : 'text-rose-600'
+              }`} />
               <div className="flex-1 flex flex-col min-w-0">
-                <span className="text-[10px] uppercase font-extrabold text-[#FF007F] tracking-wider leading-tight">Destination</span>
+                <span className={`text-[10px] uppercase font-extrabold tracking-wider leading-tight ${
+                  isCyber ? 'text-[#FF007F]' : 'text-rose-600'
+                }`}>Destination</span>
                 <input
                   type="text"
                   placeholder="Select or enter destination..."
@@ -308,7 +355,9 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                       setActiveDropdown(null);
                     }
                   }}
-                  className="bg-transparent text-sm text-white font-bold placeholder-slate-500 w-full focus:outline-none pr-1 truncate"
+                  className={`bg-transparent text-sm font-bold w-full focus:outline-none pr-1 truncate ${
+                    isCyber ? 'text-white placeholder-slate-500' : 'text-stone-900 placeholder-stone-400'
+                  }`}
                 />
               </div>
               {endNode || endQuery ? (
@@ -321,7 +370,9 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                     setActiveDropdown('end');
                   }}
                   title="Clear destination room"
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition flex-shrink-0"
+                  className={`p-1 rounded-lg transition flex-shrink-0 ${
+                    isCyber ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-stone-500 hover:text-stone-900 hover:bg-[#EBE6DF]'
+                  }`}
                 >
                   <X className="w-4 h-4 stroke-[2.5]" />
                 </button>
@@ -332,7 +383,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
             {/* Destination Dropdown */}
             {activeDropdown === 'end' && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-[#0B1120] border border-[#1E293B] rounded-xl shadow-2xl z-50 divide-y divide-[#1E293B]">
+              <div className={`absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto rounded-xl shadow-2xl z-50 border divide-y ${
+                isCyber
+                  ? 'bg-[#0B1120] border-[#1E293B] divide-[#1E293B]'
+                  : 'bg-[#FAF8F5] border-[#E7E2DA] divide-[#E7E2DA]'
+              }`}>
                 {filteredEndRooms.length > 0 ? (
                   filteredEndRooms.map((room) => {
                     const isSelected = room.id === selectedEndId;
@@ -351,17 +406,21 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                         }}
                         className={`w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs font-semibold transition ${
                           isSelected
-                            ? 'bg-fuchsia-950/60 text-[#FF007F] font-bold border-l-4 border-[#FF007F]'
-                            : 'hover:bg-slate-800/70 text-slate-200'
+                            ? isCyber
+                              ? 'bg-fuchsia-950/60 text-[#FF007F] font-bold border-l-4 border-[#FF007F]'
+                              : 'bg-rose-50 text-rose-800 font-bold border-l-4 border-rose-600'
+                            : isCyber
+                            ? 'hover:bg-slate-800/70 text-slate-200'
+                            : 'hover:bg-[#F2EEE9] text-stone-800'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 min-w-0 pr-2">
-                          {isSelected && <Check className="w-4 h-4 text-[#FF007F] flex-shrink-0 stroke-[2.5]" />}
-                          <span className={`truncate ${isSelected ? 'text-[#FF007F] font-extrabold' : 'text-slate-100'}`}>
+                          {isSelected && <Check className={`w-4 h-4 flex-shrink-0 stroke-[2.5] ${isCyber ? 'text-[#FF007F]' : 'text-rose-600'}`} />}
+                          <span className={`truncate ${isSelected ? (isCyber ? 'text-[#FF007F] font-extrabold' : 'text-rose-900 font-extrabold') : (isCyber ? 'text-slate-100' : 'text-stone-800')}`}>
                             {room.label}
                           </span>
                           {showSecondary && (
-                            <span className="text-slate-400 text-[11px] flex-shrink-0">
+                            <span className={`text-[11px] flex-shrink-0 ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>
                               (Room {room.roomNumber})
                             </span>
                           )}
@@ -375,7 +434,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                               </span>
                             );
                           })()}
-                          <span className="px-2 py-0.5 rounded-full bg-[#070B14] text-slate-300 font-mono font-bold text-[10px] border border-[#1E293B]">
+                          <span className={`px-2 py-0.5 rounded-full font-mono font-bold text-[10px] border ${
+                            isCyber
+                              ? 'bg-[#070B14] text-slate-300 border-[#1E293B]'
+                              : 'bg-[#F2EEE9] text-stone-700 border-[#E2DDD5]'
+                          }`}>
                             {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
                           </span>
                         </div>
@@ -383,7 +446,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                     );
                   })
                 ) : (
-                  <div className="p-3.5 text-center text-xs text-slate-400 font-semibold">No rooms found matching "{endQuery}"</div>
+                  <div className={`p-3.5 text-center text-xs font-semibold ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>No rooms found matching "{endQuery}"</div>
                 )}
               </div>
             )}
@@ -395,7 +458,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           type="button"
           onClick={handleSwap}
           title="Swap start & destination rooms"
-          className="p-3 rounded-xl bg-[#070B14] hover:bg-[#0F172A] active:scale-95 border border-[#1E293B] hover:border-[#00F0FF]/40 text-slate-300 hover:text-[#00F0FF] transition shadow-sm flex items-center justify-center self-stretch flex-shrink-0"
+          className={`p-3 rounded-xl border transition shadow-sm flex items-center justify-center self-stretch flex-shrink-0 active:scale-95 ${
+            isCyber
+              ? 'bg-[#070B14] hover:bg-[#0F172A] border-[#1E293B] hover:border-[#00F0FF]/40 text-slate-300 hover:text-[#00F0FF]'
+              : 'bg-[#F2EEE9] hover:bg-[#EBE6DF] border-[#E2DDD5] text-stone-700 hover:text-blue-700'
+          }`}
         >
           <ArrowUpDown className="w-5 h-5 stroke-[2.2]" />
         </button>
@@ -406,34 +473,44 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
         <button
           onClick={() => onCalculateRoute()}
           disabled={!selectedStartId || !selectedEndId}
-          className="flex-1 py-3 px-4 sharp-btn-royal font-black text-sm rounded-xl flex items-center justify-center gap-2 tracking-wide shadow-lg"
+          className={`flex-1 py-3 px-4 font-black text-sm rounded-xl flex items-center justify-center gap-2 tracking-wide shadow-lg transition-transform active:scale-[0.98] ${
+            isCyber
+              ? 'sharp-btn-royal text-slate-950'
+              : 'bg-[#1E40AF] hover:bg-[#1D4ED8] text-white shadow-blue-900/20'
+          }`}
         >
-          <Navigation className="w-4 h-4 fill-slate-950 stroke-slate-950" />
+          <Navigation className={`w-4 h-4 ${isCyber ? 'fill-slate-950 stroke-slate-950' : 'fill-white stroke-white'}`} />
           <span>INITIALIZE ROUTE</span>
         </button>
 
         {(selectedStartId || selectedEndId) && (
           <button
             onClick={handleClearAll}
-            className="px-4 py-3 bg-[#070B14] hover:bg-[#0F172A] text-slate-400 hover:text-white text-xs font-bold rounded-xl border border-[#1E293B] transition"
+            className={`px-4 py-3 text-xs font-bold rounded-xl border transition ${
+              isCyber
+                ? 'bg-[#070B14] hover:bg-[#0F172A] text-slate-400 hover:text-white border-[#1E293B]'
+                : 'bg-[#F2EEE9] hover:bg-[#EBE6DF] text-stone-600 hover:text-stone-900 border-[#E2DDD5]'
+            }`}
           >
             Clear
           </button>
         )}
       </div>
 
-      {/* Quick Route Presets (Collapsible to save vertical room for milestones) */}
-      <div className="pt-2 border-t border-[#1E293B] relative z-10">
+      {/* Quick Route Presets */}
+      <div className={`pt-2 border-t relative z-10 ${isCyber ? 'border-[#1E293B]' : 'border-[#E7E2DA]'}`}>
         <button
           type="button"
           onClick={() => setPresetsExpanded(!presetsExpanded)}
-          className="w-full flex items-center justify-between text-xs text-slate-400 font-extrabold mb-1.5 uppercase tracking-wider hover:text-white transition"
+          className={`w-full flex items-center justify-between text-xs font-extrabold mb-1.5 uppercase tracking-wider transition ${
+            isCyber ? 'text-slate-400 hover:text-white' : 'text-stone-600 hover:text-stone-900'
+          }`}
         >
           <div className="flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#00F0FF]" />
+            <Sparkles className={`w-3.5 h-3.5 ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`} />
             <span>Presets {isRouteActive && !presetsExpanded && '(4)'}</span>
           </div>
-          <span className="text-[11px] font-bold text-[#00F0FF] normal-case">
+          <span className={`text-[11px] font-bold normal-case ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>
             {presetsExpanded ? 'Collapse ▲' : 'Show (4) ▼'}
           </span>
         </button>
@@ -443,12 +520,20 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
               <button
                 key={idx}
                 onClick={() => handleSelectPreset(preset.from, preset.to)}
-                className="sharp-card px-3 py-2.5 rounded-xl text-left text-xs transition border border-[#1E293B] hover:border-[#00F0FF]/60 bg-[#070B14] group shadow-sm"
+                className={`sharp-card px-3 py-2.5 rounded-xl text-left text-xs transition border group shadow-sm ${
+                  isCyber
+                    ? 'border-[#1E293B] hover:border-[#00F0FF]/60 bg-[#070B14]'
+                    : 'border-[#E2DDD5] hover:border-blue-500 bg-[#F2EEE9]'
+                }`}
               >
-                <div className="font-extrabold text-slate-200 group-hover:text-[#00F0FF] truncate transition">
+                <div className={`font-extrabold truncate transition ${
+                  isCyber ? 'text-slate-200 group-hover:text-[#00F0FF]' : 'text-stone-800 group-hover:text-blue-700'
+                }`}>
                   {preset.label}
                 </div>
-                <div className="text-[11px] text-[#00F0FF] font-bold mt-0.5">{preset.desc}</div>
+                <div className={`text-[11px] font-bold mt-0.5 ${
+                  isCyber ? 'text-[#00F0FF]' : 'text-blue-700'
+                }`}>{preset.desc}</div>
               </button>
             ))}
           </div>

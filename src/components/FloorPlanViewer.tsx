@@ -25,6 +25,12 @@ interface FloorPlanViewerProps {
   onPrevMilestone?: () => void;
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
+  theme?: 'cyberpunk' | 'beige';
+  onSelectStart?: (id: string | null) => void;
+  onSelectEnd?: (id: string | null) => void;
+  onCalculateRoute?: (startId?: string, endId?: string) => void;
+  selectedStartId?: string | null;
+  selectedEndId?: string | null;
 }
 
 export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
@@ -37,8 +43,15 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   onNextMilestone,
   onPrevMilestone,
   sidebarOpen,
-  onToggleSidebar
+  onToggleSidebar,
+  theme = 'cyberpunk',
+  onSelectStart,
+  onSelectEnd,
+  onCalculateRoute,
+  selectedStartId,
+  selectedEndId
 }) => {
+  const isCyber = theme === 'cyberpunk';
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Pan & Zoom state
@@ -46,6 +59,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+  // Interactive Tap-to-Route state
+  const [tappedNode, setTappedNode] = useState<{ id: string; label: string; floor: number; x: number; y: number } | null>(null);
 
   const floorMeta = graph.floors[String(currentFloor)] || {
     name: currentFloor === 0 ? 'Apex Block - Ground Floor' : `Apex Block - Floor ${currentFloor}`,
@@ -339,21 +355,32 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
-      className="relative flex-1 h-full w-full bg-[#050811] overflow-hidden cursor-grab active:cursor-grabbing select-none"
+      onClick={() => setTappedNode(null)}
+      className={`relative flex-1 h-full w-full overflow-hidden cursor-grab active:cursor-grabbing select-none transition-colors duration-300 ${
+        isCyber ? 'bg-[#050811]' : 'bg-[#EAE5DC]'
+      }`}
     >
       {/* Sidebar toggle button */}
       <button
         onClick={onToggleSidebar}
         title={sidebarOpen ? 'Collapse sidebar' : 'Open navigation sidebar'}
-        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-[#0B1120] hover:bg-[#1E293B] text-[#00F0FF] border border-[#1E293B] hover:border-[#00F0FF]/50 shadow-lg transition"
+        className={`absolute top-4 left-4 z-20 p-2.5 rounded-xl border shadow-lg transition ${
+          isCyber
+            ? 'bg-[#0B1120] hover:bg-[#1E293B] text-[#00F0FF] border-[#1E293B] hover:border-[#00F0FF]/50'
+            : 'bg-white hover:bg-slate-100 text-slate-900 border-slate-300'
+        }`}
       >
         {sidebarOpen ? <ChevronLeft className="w-5 h-5 stroke-[2.5]" /> : <ChevronRight className="w-5 h-5 stroke-[2.5]" />}
       </button>
 
       {/* Floating Floor Selector Dock */}
-      <div className="absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1.5 rounded-xl bg-[#0B1120]/95 backdrop-blur-md border border-[#1E293B] shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-        <span className="text-xs text-slate-300 px-2 font-black flex items-center gap-1.5">
-          <Layers className="w-4 h-4 text-[#00F0FF] stroke-[2.5]" /> Floor:
+      <div className={`absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1.5 rounded-xl border shadow-md transition-colors ${
+        isCyber
+          ? 'bg-[#0B1120]/95 backdrop-blur-md border-[#1E293B] shadow-[0_0_20px_rgba(0,0,0,0.8)]'
+          : 'bg-white border-slate-300'
+      }`}>
+        <span className={`text-xs px-2 font-black flex items-center gap-1.5 ${isCyber ? 'text-slate-300' : 'text-slate-800'}`}>
+          <Layers className={`w-4 h-4 stroke-[2.5] ${isCyber ? 'text-[#00F0FF]' : 'text-blue-600'}`} /> Floor:
         </span>
         {availableFloors.map((floor) => {
           const isActive = floor === currentFloor;
@@ -363,8 +390,12 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               onClick={() => onFloorChange(floor)}
               className={`px-3 py-1.5 text-xs font-black rounded-lg transition-all ${
                 isActive
-                  ? 'bg-[#00F0FF] text-slate-950 shadow-[0_0_12px_rgba(0,240,255,0.5)]'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  ? isCyber
+                    ? 'bg-[#00F0FF] text-slate-950 shadow-[0_0_12px_rgba(0,240,255,0.5)]'
+                    : 'bg-blue-600 text-white shadow-md'
+                  : isCyber
+                  ? 'text-slate-300 hover:text-white hover:bg-slate-800'
+                  : 'text-slate-800 hover:text-slate-950 hover:bg-slate-100'
               }`}
             >
               {floor === 0 ? 'G' : `F${floor}`}
@@ -372,7 +403,11 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           );
         })}
         {routeResult && (
-          <span className="text-xs px-2.5 py-1 ml-1 rounded-full bg-cyan-950/80 text-[#00F0FF] font-extrabold border border-cyan-800/80 hidden sm:inline-block shadow-[0_0_8px_rgba(0,240,255,0.25)]">
+          <span className={`text-xs px-2.5 py-1 ml-1 rounded-full font-extrabold border hidden sm:inline-block ${
+            isCyber
+              ? 'bg-cyan-950/80 text-[#00F0FF] border-cyan-800/80 shadow-[0_0_8px_rgba(0,240,255,0.25)]'
+              : 'bg-blue-100 text-blue-800 border-blue-300'
+          }`}>
             Active Route
           </span>
         )}
@@ -381,40 +416,56 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       {/* Compass Rose & North Orientation */}
       <div
         title="North orientation"
-        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-xl bg-[#0B1120] border border-[#1E293B] shadow-lg flex flex-col items-center justify-center pointer-events-none select-none"
+        className={`absolute top-4 right-4 z-20 w-11 h-11 rounded-xl border shadow-md flex flex-col items-center justify-center pointer-events-none select-none transition-colors ${
+          isCyber ? 'bg-[#0B1120] border-[#1E293B]' : 'bg-white border-slate-300'
+        }`}
       >
-        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[9px] border-b-[#00F0FF] mb-0.5" />
-        <span className="text-[10px] font-black text-[#00F0FF] tracking-tighter leading-none">N</span>
-        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[9px] border-t-slate-600 mt-0.5" />
+        <div className={`w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[9px] mb-0.5 ${
+          isCyber ? 'border-b-[#00F0FF]' : 'border-b-red-600'
+        }`} />
+        <span className={`text-[10px] font-black tracking-tighter leading-none ${isCyber ? 'text-[#00F0FF]' : 'text-slate-800'}`}>N</span>
+        <div className={`w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[9px] mt-0.5 ${
+          isCyber ? 'border-t-slate-600' : 'border-t-slate-400'
+        }`} />
       </div>
 
       {/* Zoom / Viewport Controls */}
-      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-[#0B1120]/95 backdrop-blur-md p-1.5 rounded-xl border border-[#1E293B] shadow-2xl">
+      <div className={`absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 p-1.5 rounded-xl border shadow-2xl transition-colors ${
+        isCyber ? 'bg-[#0B1120]/95 backdrop-blur-md border-[#1E293B]' : 'bg-white border-slate-300'
+      }`}>
         <button
           onClick={() => setScale((s) => Math.min(s * 1.2, 4.0))}
           title="Zoom In"
-          className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
+          className={`p-2 rounded-lg transition ${
+            isCyber ? 'hover:bg-slate-800 text-slate-300 hover:text-white' : 'hover:bg-slate-100 text-slate-800 hover:text-slate-950'
+          }`}
         >
           <ZoomIn className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={() => setScale((s) => Math.max(s * 0.8, 0.25))}
           title="Zoom Out"
-          className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
+          className={`p-2 rounded-lg transition ${
+            isCyber ? 'hover:bg-slate-800 text-slate-300 hover:text-white' : 'hover:bg-slate-100 text-slate-800 hover:text-slate-950'
+          }`}
         >
           <ZoomOut className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={handleResetView}
           title="Reset to Fit Whole Floor"
-          className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
+          className={`p-2 rounded-lg transition ${
+            isCyber ? 'hover:bg-slate-800 text-slate-300 hover:text-white' : 'hover:bg-slate-100 text-slate-800 hover:text-slate-950'
+          }`}
         >
           <Maximize2 className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={handleFitToRoute}
           title="Fit Active Route on Screen"
-          className="p-2 rounded-lg hover:bg-cyan-950/50 text-slate-300 hover:text-[#00F0FF] transition"
+          className={`p-2 rounded-lg transition ${
+            isCyber ? 'hover:bg-cyan-950/50 text-slate-300 hover:text-[#00F0FF]' : 'hover:bg-blue-50 text-slate-800 hover:text-blue-600'
+          }`}
         >
           <Target className="w-4 h-4 stroke-[2.5]" />
         </button>
@@ -430,39 +481,114 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               }
             }}
             title="Focus Current Milestone"
-            className="p-2 rounded-lg bg-cyan-950/80 text-[#00F0FF] hover:bg-cyan-900 border border-cyan-700 transition shadow-[0_0_10px_rgba(0,240,255,0.3)]"
+            className={`p-2 rounded-lg transition shadow-sm ${
+              isCyber
+                ? 'bg-cyan-950/80 text-[#00F0FF] hover:bg-cyan-900 border border-cyan-700 shadow-[0_0_10px_rgba(0,240,255,0.3)]'
+                : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-300'
+            }`}
           >
             <Crosshair className="w-4 h-4 stroke-[2.5]" />
           </button>
         )}
       </div>
 
+      {/* Interactive Tap-to-Route Floating Popover */}
+      {tappedNode && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            left: `${Math.max(120, Math.min(position.x + tappedNode.x * scale, (containerRef.current?.clientWidth || 800) - 140))}px`,
+            top: `${Math.max(80, position.y + (tappedNode.y - 48) * scale)}px`
+          }}
+          className={`absolute z-40 -translate-x-1/2 p-3 rounded-2xl shadow-2xl border flex flex-col gap-2 min-w-[210px] transition-all animate-fade-in ${
+            isCyber
+              ? 'bg-[#0B1120]/95 backdrop-blur-md border-[#00F0FF]/60 text-white shadow-[0_0_30px_rgba(0,240,255,0.35)]'
+              : 'bg-white border-slate-300 text-slate-900 shadow-2xl'
+          }`}
+        >
+          <div className="flex items-center justify-between gap-2 border-b pb-1.5 border-slate-500/30">
+            <div>
+              <div className="text-xs font-black truncate">{tappedNode.label}</div>
+              <div className="text-[10px] text-slate-400 font-bold">{tappedNode.floor === 0 ? 'Ground Floor' : `Floor ${tappedNode.floor}`}</div>
+            </div>
+            <button
+              onClick={() => setTappedNode(null)}
+              className="p-1 rounded-lg hover:bg-slate-500/20 text-slate-400 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="flex gap-1.5 pt-1">
+            <button
+              onClick={() => {
+                if (onSelectStart) onSelectStart(tappedNode.id);
+                setTappedNode(null);
+              }}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-black border transition ${
+                isCyber
+                  ? 'bg-[#070B14] hover:bg-[#0F172A] border-[#1E293B] text-slate-200 hover:text-[#00F0FF]'
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800'
+              }`}
+            >
+              Set Start
+            </button>
+            <button
+              onClick={() => {
+                if (onSelectEnd) onSelectEnd(tappedNode.id);
+                if (onCalculateRoute) onCalculateRoute(selectedStartId ?? undefined, tappedNode.id);
+                setTappedNode(null);
+              }}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-black transition ${
+                isCyber
+                  ? 'bg-[#00F0FF] hover:bg-cyan-400 text-slate-950 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md'
+              }`}
+            >
+              Navigate ➔
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Floating On-Map Turn-by-Turn Guidance HUD */}
       {routeResult && currentMilestone && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[94%] max-w-lg bg-[#0B1120]/95 backdrop-blur-md border border-[#00F0FF]/40 shadow-[0_0_30px_rgba(0,240,255,0.2)] rounded-2xl p-3 sm:px-4 sm:py-3 flex items-center justify-between gap-3 text-white transition-all">
+        <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[94%] max-w-lg backdrop-blur-md border rounded-2xl p-3 sm:px-4 sm:py-3 flex items-center justify-between gap-3 transition-all ${
+          isCyber
+            ? 'bg-[#0B1120]/95 border-[#00F0FF]/40 shadow-[0_0_30px_rgba(0,240,255,0.2)] text-white'
+            : 'bg-white/95 border-slate-300/90 shadow-2xl text-slate-900'
+        }`}>
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] text-slate-950 flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(0,240,255,0.5)]">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md ${
+              isCyber
+                ? 'bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] text-slate-950 shadow-[0_0_12px_rgba(0,240,255,0.5)]'
+                : 'bg-blue-600 text-white'
+            }`}>
               {currentMilestoneIndex === routeResult.milestones.length - 1 ? (
                 <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
               ) : (
-                <Navigation className="w-5 h-5 fill-slate-950 stroke-slate-950" />
+                <Navigation className={`w-5 h-5 stroke-[2.2] ${isCyber ? 'fill-slate-950 stroke-slate-950' : 'fill-white stroke-white'}`} />
               )}
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#00F0FF] bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/80 shadow-[0_0_6px_rgba(0,240,255,0.2)]">
+                <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                  isCyber
+                    ? 'text-[#00F0FF] bg-cyan-950/80 border-cyan-800/80 shadow-[0_0_6px_rgba(0,240,255,0.2)]'
+                    : 'text-blue-700 bg-blue-50 border-blue-200'
+                }`}>
                   Step {currentMilestoneIndex + 1} of {routeResult.milestones.length}
                 </span>
                 {currentMilestone.distanceToNextMeters > 0 && (
-                  <span className="text-[11px] font-bold text-slate-400">
+                  <span className={`text-[11px] font-bold ${isCyber ? 'text-slate-400' : 'text-slate-500'}`}>
                     +{currentMilestone.distanceToNextMeters.toFixed(1)}m
                   </span>
                 )}
               </div>
-              <div className="text-xs sm:text-sm font-extrabold text-white truncate mt-0.5">
+              <div className={`text-xs sm:text-sm font-extrabold truncate mt-0.5 ${isCyber ? 'text-white' : 'text-slate-900'}`}>
                 {currentMilestone.action || currentMilestone.label}
               </div>
-              <div className="text-[11px] text-slate-400 font-medium truncate">
+              <div className={`text-[11px] font-medium truncate ${isCyber ? 'text-slate-400' : 'text-slate-500'}`}>
                 {currentMilestone.subtext}
               </div>
             </div>
@@ -474,7 +600,11 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                 onClick={onPrevMilestone}
                 disabled={currentMilestoneIndex === 0}
                 title="Previous milestone"
-                className="p-2 rounded-xl bg-[#070B14] hover:bg-[#1E293B] disabled:opacity-30 disabled:pointer-events-none text-slate-300 transition border border-[#1E293B]"
+                className={`p-2 rounded-xl border transition ${
+                  isCyber
+                    ? 'bg-[#070B14] hover:bg-[#1E293B] disabled:opacity-30 disabled:pointer-events-none text-slate-300 border-[#1E293B]'
+                    : 'bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:pointer-events-none text-slate-800 border-slate-300'
+                }`}
               >
                 <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
               </button>
@@ -485,7 +615,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                   onFloorChange(activeElevatorTransition.toFloor);
                   if (onNextMilestone) onNextMilestone();
                 }}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 active:scale-95 text-slate-950 font-black text-xs shadow-[0_0_15px_rgba(245,158,11,0.5)] transition flex items-center gap-1.5 animate-pulse hover:animate-none border border-amber-400"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 active:scale-95 text-slate-950 font-black text-xs shadow-lg transition flex items-center gap-1.5 animate-pulse hover:animate-none border border-amber-400"
               >
                 <span>Take {activeElevatorTransition.type === 'stairs' ? 'Stairs' : 'Elevator'} to Floor {activeElevatorTransition.toFloor === 0 ? 'G' : `F${activeElevatorTransition.toFloor}`}</span>
                 <ArrowRight className="w-4 h-4 stroke-[3]" />
@@ -493,7 +623,11 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
             ) : onNextMilestone && (
               <button
                 onClick={onNextMilestone}
-                className="px-3.5 py-2 rounded-xl sharp-btn-royal active:scale-95 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1"
+                className={`px-3.5 py-2 rounded-xl font-black text-xs shadow-md transition flex items-center gap-1 ${
+                  isCyber
+                    ? 'sharp-btn-royal active:scale-95 text-slate-950'
+                    : 'bg-blue-600 hover:bg-blue-700 active:scale-95 text-white'
+                }`}
               >
                 <span>{currentMilestoneIndex === routeResult.milestones.length - 1 ? 'Done' : 'Next'}</span>
                 <ChevronRight className="w-4 h-4 stroke-[2.5]" />
@@ -512,18 +646,22 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           height: imgHeight,
           position: 'absolute'
         }}
-        className="transition-transform duration-75"
+        className="transition-transform duration-200 ease-out"
       >
-        {/* Floor Plan Background Image (Dark Blueprint Inversion for Cyberpunk) */}
+        {/* Floor Plan Background Image (Adaptive Theme: Dark Blueprint on Cyber, Clean White on Beige) */}
         <img
           src={floorMeta.planImage}
           alt={`Floor Plan ${currentFloor}`}
           style={{
             width: `${imgWidth}px`,
             height: `${imgHeight}px`,
-            filter: 'invert(0.92) hue-rotate(190deg) contrast(1.15) brightness(0.92)'
+            filter: isCyber ? 'invert(0.92) hue-rotate(190deg) contrast(1.15) brightness(0.92)' : 'none'
           }}
-          className="absolute top-0 left-0 pointer-events-none select-none rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.95)] object-cover bg-[#090D1A]"
+          className={`absolute top-0 left-0 pointer-events-none select-none rounded-xl object-cover transition-all ${
+            isCyber
+              ? 'shadow-[0_0_50px_rgba(0,0,0,0.95)] bg-[#090D1A]'
+              : 'shadow-2xl bg-white'
+          }`}
           draggable={false}
           onError={(e) => {
             (e.target as HTMLElement).style.display = 'none';
@@ -537,80 +675,112 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           className="absolute top-0 left-0 pointer-events-none"
         >
           <defs>
-            {/* Cyberpunk Start Beacon filter */}
+            {/* Start Beacon filter */}
             <filter id="beaconGlowCyan" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#00F0FF" floodOpacity="0.85" />
+              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor={isCyber ? '#00F0FF' : '#2563EB'} floodOpacity="0.85" />
             </filter>
 
-            {/* Cyberpunk Destination Beacon filter */}
+            {/* Destination Beacon filter */}
             <filter id="beaconGlowPink" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#FF007F" floodOpacity="0.85" />
+              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor={isCyber ? '#FF007F' : '#EF4444'} floodOpacity="0.85" />
             </filter>
           </defs>
 
-          {/* CONTINUOUS CYBERPUNK NEON ROUTE TUBE (Guaranteed visible with CSS drop-shadow) */}
+          {/* CONTINUOUS NEON ROUTE TUBE WITH DIRECTIONAL LIGHT FLOW */}
           {currentFloorSvgPaths.map((dPath, idx) => (
-            <g key={`neon-path-${idx}`} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5))' }}>
-              {/* Layer 1: Ambient Magenta/Violet Outer Aura */}
+            <g
+              key={`neon-path-${idx}`}
+              style={{
+                filter: isCyber
+                  ? 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5))'
+                  : 'drop-shadow(0 0 6px rgba(37, 99, 235, 0.45))'
+              }}
+            >
+              {/* Layer 1: Ambient Outer Aura */}
               <path
                 d={dPath}
                 fill="none"
-                stroke="#A855F7"
-                strokeWidth="12"
+                stroke={isCyber ? '#A855F7' : '#3B82F6'}
+                strokeWidth={isCyber ? 12 : 9}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeOpacity="0.55"
+                strokeOpacity={isCyber ? 0.55 : 0.3}
               />
 
-              {/* Layer 2: Electric Cyan Solid Neon Core Tube */}
+              {/* Layer 2: Core Solid Neon Tube */}
               <path
                 d={dPath}
                 fill="none"
-                stroke="#00F0FF"
-                strokeWidth="5"
+                stroke={isCyber ? '#00F0FF' : '#2563EB'}
+                strokeWidth={4.8}
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeOpacity="1"
+                strokeOpacity={0.95}
               />
 
-              {/* Layer 3: Ultra-Luminous Laser Filament Core */}
+              {/* Layer 3: Ultra-Luminous Laser Center */}
+              <path
+                d={dPath}
+                fill="none"
+                stroke={isCyber ? '#FFFFFF' : '#93C5FD'}
+                strokeWidth={1.8}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeOpacity={isCyber ? 0.85 : 0.7}
+              />
+
+              {/* Layer 4: Animated Directional Light-Flow Particle Stream */}
               <path
                 d={dPath}
                 fill="none"
                 stroke="#FFFFFF"
-                strokeWidth="1.8"
+                strokeWidth={2.2}
                 strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeOpacity="0.9"
+                className="route-flow-line"
               />
             </g>
           ))}
 
-          {/* Fallback line segments */}
+          {/* Fallback line segments with light flow */}
           {currentFloorSvgPaths.length === 0 &&
             currentFloorPathSegments.map((seg, idx) => (
-              <g key={`fallback-seg-${idx}`} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5))' }}>
+              <g
+                key={`fallback-seg-${idx}`}
+                style={{
+                  filter: isCyber
+                    ? 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5))'
+                    : 'drop-shadow(0 0 6px rgba(37, 99, 235, 0.45))'
+                }}
+              >
                 <line
                   x1={seg.p1.x}
                   y1={seg.p1.y}
                   x2={seg.p2.x}
                   y2={seg.p2.y}
-                  stroke="#A855F7"
-                  strokeWidth="12"
+                  stroke={isCyber ? '#A855F7' : '#3B82F6'}
+                  strokeWidth={isCyber ? 12 : 9}
                   strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeOpacity="0.55"
+                  strokeOpacity={isCyber ? 0.55 : 0.3}
                 />
                 <line
                   x1={seg.p1.x}
                   y1={seg.p1.y}
                   x2={seg.p2.x}
                   y2={seg.p2.y}
-                  stroke="#00F0FF"
-                  strokeWidth="5"
+                  stroke={isCyber ? '#00F0FF' : '#2563EB'}
+                  strokeWidth={4.8}
                   strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeOpacity="1"
+                  strokeOpacity={0.95}
+                />
+                <line
+                  x1={seg.p1.x}
+                  y1={seg.p1.y}
+                  x2={seg.p2.x}
+                  y2={seg.p2.y}
+                  stroke={isCyber ? '#FFFFFF' : '#93C5FD'}
+                  strokeWidth={1.8}
+                  strokeLinecap="round"
+                  strokeOpacity={isCyber ? 0.85 : 0.7}
                 />
                 <line
                   x1={seg.p1.x}
@@ -618,10 +788,46 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                   x2={seg.p2.x}
                   y2={seg.p2.y}
                   stroke="#FFFFFF"
-                  strokeWidth="1.8"
+                  strokeWidth={2.2}
                   strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeOpacity="0.9"
+                  className="route-flow-line"
+                />
+              </g>
+            ))}
+
+          {/* Interactive Tap-to-Route Room Nodes (Shown as clickable targets) */}
+          {floorNodes
+            .filter(([nodeId, n]) => n.type === 'room' && !visibleKeyNodeIds.has(nodeId))
+            .map(([nodeId, node]) => (
+              <g
+                key={`tap-room-${nodeId}`}
+                className="pointer-events-auto cursor-pointer group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTappedNode({
+                    id: nodeId,
+                    label: node.label,
+                    floor: node.floor,
+                    x: node.x,
+                    y: node.y
+                  });
+                }}
+              >
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r="7"
+                  fill={isCyber ? '#070B14' : '#FFFFFF'}
+                  stroke={isCyber ? '#00F0FF' : '#2563EB'}
+                  strokeWidth="1.8"
+                  opacity="0.8"
+                  className="transition-transform transform hover:scale-125"
+                />
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r="2.5"
+                  fill={isCyber ? '#00F0FF' : '#2563EB'}
                 />
               </g>
             ))}
@@ -651,7 +857,8 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                 <g
                   key={nodeId}
                   className="pointer-events-auto cursor-pointer"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (isTransitionActive && activeElevatorTransition) {
                       onFloorChange(activeElevatorTransition.toFloor);
                       if (onNextMilestone) onNextMilestone();
@@ -673,7 +880,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                         cy={node.y}
                         r="18"
                         fill="none"
-                        stroke={isDest ? '#FF007F' : '#00F0FF'}
+                        stroke={isDest ? (isCyber ? '#FF007F' : '#EF4444') : (isCyber ? '#00F0FF' : '#2563EB')}
                         className="beacon-ring-sharp"
                         filter={isDest ? 'url(#beaconGlowPink)' : 'url(#beaconGlowCyan)'}
                       />
@@ -682,7 +889,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                         cy={node.y}
                         r="32"
                         fill="none"
-                        stroke={isDest ? '#FF007F' : '#38BDF8'}
+                        stroke={isDest ? (isCyber ? '#FF007F' : '#F97316') : (isCyber ? '#38BDF8' : '#60A5FA')}
                         className="beacon-ring-sharp"
                         filter={isDest ? 'url(#beaconGlowPink)' : 'url(#beaconGlowCyan)'}
                         style={{ animationDelay: '0.6s' }}
@@ -697,7 +904,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                       cy={node.y}
                       r="44"
                       fill="none"
-                      stroke="#FF007F"
+                      stroke={isCyber ? '#FF007F' : '#EF4444'}
                       className="beacon-ring-sharp"
                       filter="url(#beaconGlowPink)"
                       style={{ animationDelay: '1s' }}
@@ -709,7 +916,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                     cx={node.x}
                     cy={node.y}
                     r={isStart || isDest ? 14 : 11}
-                    fill={isDest ? '#FF007F' : isStart ? '#00F0FF' : '#0284C7'}
+                    fill={isDest ? (isCyber ? '#FF007F' : '#DC2626') : isStart ? (isCyber ? '#00F0FF' : '#2563EB') : (isCyber ? '#0284C7' : '#1D4ED8')}
                     stroke="#FFFFFF"
                     strokeWidth={2.5}
                     filter={isDest ? 'url(#beaconGlowPink)' : 'url(#beaconGlowCyan)'}
@@ -720,10 +927,10 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                     cx={node.x}
                     cy={node.y}
                     r={isStart || isDest ? 5 : 4}
-                    fill="#050811"
+                    fill={isCyber ? '#050811' : '#FFFFFF'}
                   />
 
-                  {/* Cyberpunk High-Contrast Tag */}
+                  {/* High-Contrast Bold Label Tag (Elevated above circle) */}
                   <g transform={`translate(${node.x}, ${node.y - 32})`}>
                     <rect
                       x={-((pillText.length * 7.5 + 24) / 2)}
@@ -731,10 +938,10 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                       width={pillText.length * 7.5 + 24}
                       height="26"
                       rx="13"
-                      fill={isTransitionActive ? '#B45309' : '#050811'}
-                      stroke={isTransitionActive ? '#F59E0B' : isDest ? '#FF007F' : isStart ? '#00F0FF' : '#38BDF8'}
+                      fill={isTransitionActive ? '#B45309' : (isCyber ? '#050811' : '#0F172A')}
+                      stroke={isTransitionActive ? '#F59E0B' : isDest ? (isCyber ? '#FF007F' : '#EF4444') : isStart ? (isCyber ? '#00F0FF' : '#38BDF8') : '#60A5FA'}
                       strokeWidth={isTransitionActive ? 2.5 : 2}
-                      filter="url(#cyberRouteGlow)"
+                      style={{ filter: isCyber ? 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.4))' : 'drop-shadow(0 0 4px rgba(0,0,0,0.2))' }}
                     />
                     <text
                       textAnchor="middle"

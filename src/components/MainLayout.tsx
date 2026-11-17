@@ -21,6 +21,7 @@ interface MainLayoutProps {
   onPrevMilestone: () => void;
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
+  theme?: 'cyberpunk' | 'beige';
 }
 
 export const MainLayout: React.FC<MainLayoutProps> = ({
@@ -39,16 +40,26 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   onNextMilestone,
   onPrevMilestone,
   sidebarOpen,
-  onToggleSidebar
+  onToggleSidebar,
+  theme = 'cyberpunk'
 }) => {
+  const isCyber = theme === 'cyberpunk';
+
   return (
-    <div className="flex-1 flex overflow-hidden relative bg-[#050811]">
-      {/* Left Sidebar */}
+    <div className={`flex-1 flex overflow-hidden relative transition-colors duration-300 ${isCyber ? 'bg-[#050811]' : 'bg-[#F6F3ED]'}`}>
+      {/* Left Sidebar (Desktop slide-over + Mobile responsive drawer) */}
       <aside
-        className={`w-full md:w-[420px] flex-shrink-0 bg-[#0B1120] border-r border-[#1E293B] flex flex-col z-20 transition-all duration-300 ease-in-out shadow-[0_0_30px_rgba(0,0,0,0.8)] ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[420px]'
-        }`}
+        className={`w-full md:w-[420px] flex-shrink-0 border-r flex flex-col z-20 transition-all duration-300 ease-in-out ${
+          isCyber
+            ? 'bg-[#0B1120] border-[#1E293B] shadow-[0_0_30px_rgba(0,0,0,0.8)]'
+            : 'bg-white border-slate-300 shadow-lg'
+        } ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[420px]'}`}
       >
+        {/* Mobile Pull Handle */}
+        <div className="md:hidden flex justify-center py-1">
+          <div className="w-12 h-1.5 rounded-full bg-slate-500/40" />
+        </div>
+
         {/* Route Selector */}
         <RouteSelector
           graph={graph}
@@ -58,10 +69,11 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           onSelectEnd={onSelectEnd}
           onCalculateRoute={onCalculateRoute}
           onClearRoute={onClearRoute}
+          theme={theme}
         />
 
         {/* Milestone Stepper or Empty Prompt */}
-        <div className="flex-1 overflow-hidden bg-[#070B14]">
+        <div className={`flex-1 overflow-hidden ${isCyber ? 'bg-[#070B14]' : 'bg-[#FAF8F5]'}`}>
           {routeResult ? (
             <MilestoneStepper
               routeResult={routeResult}
@@ -69,10 +81,15 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
               onSelectMilestone={onSelectMilestone}
               onNextMilestone={onNextMilestone}
               onPrevMilestone={onPrevMilestone}
+              theme={theme}
             />
           ) : (
             <div className="h-full flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-center mb-4 text-[#00F0FF] shadow-[0_0_20px_rgba(0,240,255,0.25)]">
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-sm border ${
+                isCyber
+                  ? 'bg-cyan-950/50 border-cyan-500/40 text-[#00F0FF] shadow-[0_0_20px_rgba(0,240,255,0.25)]'
+                  : 'bg-blue-50 border-blue-200 text-blue-600'
+              }`}>
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -82,8 +99,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                   />
                 </svg>
               </div>
-              <h4 className="text-base font-extrabold text-white mb-1 tracking-tight">Indoor Landmark Guidance</h4>
-              <p className="text-xs text-slate-400 max-w-xs leading-relaxed font-medium">
+              <h4 className={`text-base font-extrabold mb-1 tracking-tight ${isCyber ? 'text-white' : 'text-slate-900'}`}>Indoor Landmark Guidance</h4>
+              <p className={`text-xs max-w-xs leading-relaxed font-medium ${isCyber ? 'text-slate-400' : 'text-slate-600 font-semibold'}`}>
                 Select your starting room and destination room above to calculate an indoor route across Apex Block.
               </p>
             </div>
@@ -104,6 +121,12 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           onPrevMilestone={onPrevMilestone}
           sidebarOpen={sidebarOpen}
           onToggleSidebar={onToggleSidebar}
+          theme={theme}
+          onSelectStart={onSelectStart}
+          onSelectEnd={onSelectEnd}
+          onCalculateRoute={onCalculateRoute}
+          selectedStartId={selectedStartId}
+          selectedEndId={selectedEndId}
         />
       </main>
     </div>

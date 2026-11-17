@@ -8,13 +8,15 @@ interface ArrivalModalProps {
   onClose: () => void;
   routeResult: RouteResult;
   destLabel: string;
+  theme?: 'cyberpunk' | 'beige';
 }
 
 export const ArrivalModal: React.FC<ArrivalModalProps> = ({
   isOpen,
   onClose,
   routeResult,
-  destLabel
+  destLabel,
+  theme = 'cyberpunk'
 }) => {
   useEffect(() => {
     if (isOpen) {
@@ -32,40 +34,66 @@ export const ArrivalModal: React.FC<ArrivalModalProps> = ({
 
   if (!isOpen) return null;
 
+  const isCyber = theme === 'cyberpunk';
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="bg-[#0B1120] border border-[#00F0FF]/40 rounded-3xl max-w-md w-full p-6 text-center shadow-[0_0_50px_rgba(0,240,255,0.25)]">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-fade-in ${
+      isCyber ? 'bg-black/80' : 'bg-[#181614]/60'
+    }`}>
+      <div className={`rounded-3xl max-w-md w-full p-6 text-center transition-all ${
+        isCyber
+          ? 'bg-[#0B1120] border border-[#00F0FF]/40 shadow-[0_0_50px_rgba(0,240,255,0.25)]'
+          : 'bg-[#FAF8F5] border border-[#E7E2DA] shadow-2xl shadow-stone-900/20'
+      }`}>
         {/* Trophy Icon */}
-        <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-[#00F0FF] via-[#06B6D4] to-[#FF007F] flex items-center justify-center text-slate-950 shadow-[0_0_25px_rgba(0,240,255,0.6)]">
+        <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center ${
+          isCyber
+            ? 'bg-gradient-to-tr from-[#00F0FF] via-[#06B6D4] to-[#FF007F] text-slate-950 shadow-[0_0_25px_rgba(0,240,255,0.6)]'
+            : 'bg-gradient-to-tr from-[#1E40AF] to-[#2563EB] text-white shadow-lg shadow-blue-500/30'
+        }`}>
           <Trophy className="w-8 h-8 stroke-[2.4]" />
         </div>
 
-        <h3 className="text-xl font-extrabold text-white mb-1 tracking-tight">Destination Reached!</h3>
-        <p className="text-sm text-[#00F0FF] font-extrabold mb-5 flex items-center justify-center gap-1.5">
-          <MapPin className="w-4 h-4 text-[#FF007F] stroke-[2.2] drop-shadow-[0_0_6px_#FF007F]" />
+        <h3 className={`text-xl font-extrabold mb-1 tracking-tight ${
+          isCyber ? 'text-white' : 'text-stone-900'
+        }`}>
+          Destination Reached!
+        </h3>
+        <p className={`text-sm font-extrabold mb-5 flex items-center justify-center gap-1.5 ${
+          isCyber ? 'text-[#00F0FF]' : 'text-blue-700'
+        }`}>
+          <MapPin className={`w-4 h-4 stroke-[2.2] ${isCyber ? 'text-[#FF007F] drop-shadow-[0_0_6px_#FF007F]' : 'text-red-500'}`} />
           <span>{destLabel}</span>
         </p>
 
         {/* Route Stats Card */}
-        <div className="bg-[#070B14] border border-[#1E293B] rounded-2xl p-4 mb-6 grid grid-cols-3 gap-2 text-center">
+        <div className={`rounded-2xl p-4 mb-6 grid grid-cols-3 gap-2 text-center border ${
+          isCyber
+            ? 'bg-[#070B14] border-[#1E293B]'
+            : 'bg-[#F2EEE9] border-[#E2DDD5]'
+        }`}>
           <div>
-            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Distance</div>
-            <div className="text-base font-black text-white">{routeResult.totalDistance} m</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Distance</div>
+            <div className={`text-base font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>{routeResult.totalDistance} m</div>
           </div>
           <div>
-            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Time</div>
-            <div className="text-base font-black text-white">~{routeResult.estimatedMinutes} min</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Time</div>
+            <div className={`text-base font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>~{routeResult.estimatedMinutes} min</div>
           </div>
           <div>
-            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Floors</div>
-            <div className="text-base font-black text-[#00F0FF]">{routeResult.floorsTraversed.length}</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Floors</div>
+            <div className={`text-base font-black ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>{routeResult.floorsTraversed.length}</div>
           </div>
         </div>
 
         {/* Action Button */}
         <button
           onClick={onClose}
-          className="w-full py-3.5 px-4 sharp-btn-royal font-black text-sm rounded-xl flex items-center justify-center gap-2 tracking-wide shadow-lg text-slate-950"
+          className={`w-full py-3.5 px-4 font-black text-sm rounded-xl flex items-center justify-center gap-2 tracking-wide shadow-lg transition-transform active:scale-[0.98] ${
+            isCyber
+              ? 'sharp-btn-royal text-slate-950'
+              : 'bg-[#1E40AF] hover:bg-[#1D4ED8] text-white shadow-blue-900/20'
+          }`}
         >
           <span>COMPLETE & START NEW ROUTE</span>
           <ArrowRight className="w-4 h-4 stroke-[3]" />
