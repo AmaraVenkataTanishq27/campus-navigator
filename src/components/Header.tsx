@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Accessibility, Volume2, VolumeX, MapPin, ExternalLink, RefreshCw, Sun, Moon } from 'lucide-react';
+import { Compass, Accessibility, Volume2, VolumeX, MapPin, RefreshCw, Sun, Moon, QrCode } from 'lucide-react';
 import { CampusGraph } from '../types/navigation';
 
 interface HeaderProps {
@@ -14,6 +14,7 @@ interface HeaderProps {
   hasActiveRoute: boolean;
   theme: 'cyberpunk' | 'beige';
   onToggleTheme: () => void;
+  onOpenQr?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -27,7 +28,8 @@ export const Header: React.FC<HeaderProps> = ({
   onResetRoute,
   hasActiveRoute,
   theme,
-  onToggleTheme
+  onToggleTheme,
+  onOpenQr
 }) => {
   const isCyber = theme === 'cyberpunk';
 
@@ -76,6 +78,22 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Actions */}
       <div className="flex items-center gap-2.5">
+        {/* Share / Scan QR Code Button */}
+        {onOpenQr && (
+          <button
+            onClick={onOpenQr}
+            title="Scan QR Code to open on mobile"
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-black rounded-xl border transition-all ${
+              isCyber
+                ? 'bg-[#070B14] border-[#00F0FF]/40 text-[#00F0FF] hover:bg-[#00F0FF] hover:text-slate-950 shadow-[0_0_10px_rgba(0,240,255,0.2)]'
+                : 'bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 shadow-sm'
+            }`}
+          >
+            <QrCode className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">QR Code</span>
+          </button>
+        )}
+
         {/* One-Click Theme Switcher (Warm Beige ⇄ Cyberpunk) */}
         <button
           onClick={onToggleTheme}

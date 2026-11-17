@@ -5,6 +5,7 @@ import { buildRouteResult } from './engine/milestoneEngine';
 import { Header } from './components/Header';
 import { MainLayout } from './components/MainLayout';
 import { ArrivalModal } from './components/ArrivalModal';
+import { QrModal } from './components/QrModal';
 
 const graph = rawGraphData as unknown as CampusGraph;
 
@@ -19,6 +20,7 @@ export const App: React.FC = () => {
   const [currentMilestoneIndex, setCurrentMilestoneIndex] = useState<number>(0);
   const [arrivalModalOpen, setArrivalModalOpen] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
 
   const toggleTheme = useCallback(() => {
     setTheme((t) => (t === 'cyberpunk' ? 'beige' : 'cyberpunk'));
@@ -154,6 +156,7 @@ export const App: React.FC = () => {
         hasActiveRoute={!!routeResult}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onOpenQr={() => setQrModalOpen(true)}
       />
 
       {/* Main Split Layout: Left Sidebar + Right Map */}
@@ -187,6 +190,13 @@ export const App: React.FC = () => {
           theme={theme}
         />
       )}
+
+      {/* QR Code Sharing Modal */}
+      <QrModal
+        isOpen={qrModalOpen}
+        onClose={() => setQrModalOpen(false)}
+        theme={theme}
+      />
     </div>
   );
 };
