@@ -579,11 +579,6 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                 }`}>
                   Step {currentMilestoneIndex + 1} of {routeResult.milestones.length}
                 </span>
-                {currentMilestone.distanceToNextMeters > 0 && (
-                  <span className={`text-[11px] font-bold ${isCyber ? 'text-slate-400' : 'text-slate-500'}`}>
-                    +{currentMilestone.distanceToNextMeters.toFixed(1)}m
-                  </span>
-                )}
               </div>
               <div className={`text-xs sm:text-sm font-extrabold truncate mt-0.5 ${isCyber ? 'text-white' : 'text-slate-900'}`}>
                 {currentMilestone.action || currentMilestone.label}
@@ -795,42 +790,57 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               </g>
             ))}
 
-          {/* Interactive Tap-to-Route Room Nodes (Shown as clickable targets) */}
+          {/* Interactive Tap-to-Route Room Nodes: Only nodes on the active path are bright & visible */}
           {floorNodes
             .filter(([nodeId, n]) => n.type === 'room' && !visibleKeyNodeIds.has(nodeId))
-            .map(([nodeId, node]) => (
-              <g
-                key={`tap-room-${nodeId}`}
-                className="pointer-events-auto cursor-pointer group"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setTappedNode({
-                    id: nodeId,
-                    label: node.label,
-                    floor: node.floor,
-                    x: node.x,
-                    y: node.y
-                  });
-                }}
-              >
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r="7"
-                  fill={isCyber ? '#070B14' : '#FFFFFF'}
-                  stroke={isCyber ? '#00F0FF' : '#2563EB'}
-                  strokeWidth="1.8"
-                  opacity="0.8"
-                  className="transition-transform transform hover:scale-125"
-                />
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r="2.5"
-                  fill={isCyber ? '#00F0FF' : '#2563EB'}
-                />
-              </g>
-            ))}
+            .map(([nodeId, node]) => {
+              const isOnActivePath = Boolean(routeResult?.pathNodeIds.includes(nodeId));
+              return (
+                <g
+                  key={`tap-room-${nodeId}`}
+                  className="pointer-events-auto cursor-pointer group"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setTappedNode({
+                      id: nodeId,
+                      label: node.label,
+                      floor: node.floor,
+                      x: node.x,
+                      y: node.y
+                    });
+                  }}
+                >
+                  {/* Invisible touch/click hit area */}
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r="18"
+                    fill="transparent"
+                    stroke="transparent"
+                  />
+                  {/* Only nodes that are on the active route are rendered bright and visible */}
+                  {isOnActivePath && (
+                    <>
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r="6"
+                        fill={isCyber ? '#070B14' : '#FFFFFF'}
+                        stroke={isCyber ? '#00F0FF' : '#2563EB'}
+                        strokeWidth="2"
+                        filter={isCyber ? 'drop-shadow(0 0 6px #00F0FF)' : undefined}
+                      />
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r="2.5"
+                        fill={isCyber ? '#00F0FF' : '#2563EB'}
+                      />
+                    </>
+                  )}
+                </g>
+              );
+            })}
 
           {/* Key Milestone Nodes: Start, Floor Transition Departure/Arrival, Destination */}
           {floorNodes

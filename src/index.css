@@ -41,40 +41,7 @@ body {
   color: #F1F5F9;
 }
 
-/* Cyberpunk Card & Panel Styling */
-.sharp-panel {
-  background: rgba(11, 17, 32, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid #1E293B;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
-}
-
-.sharp-card {
-  background: #0B1120;
-  border: 1px solid #1E293B;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  transition: all 0.2s ease;
-}
-
-.sharp-card:hover {
-  border-color: #00F0FF;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
-}
-
-.sharp-input {
-  background: #070B14;
-  border: 1.5px solid #1E293B;
-  color: #F1F5F9;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.6);
-  transition: all 0.2s ease;
-}
-
-.sharp-input:focus-within {
-  border-color: #00F0FF;
-  box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
-}
-
+/* Cyberpunk Card & Button Styling */
 .sharp-btn-royal {
   background: linear-gradient(135deg, #00F0FF 0%, #0284C7 100%);
   color: #050811;

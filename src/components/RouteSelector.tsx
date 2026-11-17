@@ -178,10 +178,10 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           <div className={`relative ${activeDropdown === 'start' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('start')}
-              className={`sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all border ${
+              className={`flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all border ${
                 isCyber
-                  ? 'bg-[#070B14] border-[#1E293B]'
-                  : 'bg-[#F2EEE9] border-[#E2DDD5]'
+                  ? 'bg-[#070B14] border-[#1E293B] shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] focus-within:border-[#00F0FF] focus-within:shadow-[0_0_14px_rgba(0,240,255,0.35)]'
+                  : 'bg-[#F2EEE9] border-[#E2DDD5] shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] focus-within:border-[#1E40AF] focus-within:shadow-[0_0_10px_rgba(30,64,175,0.2)]'
               }`}
             >
               <span className={`w-3 h-3 rounded-full mr-2.5 flex-shrink-0 ${
@@ -317,10 +317,10 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           <div className={`relative ${activeDropdown === 'end' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('end')}
-              className={`sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all border ${
+              className={`flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all border ${
                 isCyber
-                  ? 'bg-[#070B14] border-[#1E293B]'
-                  : 'bg-[#F2EEE9] border-[#E2DDD5]'
+                  ? 'bg-[#070B14] border-[#1E293B] shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] focus-within:border-[#FF007F] focus-within:shadow-[0_0_14px_rgba(255,0,127,0.35)]'
+                  : 'bg-[#F2EEE9] border-[#E2DDD5] shadow-[inset_0_1px_2px_rgba(0,0,0,0.06)] focus-within:border-rose-600 focus-within:shadow-[0_0_10px_rgba(225,29,72,0.2)]'
               }`}
             >
               <MapPin className={`w-4 h-4 mr-2.5 flex-shrink-0 stroke-[2.2] ${
@@ -520,7 +520,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
               <button
                 key={idx}
                 onClick={() => handleSelectPreset(preset.from, preset.to)}
-                className={`sharp-card px-3 py-2.5 rounded-xl text-left text-xs transition border group shadow-sm ${
+                className={`px-3 py-2.5 rounded-xl text-left text-xs transition border group shadow-sm ${
                   isCyber
                     ? 'border-[#1E293B] hover:border-[#00F0FF]/60 bg-[#070B14]'
                     : 'border-[#E2DDD5] hover:border-blue-500 bg-[#F2EEE9]'

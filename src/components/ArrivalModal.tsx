@@ -66,23 +66,21 @@ export const ArrivalModal: React.FC<ArrivalModalProps> = ({
           <span>{destLabel}</span>
         </p>
 
-        {/* Route Stats Card */}
-        <div className={`rounded-2xl p-4 mb-6 grid grid-cols-3 gap-2 text-center border ${
+        {/* Route Stats Card without distance/time */}
+        <div className={`rounded-2xl p-4 mb-6 grid grid-cols-2 gap-3 text-center border ${
           isCyber
             ? 'bg-[#070B14] border-[#1E293B]'
             : 'bg-[#F2EEE9] border-[#E2DDD5]'
         }`}>
           <div>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Distance</div>
-            <div className={`text-base font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>{routeResult.totalDistance} m</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Milestones</div>
+            <div className={`text-base font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>{routeResult.milestones.length} Steps</div>
           </div>
           <div>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Time</div>
-            <div className={`text-base font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>~{routeResult.estimatedMinutes} min</div>
-          </div>
-          <div>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Floors</div>
-            <div className={`text-base font-black ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>{routeResult.floorsTraversed.length}</div>
+            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Floors Traversed</div>
+            <div className={`text-base font-black ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>
+              {routeResult.floorsTraversed.length} ({routeResult.floorsTraversed.map(f => f === 0 ? 'G' : `F${f}`).join(' → ')})
+            </div>
           </div>
         </div>
 

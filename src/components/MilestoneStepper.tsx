@@ -35,7 +35,7 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
 }) => {
   const isCyber = theme === 'cyberpunk';
   const currentItemRef = useRef<HTMLDivElement>(null);
-  const { milestones, totalDistance, estimatedMinutes, floorsTraversed } = routeResult;
+  const { milestones, floorsTraversed } = routeResult;
 
   // Auto-scroll the active milestone card into view
   useEffect(() => {
@@ -115,18 +115,14 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
           />
         </div>
 
-        {/* Metric Badges */}
+        {/* Metric Badges without distance/time */}
         <div className={`flex items-center gap-3 text-xs font-bold ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>
           <div>
-            <span className={`font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>{totalDistance} m</span> total
+            <span className={`font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>{milestones.length}</span> Milestones
           </div>
           <span>•</span>
           <div>
-            <span className={`font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>~{estimatedMinutes} min</span> walk
-          </div>
-          <span>•</span>
-          <div>
-            Floors: <span className={`font-black ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>{floorsTraversed.join(', ')}</span>
+            Floors: <span className={`font-black ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>{floorsTraversed.map(f => f === 0 ? 'Ground' : `Floor ${f}`).join(' → ')}</span>
           </div>
         </div>
       </div>
@@ -230,19 +226,14 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
                   )}
                 </div>
 
-                {/* Distance and Floor Tag */}
+                {/* Floor Tag without distance */}
                 <div className="text-right flex-shrink-0">
-                  <span className={`text-[11px] font-mono font-bold block ${
-                    isCyber ? 'text-slate-400' : 'text-stone-500'
-                  }`}>
-                    {ms.distanceToNextMeters > 0 ? `+${ms.distanceToNextMeters} m` : 'Arrived'}
-                  </span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-black border mt-1 inline-block ${
+                  <span className={`text-[10px] px-2.5 py-1 rounded-full font-mono font-black border inline-block ${
                     isCyber
                       ? 'bg-[#070B14] text-slate-300 border-[#1E293B]'
                       : 'bg-[#F2EEE9] text-stone-700 border-[#E2DDD5]'
                   }`}>
-                    F{ms.floor}
+                    {ms.floor === 0 ? 'Ground' : `Floor ${ms.floor}`}
                   </span>
                 </div>
               </div>
