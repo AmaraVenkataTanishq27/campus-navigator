@@ -1,0 +1,2199 @@
+{
+  "floors": {
+    "5": {
+      "name": "Academic Block - Floor 5",
+      "planImage": "/assets/floor-plans/reference/ab-5th-floor-plan.jpeg",
+      "width": 1600,
+      "height": 1515
+    },
+    "6": {
+      "name": "Academic Block - Floor 6",
+      "planImage": "/assets/floor-plans/reference/ab-6th-floor-plan.jpeg",
+      "width": 1600,
+      "height": 1515
+    },
+    "7": {
+      "name": "Academic Block - Floor 7",
+      "planImage": "/assets/floor-plans/reference/ab-7th-floor-plan.jpeg",
+      "width": 1600,
+      "height": 1515
+    }
+  },
+  "nodes": {
+    "J_F6_SW": {
+      "label": "Southwest Junction",
+      "floor": 6,
+      "type": "junction",
+      "x": 305,
+      "y": 1035,
+      "aliases": [
+        "SW Corner",
+        "West-South Turn"
+      ]
+    },
+    "J_F6_NW": {
+      "label": "Northwest Junction",
+      "floor": 6,
+      "type": "junction",
+      "x": 305,
+      "y": 330,
+      "aliases": [
+        "NW Corner",
+        "Physics Corner"
+      ]
+    },
+    "J_F6_NE": {
+      "label": "Northeast Junction",
+      "floor": 6,
+      "type": "junction",
+      "x": 1075,
+      "y": 330,
+      "aliases": [
+        "NE Corner",
+        "North-East Turn"
+      ]
+    },
+    "J_F6_SE": {
+      "label": "Southeast Lobby Junction",
+      "floor": 6,
+      "type": "junction",
+      "x": 1075,
+      "y": 1035,
+      "aliases": [
+        "SE Lobby",
+        "Main Hallway Crossing"
+      ]
+    },
+    "J_F6_SKY": {
+      "label": "Southeast Skybridge",
+      "floor": 6,
+      "type": "junction",
+      "x": 1220,
+      "y": 1035,
+      "aliases": [
+        "Board Room Skybridge"
+      ]
+    },
+    "R_AB_603": {
+      "label": "Room 603",
+      "roomNumber": "603",
+      "floor": 6,
+      "type": "room",
+      "x": 380,
+      "y": 1035,
+      "aliases": [
+        "Classroom 603",
+        "AB 603",
+        "603"
+      ]
+    },
+    "R_AB_602": {
+      "label": "Room 602",
+      "roomNumber": "602",
+      "floor": 6,
+      "type": "room",
+      "x": 520,
+      "y": 1035,
+      "aliases": [
+        "Classroom 602",
+        "AB 602",
+        "602"
+      ]
+    },
+    "R_AB_601": {
+      "label": "Room 601",
+      "roomNumber": "601",
+      "floor": 6,
+      "type": "room",
+      "x": 800,
+      "y": 1035,
+      "aliases": [
+        "Classroom 601",
+        "AB 601",
+        "601"
+      ]
+    },
+    "LIFT_F6_S": {
+      "label": "South Elevators",
+      "floor": 6,
+      "type": "elevator",
+      "x": 940,
+      "y": 1035,
+      "aliases": [
+        "South Lift",
+        "Elevator S"
+      ]
+    },
+    "STAIRS_F6_S": {
+      "label": "South Stairwell",
+      "floor": 6,
+      "type": "stairs",
+      "x": 1010,
+      "y": 1035,
+      "aliases": [
+        "South Stairs"
+      ]
+    },
+    "R_BOARD_ROOM": {
+      "label": "Room 612 (Board Room)",
+      "roomNumber": "612",
+      "floor": 6,
+      "type": "room",
+      "x": 1350,
+      "y": 1200,
+      "aliases": [
+        "Board Room",
+        "Executive Board Room",
+        "612"
+      ]
+    },
+    "R_AB_604": {
+      "label": "Room 604",
+      "roomNumber": "604",
+      "floor": 6,
+      "type": "room",
+      "x": 305,
+      "y": 930,
+      "aliases": [
+        "Classroom 604",
+        "AB 604",
+        "604"
+      ]
+    },
+    "STAIRS_F6_W": {
+      "label": "West Stairwell",
+      "floor": 6,
+      "type": "stairs",
+      "x": 305,
+      "y": 750,
+      "aliases": [
+        "West Stairs"
+      ]
+    },
+    "LIFT_F6_W": {
+      "label": "West Courtyard Elevator",
+      "floor": 6,
+      "type": "elevator",
+      "x": 305,
+      "y": 620,
+      "aliases": [
+        "West Lift",
+        "Courtyard West Elevator"
+      ]
+    },
+    "R_PHYSICS_W": {
+      "label": "Room 605 (Physics Lab West)",
+      "roomNumber": "605",
+      "floor": 6,
+      "type": "room",
+      "x": 305,
+      "y": 460,
+      "aliases": [
+        "Physics Lab West",
+        "Physics Laboratory West Wing",
+        "605"
+      ]
+    },
+    "R_PHYSICS_NW": {
+      "label": "Room 607 (Main Physics Lab)",
+      "roomNumber": "607",
+      "floor": 6,
+      "type": "room",
+      "x": 460,
+      "y": 330,
+      "aliases": [
+        "Main Physics Lab",
+        "Physics Lab NW",
+        "607"
+      ]
+    },
+    "STAIRS_F6_N": {
+      "label": "North Stairwell",
+      "floor": 6,
+      "type": "stairs",
+      "x": 680,
+      "y": 330,
+      "aliases": [
+        "North Stairs"
+      ]
+    },
+    "LIFT_F6_N": {
+      "label": "Courtyard North Elevator",
+      "floor": 6,
+      "type": "elevator",
+      "x": 780,
+      "y": 330,
+      "aliases": [
+        "North Lift",
+        "Courtyard North Elevator"
+      ]
+    },
+    "R_AB_608": {
+      "label": "Room 608",
+      "roomNumber": "608",
+      "floor": 6,
+      "type": "room",
+      "x": 980,
+      "y": 330,
+      "aliases": [
+        "Classroom 608",
+        "AB 608",
+        "608"
+      ]
+    },
+    "WASHROOM_F6_M": {
+      "label": "Washroom (Floor 6)",
+      "roomNumber": "609",
+      "floor": 6,
+      "type": "room",
+      "x": 1075,
+      "y": 420,
+      "aliases": [
+        "Male Washroom",
+        "Restroom Floor 6",
+        "609"
+      ]
+    },
+    "R_AB_610": {
+      "label": "Room 610",
+      "roomNumber": "610",
+      "floor": 6,
+      "type": "room",
+      "x": 1075,
+      "y": 540,
+      "aliases": [
+        "Classroom 610",
+        "AB 610",
+        "610"
+      ]
+    },
+    "R_AB_611": {
+      "label": "Room 611",
+      "roomNumber": "611",
+      "floor": 6,
+      "type": "room",
+      "x": 1075,
+      "y": 720,
+      "aliases": [
+        "Classroom 611",
+        "AB 611",
+        "611"
+      ]
+    },
+    "LIFT_F6_SE": {
+      "label": "Southeast Elevators",
+      "floor": 6,
+      "type": "elevator",
+      "x": 1075,
+      "y": 870,
+      "aliases": [
+        "SE Lift",
+        "Main Elevators"
+      ]
+    },
+    "STAIRS_F6_SE": {
+      "label": "Southeast Stairwell",
+      "floor": 6,
+      "type": "stairs",
+      "x": 1075,
+      "y": 950,
+      "aliases": [
+        "SE Stairs",
+        "Main Staircase"
+      ]
+    },
+    "J_F5_SW": {
+      "label": "Southwest Junction (F5)",
+      "floor": 5,
+      "type": "junction",
+      "x": 305,
+      "y": 1035,
+      "aliases": [
+        "SW Corner Floor 5"
+      ]
+    },
+    "J_F5_NW": {
+      "label": "Northwest Junction (F5)",
+      "floor": 5,
+      "type": "junction",
+      "x": 305,
+      "y": 330,
+      "aliases": [
+        "NW Corner Floor 5"
+      ]
+    },
+    "J_F5_NE": {
+      "label": "Northeast Junction (F5)",
+      "floor": 5,
+      "type": "junction",
+      "x": 1075,
+      "y": 330,
+      "aliases": [
+        "NE Corner Floor 5"
+      ]
+    },
+    "J_F5_SE": {
+      "label": "Southeast Lobby Junction (F5)",
+      "floor": 5,
+      "type": "junction",
+      "x": 1075,
+      "y": 1035,
+      "aliases": [
+        "SE Lobby Floor 5"
+      ]
+    },
+    "J_F5_SKY": {
+      "label": "Skybridge Passage (F5)",
+      "floor": 5,
+      "type": "junction",
+      "x": 1220,
+      "y": 1035,
+      "aliases": [
+        "Lecture Hall Skybridge Floor 5"
+      ]
+    },
+    "R_AB_503": {
+      "label": "Room 503",
+      "roomNumber": "503",
+      "floor": 5,
+      "type": "room",
+      "x": 380,
+      "y": 1035,
+      "aliases": [
+        "Classroom 503",
+        "AB 503",
+        "503"
+      ]
+    },
+    "R_AB_502": {
+      "label": "Room 502",
+      "roomNumber": "502",
+      "floor": 5,
+      "type": "room",
+      "x": 520,
+      "y": 1035,
+      "aliases": [
+        "Classroom 502",
+        "AB 502",
+        "502"
+      ]
+    },
+    "R_AB_501": {
+      "label": "Room 501",
+      "roomNumber": "501",
+      "floor": 5,
+      "type": "room",
+      "x": 800,
+      "y": 1035,
+      "aliases": [
+        "Classroom 501",
+        "AB 501",
+        "501"
+      ]
+    },
+    "LIFT_F5_S": {
+      "label": "South Elevators (F5)",
+      "floor": 5,
+      "type": "elevator",
+      "x": 940,
+      "y": 1035,
+      "aliases": [
+        "South Lift Floor 5"
+      ]
+    },
+    "STAIRS_F5_S": {
+      "label": "South Stairwell (F5)",
+      "floor": 5,
+      "type": "stairs",
+      "x": 1010,
+      "y": 1035,
+      "aliases": [
+        "South Stairs Floor 5"
+      ]
+    },
+    "R_AB_516": {
+      "label": "Room 516 (Lecture Hall)",
+      "roomNumber": "516",
+      "floor": 5,
+      "type": "room",
+      "x": 1350,
+      "y": 1200,
+      "aliases": [
+        "Lecture Hall 516",
+        "Room 516",
+        "Audi 516",
+        "516"
+      ]
+    },
+    "R_AB_504": {
+      "label": "Room 504",
+      "roomNumber": "504",
+      "floor": 5,
+      "type": "room",
+      "x": 305,
+      "y": 930,
+      "aliases": [
+        "Classroom 504",
+        "AB 504",
+        "504"
+      ]
+    },
+    "STAIRS_F5_W": {
+      "label": "West Stairwell (F5)",
+      "floor": 5,
+      "type": "stairs",
+      "x": 305,
+      "y": 750,
+      "aliases": [
+        "West Stairs Floor 5"
+      ]
+    },
+    "LIFT_F5_W": {
+      "label": "West Courtyard Elevator (F5)",
+      "floor": 5,
+      "type": "elevator",
+      "x": 305,
+      "y": 620,
+      "aliases": [
+        "West Lift Floor 5"
+      ]
+    },
+    "R_AB_505": {
+      "label": "Room 505",
+      "roomNumber": "505",
+      "floor": 5,
+      "type": "room",
+      "x": 305,
+      "y": 460,
+      "aliases": [
+        "Classroom 505",
+        "AB 505",
+        "505"
+      ]
+    },
+    "R_AB_506": {
+      "label": "Room 506",
+      "roomNumber": "506",
+      "floor": 5,
+      "type": "room",
+      "x": 380,
+      "y": 330,
+      "aliases": [
+        "Classroom 506",
+        "AB 506",
+        "506"
+      ]
+    },
+    "R_AB_507": {
+      "label": "Room 507",
+      "roomNumber": "507",
+      "floor": 5,
+      "type": "room",
+      "x": 460,
+      "y": 330,
+      "aliases": [
+        "Classroom 507",
+        "AB 507",
+        "507"
+      ]
+    },
+    "R_AB_508": {
+      "label": "Room 508",
+      "roomNumber": "508",
+      "floor": 5,
+      "type": "room",
+      "x": 580,
+      "y": 330,
+      "aliases": [
+        "Classroom 508",
+        "AB 508",
+        "508"
+      ]
+    },
+    "STAIRS_F5_N": {
+      "label": "North Stairwell (F5)",
+      "floor": 5,
+      "type": "stairs",
+      "x": 680,
+      "y": 330,
+      "aliases": [
+        "North Stairs Floor 5"
+      ]
+    },
+    "LIFT_F5_N": {
+      "label": "Courtyard North Elevator (F5)",
+      "floor": 5,
+      "type": "elevator",
+      "x": 780,
+      "y": 330,
+      "aliases": [
+        "North Lift Floor 5"
+      ]
+    },
+    "R_AB_510": {
+      "label": "Room 510",
+      "roomNumber": "510",
+      "floor": 5,
+      "type": "room",
+      "x": 880,
+      "y": 330,
+      "aliases": [
+        "Classroom 510",
+        "AB 510",
+        "510"
+      ]
+    },
+    "R_AB_511": {
+      "label": "Room 511",
+      "roomNumber": "511",
+      "floor": 5,
+      "type": "room",
+      "x": 980,
+      "y": 330,
+      "aliases": [
+        "Classroom 511",
+        "AB 511",
+        "511"
+      ]
+    },
+    "R_AB_512": {
+      "label": "Room 512",
+      "roomNumber": "512",
+      "floor": 5,
+      "type": "room",
+      "x": 1075,
+      "y": 420,
+      "aliases": [
+        "Classroom 512",
+        "AB 512",
+        "512"
+      ]
+    },
+    "R_AB_514": {
+      "label": "Room 514",
+      "roomNumber": "514",
+      "floor": 5,
+      "type": "room",
+      "x": 1075,
+      "y": 540,
+      "aliases": [
+        "Classroom 514",
+        "AB 514",
+        "514"
+      ]
+    },
+    "R_AB_515": {
+      "label": "Room 515",
+      "roomNumber": "515",
+      "floor": 5,
+      "type": "room",
+      "x": 1075,
+      "y": 720,
+      "aliases": [
+        "Classroom 515",
+        "AB 515",
+        "515"
+      ]
+    },
+    "LIFT_F5_SE": {
+      "label": "Southeast Elevators (F5)",
+      "floor": 5,
+      "type": "elevator",
+      "x": 1075,
+      "y": 870,
+      "aliases": [
+        "SE Lift Floor 5"
+      ]
+    },
+    "STAIRS_F5_SE": {
+      "label": "Southeast Stairwell (F5)",
+      "floor": 5,
+      "type": "stairs",
+      "x": 1075,
+      "y": 950,
+      "aliases": [
+        "SE Stairs Floor 5"
+      ]
+    },
+    "J_F7_SW": {
+      "label": "Southwest Junction (F7)",
+      "floor": 7,
+      "type": "junction",
+      "x": 305,
+      "y": 1035,
+      "aliases": [
+        "SW Corner Floor 7"
+      ]
+    },
+    "J_F7_NW": {
+      "label": "Northwest Junction (F7)",
+      "floor": 7,
+      "type": "junction",
+      "x": 305,
+      "y": 330,
+      "aliases": [
+        "NW Corner Floor 7"
+      ]
+    },
+    "J_F7_NE": {
+      "label": "Northeast Junction (F7)",
+      "floor": 7,
+      "type": "junction",
+      "x": 1075,
+      "y": 330,
+      "aliases": [
+        "NE Corner Floor 7"
+      ]
+    },
+    "J_F7_SE": {
+      "label": "Southeast Lobby Junction (F7)",
+      "floor": 7,
+      "type": "junction",
+      "x": 1075,
+      "y": 1035,
+      "aliases": [
+        "SE Lobby Floor 7"
+      ]
+    },
+    "J_F7_SKY": {
+      "label": "Skybridge Passage (F7)",
+      "floor": 7,
+      "type": "junction",
+      "x": 1220,
+      "y": 1035,
+      "aliases": [
+        "Apex Library Bridge Floor 7"
+      ]
+    },
+    "R_AB_702": {
+      "label": "Room 702",
+      "roomNumber": "702",
+      "floor": 7,
+      "type": "room",
+      "x": 520,
+      "y": 1035,
+      "aliases": [
+        "Classroom 702",
+        "AB 702",
+        "702"
+      ]
+    },
+    "R_AB_701": {
+      "label": "Room 701",
+      "roomNumber": "701",
+      "floor": 7,
+      "type": "room",
+      "x": 800,
+      "y": 1035,
+      "aliases": [
+        "Classroom 701",
+        "AB 701",
+        "701"
+      ]
+    },
+    "LIFT_F7_S": {
+      "label": "South Elevators (F7)",
+      "floor": 7,
+      "type": "elevator",
+      "x": 940,
+      "y": 1035,
+      "aliases": [
+        "South Lift Floor 7"
+      ]
+    },
+    "STAIRS_F7_S": {
+      "label": "South Stairwell (F7)",
+      "floor": 7,
+      "type": "stairs",
+      "x": 1010,
+      "y": 1035,
+      "aliases": [
+        "South Stairs Floor 7"
+      ]
+    },
+    "R_APEX_LIB": {
+      "label": "Room 712 (Apex Central Library)",
+      "roomNumber": "712",
+      "floor": 7,
+      "type": "room",
+      "x": 1350,
+      "y": 1200,
+      "aliases": [
+        "Apex Library",
+        "Central Library",
+        "Library Floor 7",
+        "712"
+      ]
+    },
+    "R_COMP_LAB_SW": {
+      "label": "Room 703 (Computer Lab SW)",
+      "roomNumber": "703",
+      "floor": 7,
+      "type": "room",
+      "x": 305,
+      "y": 930,
+      "aliases": [
+        "Advanced Computing Lab",
+        "CS Lab SW",
+        "703"
+      ]
+    },
+    "STAIRS_F7_W": {
+      "label": "West Stairwell (F7)",
+      "floor": 7,
+      "type": "stairs",
+      "x": 305,
+      "y": 750,
+      "aliases": [
+        "West Stairs Floor 7"
+      ]
+    },
+    "LIFT_F7_W": {
+      "label": "West Courtyard Elevator (F7)",
+      "floor": 7,
+      "type": "elevator",
+      "x": 305,
+      "y": 620,
+      "aliases": [
+        "West Lift Floor 7"
+      ]
+    },
+    "R_MATH_STAFF_W": {
+      "label": "Room 704 (Math Staff Room W)",
+      "roomNumber": "704",
+      "floor": 7,
+      "type": "room",
+      "x": 305,
+      "y": 460,
+      "aliases": [
+        "Mathematics Faculty West",
+        "Staff Room 7",
+        "704"
+      ]
+    },
+    "R_COMP_LAB_NW": {
+      "label": "Room 705 (Computer Lab NW)",
+      "roomNumber": "705",
+      "floor": 7,
+      "type": "room",
+      "x": 380,
+      "y": 330,
+      "aliases": [
+        "Computing Lab NW",
+        "Systems Lab",
+        "705"
+      ]
+    },
+    "R_HUMANITIES": {
+      "label": "Room 706 (Dept. Humanities)",
+      "roomNumber": "706",
+      "floor": 7,
+      "type": "room",
+      "x": 460,
+      "y": 330,
+      "aliases": [
+        "Humanities Department",
+        "Language Lab",
+        "706"
+      ]
+    },
+    "STAIRS_F7_N": {
+      "label": "North Stairwell (F7)",
+      "floor": 7,
+      "type": "stairs",
+      "x": 680,
+      "y": 330,
+      "aliases": [
+        "North Stairs Floor 7"
+      ]
+    },
+    "LIFT_F7_N": {
+      "label": "Courtyard North Elevator (F7)",
+      "floor": 7,
+      "type": "elevator",
+      "x": 780,
+      "y": 330,
+      "aliases": [
+        "North Lift Floor 7"
+      ]
+    },
+    "R_STAFF_LIB": {
+      "label": "Room 707 (Faculty Staff Library)",
+      "roomNumber": "707",
+      "floor": 7,
+      "type": "room",
+      "x": 880,
+      "y": 330,
+      "aliases": [
+        "Professors Library",
+        "Reference Room",
+        "707"
+      ]
+    },
+    "R_STAFF_MEET": {
+      "label": "Room 708 (Staff Meeting Room)",
+      "roomNumber": "708",
+      "floor": 7,
+      "type": "room",
+      "x": 980,
+      "y": 330,
+      "aliases": [
+        "Meeting Hall 7",
+        "Conference Room",
+        "708"
+      ]
+    },
+    "R_MATH_STAFF_NE": {
+      "label": "Room 709 (Math Staff Room NE)",
+      "roomNumber": "709",
+      "floor": 7,
+      "type": "room",
+      "x": 1075,
+      "y": 420,
+      "aliases": [
+        "Mathematics Faculty NE",
+        "709"
+      ]
+    },
+    "R_MATH_DEPT": {
+      "label": "Room 710 (Dept. Mathematics)",
+      "roomNumber": "710",
+      "floor": 7,
+      "type": "room",
+      "x": 1075,
+      "y": 600,
+      "aliases": [
+        "Math Department Main Office",
+        "710"
+      ]
+    },
+    "LIFT_F7_SE": {
+      "label": "Southeast Elevators (F7)",
+      "floor": 7,
+      "type": "elevator",
+      "x": 1075,
+      "y": 870,
+      "aliases": [
+        "SE Lift Floor 7"
+      ]
+    },
+    "STAIRS_F7_SE": {
+      "label": "Southeast Stairwell (F7)",
+      "floor": 7,
+      "type": "stairs",
+      "x": 1075,
+      "y": 950,
+      "aliases": [
+        "SE Stairs Floor 7"
+      ]
+    }
+  },
+  "edges": [
+    {
+      "from": "J_F6_SW",
+      "to": "R_AB_603",
+      "weight": 4.9,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_603",
+      "to": "J_F6_SW",
+      "weight": 4.9,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_603",
+      "to": "R_AB_602",
+      "weight": 9.1,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_602",
+      "to": "R_AB_603",
+      "weight": 9.1,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_602",
+      "to": "R_AB_601",
+      "weight": 18.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_601",
+      "to": "R_AB_602",
+      "weight": 18.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_601",
+      "to": "LIFT_F6_S",
+      "weight": 9.1,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_S",
+      "to": "R_AB_601",
+      "weight": 9.1,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_S",
+      "to": "STAIRS_F6_S",
+      "weight": 4.6,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_S",
+      "to": "LIFT_F6_S",
+      "weight": 4.6,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_S",
+      "to": "J_F6_SE",
+      "weight": 4.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_SE",
+      "to": "STAIRS_F6_S",
+      "weight": 4.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_SE",
+      "to": "J_F6_SKY",
+      "weight": 9.4,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_SKY",
+      "to": "J_F6_SE",
+      "weight": 9.4,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_SKY",
+      "to": "R_BOARD_ROOM",
+      "weight": 13.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_BOARD_ROOM",
+      "to": "J_F6_SKY",
+      "weight": 13.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_SW",
+      "to": "R_AB_604",
+      "weight": 6.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_604",
+      "to": "J_F6_SW",
+      "weight": 6.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_604",
+      "to": "STAIRS_F6_W",
+      "weight": 11.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_W",
+      "to": "R_AB_604",
+      "weight": 11.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_W",
+      "to": "LIFT_F6_W",
+      "weight": 8.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_W",
+      "to": "STAIRS_F6_W",
+      "weight": 8.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_W",
+      "to": "R_PHYSICS_W",
+      "weight": 10.4,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_PHYSICS_W",
+      "to": "LIFT_F6_W",
+      "weight": 10.4,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_PHYSICS_W",
+      "to": "J_F6_NW",
+      "weight": 8.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_NW",
+      "to": "R_PHYSICS_W",
+      "weight": 8.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_NW",
+      "to": "R_PHYSICS_NW",
+      "weight": 10.1,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_PHYSICS_NW",
+      "to": "J_F6_NW",
+      "weight": 10.1,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_PHYSICS_NW",
+      "to": "STAIRS_F6_N",
+      "weight": 14.3,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_N",
+      "to": "R_PHYSICS_NW",
+      "weight": 14.3,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_N",
+      "to": "LIFT_F6_N",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_N",
+      "to": "STAIRS_F6_N",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_N",
+      "to": "R_AB_608",
+      "weight": 13,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_608",
+      "to": "LIFT_F6_N",
+      "weight": 13,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_608",
+      "to": "J_F6_NE",
+      "weight": 6.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_NE",
+      "to": "R_AB_608",
+      "weight": 6.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_NE",
+      "to": "WASHROOM_F6_M",
+      "weight": 5.9,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "WASHROOM_F6_M",
+      "to": "J_F6_NE",
+      "weight": 5.9,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "WASHROOM_F6_M",
+      "to": "R_AB_610",
+      "weight": 7.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_610",
+      "to": "WASHROOM_F6_M",
+      "weight": 7.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_610",
+      "to": "R_AB_611",
+      "weight": 11.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_611",
+      "to": "R_AB_610",
+      "weight": 11.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_611",
+      "to": "LIFT_F6_SE",
+      "weight": 9.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_SE",
+      "to": "R_AB_611",
+      "weight": 9.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F6_SE",
+      "to": "STAIRS_F6_SE",
+      "weight": 5.2,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_SE",
+      "to": "LIFT_F6_SE",
+      "weight": 5.2,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F6_SE",
+      "to": "J_F6_SE",
+      "weight": 5.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F6_SE",
+      "to": "STAIRS_F6_SE",
+      "weight": 5.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SW",
+      "to": "R_AB_503",
+      "weight": 4.9,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_503",
+      "to": "J_F5_SW",
+      "weight": 4.9,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_503",
+      "to": "R_AB_502",
+      "weight": 9.1,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_502",
+      "to": "R_AB_503",
+      "weight": 9.1,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_502",
+      "to": "R_AB_501",
+      "weight": 18.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_501",
+      "to": "R_AB_502",
+      "weight": 18.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_501",
+      "to": "LIFT_F5_S",
+      "weight": 9.1,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_S",
+      "to": "R_AB_501",
+      "weight": 9.1,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_S",
+      "to": "STAIRS_F5_S",
+      "weight": 4.6,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_S",
+      "to": "LIFT_F5_S",
+      "weight": 4.6,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_S",
+      "to": "J_F5_SE",
+      "weight": 4.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SE",
+      "to": "STAIRS_F5_S",
+      "weight": 4.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SE",
+      "to": "J_F5_SKY",
+      "weight": 9.4,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SKY",
+      "to": "J_F5_SE",
+      "weight": 9.4,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SKY",
+      "to": "R_AB_516",
+      "weight": 13.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_516",
+      "to": "J_F5_SKY",
+      "weight": 13.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SW",
+      "to": "R_AB_504",
+      "weight": 6.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_504",
+      "to": "J_F5_SW",
+      "weight": 6.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_504",
+      "to": "STAIRS_F5_W",
+      "weight": 11.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_W",
+      "to": "R_AB_504",
+      "weight": 11.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_W",
+      "to": "LIFT_F5_W",
+      "weight": 8.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_W",
+      "to": "STAIRS_F5_W",
+      "weight": 8.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_W",
+      "to": "R_AB_505",
+      "weight": 10.4,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_505",
+      "to": "LIFT_F5_W",
+      "weight": 10.4,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_505",
+      "to": "J_F5_NW",
+      "weight": 8.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_NW",
+      "to": "R_AB_505",
+      "weight": 8.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_NW",
+      "to": "R_AB_506",
+      "weight": 4.9,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_506",
+      "to": "J_F5_NW",
+      "weight": 4.9,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_506",
+      "to": "R_AB_507",
+      "weight": 5.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_507",
+      "to": "R_AB_506",
+      "weight": 5.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_507",
+      "to": "R_AB_508",
+      "weight": 7.8,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_508",
+      "to": "R_AB_507",
+      "weight": 7.8,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_508",
+      "to": "STAIRS_F5_N",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_N",
+      "to": "R_AB_508",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_N",
+      "to": "LIFT_F5_N",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_N",
+      "to": "STAIRS_F5_N",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_N",
+      "to": "R_AB_510",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_510",
+      "to": "LIFT_F5_N",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_510",
+      "to": "R_AB_511",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_511",
+      "to": "R_AB_510",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_511",
+      "to": "J_F5_NE",
+      "weight": 6.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_NE",
+      "to": "R_AB_511",
+      "weight": 6.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_NE",
+      "to": "R_AB_512",
+      "weight": 5.9,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_512",
+      "to": "J_F5_NE",
+      "weight": 5.9,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_512",
+      "to": "R_AB_514",
+      "weight": 7.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_514",
+      "to": "R_AB_512",
+      "weight": 7.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_514",
+      "to": "R_AB_515",
+      "weight": 11.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_515",
+      "to": "R_AB_514",
+      "weight": 11.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_515",
+      "to": "LIFT_F5_SE",
+      "weight": 9.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_SE",
+      "to": "R_AB_515",
+      "weight": 9.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_SE",
+      "to": "STAIRS_F5_SE",
+      "weight": 5.2,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_SE",
+      "to": "LIFT_F5_SE",
+      "weight": 5.2,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F5_SE",
+      "to": "J_F5_SE",
+      "weight": 5.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F5_SE",
+      "to": "STAIRS_F5_SE",
+      "weight": 5.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SW",
+      "to": "R_AB_702",
+      "weight": 14,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_702",
+      "to": "J_F7_SW",
+      "weight": 14,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_702",
+      "to": "R_AB_701",
+      "weight": 18.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_701",
+      "to": "R_AB_702",
+      "weight": 18.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_AB_701",
+      "to": "LIFT_F7_S",
+      "weight": 9.1,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_S",
+      "to": "R_AB_701",
+      "weight": 9.1,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_S",
+      "to": "STAIRS_F7_S",
+      "weight": 4.6,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_S",
+      "to": "LIFT_F7_S",
+      "weight": 4.6,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_S",
+      "to": "J_F7_SE",
+      "weight": 4.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SE",
+      "to": "STAIRS_F7_S",
+      "weight": 4.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SE",
+      "to": "J_F7_SKY",
+      "weight": 9.4,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SKY",
+      "to": "J_F7_SE",
+      "weight": 9.4,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SKY",
+      "to": "R_APEX_LIB",
+      "weight": 13.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_APEX_LIB",
+      "to": "J_F7_SKY",
+      "weight": 13.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SW",
+      "to": "R_COMP_LAB_SW",
+      "weight": 6.8,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_COMP_LAB_SW",
+      "to": "J_F7_SW",
+      "weight": 6.8,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_COMP_LAB_SW",
+      "to": "STAIRS_F7_W",
+      "weight": 11.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_W",
+      "to": "R_COMP_LAB_SW",
+      "weight": 11.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_W",
+      "to": "LIFT_F7_W",
+      "weight": 8.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_W",
+      "to": "STAIRS_F7_W",
+      "weight": 8.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_W",
+      "to": "R_MATH_STAFF_W",
+      "weight": 10.4,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_MATH_STAFF_W",
+      "to": "LIFT_F7_W",
+      "weight": 10.4,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_MATH_STAFF_W",
+      "to": "J_F7_NW",
+      "weight": 8.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_NW",
+      "to": "R_MATH_STAFF_W",
+      "weight": 8.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_NW",
+      "to": "R_COMP_LAB_NW",
+      "weight": 4.9,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_COMP_LAB_NW",
+      "to": "J_F7_NW",
+      "weight": 4.9,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_COMP_LAB_NW",
+      "to": "R_HUMANITIES",
+      "weight": 5.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_HUMANITIES",
+      "to": "R_COMP_LAB_NW",
+      "weight": 5.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_HUMANITIES",
+      "to": "STAIRS_F7_N",
+      "weight": 14.3,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_N",
+      "to": "R_HUMANITIES",
+      "weight": 14.3,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_N",
+      "to": "LIFT_F7_N",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_N",
+      "to": "STAIRS_F7_N",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_N",
+      "to": "R_STAFF_LIB",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_STAFF_LIB",
+      "to": "LIFT_F7_N",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_STAFF_LIB",
+      "to": "R_STAFF_MEET",
+      "weight": 6.5,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "R_STAFF_MEET",
+      "to": "R_STAFF_LIB",
+      "weight": 6.5,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "R_STAFF_MEET",
+      "to": "J_F7_NE",
+      "weight": 6.2,
+      "direction": "E",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_NE",
+      "to": "R_STAFF_MEET",
+      "weight": 6.2,
+      "direction": "W",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_NE",
+      "to": "R_MATH_STAFF_NE",
+      "weight": 5.9,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_MATH_STAFF_NE",
+      "to": "J_F7_NE",
+      "weight": 5.9,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_MATH_STAFF_NE",
+      "to": "R_MATH_DEPT",
+      "weight": 11.7,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "R_MATH_DEPT",
+      "to": "R_MATH_STAFF_NE",
+      "weight": 11.7,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "R_MATH_DEPT",
+      "to": "LIFT_F7_SE",
+      "weight": 17.6,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_SE",
+      "to": "R_MATH_DEPT",
+      "weight": 17.6,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F7_SE",
+      "to": "STAIRS_F7_SE",
+      "weight": 5.2,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_SE",
+      "to": "LIFT_F7_SE",
+      "weight": 5.2,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "STAIRS_F7_SE",
+      "to": "J_F7_SE",
+      "weight": 5.5,
+      "direction": "S",
+      "isAccessible": true
+    },
+    {
+      "from": "J_F7_SE",
+      "to": "STAIRS_F7_SE",
+      "weight": 5.5,
+      "direction": "N",
+      "isAccessible": true
+    },
+    {
+      "from": "LIFT_F5_SE",
+      "to": "LIFT_F6_SE",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_SE",
+      "to": "LIFT_F5_SE",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_SE",
+      "to": "LIFT_F7_SE",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F7_SE",
+      "to": "LIFT_F6_SE",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F5_S",
+      "to": "LIFT_F6_S",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_S",
+      "to": "LIFT_F5_S",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_S",
+      "to": "LIFT_F7_S",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F7_S",
+      "to": "LIFT_F6_S",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F5_W",
+      "to": "LIFT_F6_W",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_W",
+      "to": "LIFT_F5_W",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_W",
+      "to": "LIFT_F7_W",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F7_W",
+      "to": "LIFT_F6_W",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F5_N",
+      "to": "LIFT_F6_N",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_N",
+      "to": "LIFT_F5_N",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F6_N",
+      "to": "LIFT_F7_N",
+      "weight": 15,
+      "direction": "up",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "LIFT_F7_N",
+      "to": "LIFT_F6_N",
+      "weight": 15,
+      "direction": "down",
+      "isAccessible": true,
+      "verticalType": "elevator"
+    },
+    {
+      "from": "STAIRS_F5_SE",
+      "to": "STAIRS_F6_SE",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_SE",
+      "to": "STAIRS_F5_SE",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_SE",
+      "to": "STAIRS_F7_SE",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F7_SE",
+      "to": "STAIRS_F6_SE",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F5_S",
+      "to": "STAIRS_F6_S",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_S",
+      "to": "STAIRS_F5_S",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_S",
+      "to": "STAIRS_F7_S",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F7_S",
+      "to": "STAIRS_F6_S",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F5_W",
+      "to": "STAIRS_F6_W",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_W",
+      "to": "STAIRS_F5_W",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_W",
+      "to": "STAIRS_F7_W",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F7_W",
+      "to": "STAIRS_F6_W",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F5_N",
+      "to": "STAIRS_F6_N",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_N",
+      "to": "STAIRS_F5_N",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F6_N",
+      "to": "STAIRS_F7_N",
+      "weight": 25,
+      "direction": "up",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    },
+    {
+      "from": "STAIRS_F7_N",
+      "to": "STAIRS_F6_N",
+      "weight": 25,
+      "direction": "down",
+      "isAccessible": false,
+      "verticalType": "stairs"
+    }
+  ]
+}
