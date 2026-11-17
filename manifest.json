@@ -1,0 +1,31 @@
+{
+  "name": "HURRY! MSRIT",
+  "short_name": "HURRY!",
+  "description": "Fast indoor landmark navigation for MSRIT Apex Block.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#050811",
+  "theme_color": "#0B1120",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["navigation", "campus", "utilities"]
+}
