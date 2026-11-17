@@ -33,8 +33,8 @@ export const ArrivalModal: React.FC<ArrivalModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fade-in">
-      <div className="bg-gray-900 border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl shadow-emerald-500/10">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+      <div className="bg-[#0d121f] border border-emerald-500/40 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl shadow-emerald-500/10">
         {/* Trophy Icon */}
         <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-gray-950 shadow-lg shadow-emerald-500/30">
           <Trophy className="w-8 h-8" />
@@ -47,7 +47,7 @@ export const ArrivalModal: React.FC<ArrivalModalProps> = ({
         </p>
 
         {/* Route Stats Card */}
-        <div className="bg-gray-800/80 rounded-xl p-4 mb-6 border border-gray-700/60 grid grid-cols-3 gap-2 text-center">
+        <div className="bg-[#131b2e] rounded-xl p-4 mb-6 border border-gray-700/60 grid grid-cols-3 gap-2 text-center">
           <div>
             <div className="text-xs text-gray-400">Total Distance</div>
             <div className="text-sm font-bold text-white">{routeResult.totalDistance} m</div>

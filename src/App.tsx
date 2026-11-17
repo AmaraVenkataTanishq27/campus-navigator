@@ -10,8 +10,8 @@ const graph = rawGraphData as unknown as CampusGraph;
 
 export const App: React.FC = () => {
   const [currentFloor, setCurrentFloor] = useState<number>(6);
-  const [selectedStartId, setSelectedStartId] = useState<string | null>('R601');
-  const [selectedEndId, setSelectedEndId] = useState<string | null>('R603');
+  const [selectedStartId, setSelectedStartId] = useState<string | null>('R_AB_601');
+  const [selectedEndId, setSelectedEndId] = useState<string | null>('R_AB_603');
   const [accessibleOnly, setAccessibleOnly] = useState<boolean>(false);
   const [voiceEnabled, setVoiceEnabled] = useState<boolean>(false);
   const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
@@ -20,17 +20,19 @@ export const App: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
 
   // Compute Route
-  const handleCalculateRoute = useCallback(() => {
-    if (!selectedStartId || !selectedEndId) return;
+  const handleCalculateRoute = useCallback((overrideStart?: string, overrideEnd?: string) => {
+    const start = overrideStart ?? selectedStartId;
+    const end = overrideEnd ?? selectedEndId;
+    if (!start || !end) return;
 
-    const res = buildRouteResult(graph, selectedStartId, selectedEndId, { accessibleOnly });
+    const res = buildRouteResult(graph, start, end, { accessibleOnly });
     if (res) {
       setRouteResult(res);
       setCurrentMilestoneIndex(0);
       setArrivalModalOpen(false);
 
       // Auto-set floor to start node's floor
-      const startNode = graph.nodes[selectedStartId];
+      const startNode = graph.nodes[start];
       if (startNode) {
         setCurrentFloor(startNode.floor);
       }

@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ZoomIn, ZoomOut, Maximize2, Crosshair, Layers, ChevronRight, ChevronLeft } from 'lucide-react';
-import { CampusGraph, Milestone, RouteResult } from '../types/navigation';
+import { CampusGraph, RouteResult } from '../types/navigation';
 
 interface FloorPlanViewerProps {
   graph: CampusGraph;
@@ -39,6 +39,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   };
 
   const currentMilestone = routeResult?.milestones[currentMilestoneIndex];
+  const availableFloors = Object.keys(graph.floors).map(Number).sort((a, b) => a - b);
 
   // Auto-center or fit initial view
   useEffect(() => {
@@ -63,7 +64,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     }
   }, [currentMilestoneIndex, currentFloor]);
 
-  // Handle Drag / Pan
+  // Handle Drag / Pan (Mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0) return;
     setIsDragging(true);
@@ -79,6 +80,27 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   };
 
   const handleMouseUp = () => setIsDragging(false);
+
+  // Handle Drag / Pan (Touch for mobile / tablet)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      setDragStart({
+        x: e.touches[0].clientX - position.x,
+        y: e.touches[0].clientY - position.y
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    setPosition({
+      x: e.touches[0].clientX - dragStart.x,
+      y: e.touches[0].clientY - dragStart.y
+    });
+  };
+
+  const handleTouchEnd = () => setIsDragging(false);
 
   // Handle Wheel Zoom
   const handleWheel = (e: React.WheelEvent) => {
@@ -126,7 +148,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       const n1 = graph.nodes[ids[i]];
       const n2 = graph.nodes[ids[i + 1]];
 
-      if (n1.floor === currentFloor && n2.floor === currentFloor) {
+      if (n1 && n2 && n1.floor === currentFloor && n2.floor === currentFloor) {
         segments.push({
           p1: { x: n1.x, y: n1.y },
           p2: { x: n2.x, y: n2.y },
@@ -144,6 +166,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
       className="relative flex-1 h-full w-full bg-[#0a0e17] overflow-hidden cursor-grab active:cursor-grabbing select-none"
     >
@@ -151,24 +176,41 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       <button
         onClick={onToggleSidebar}
         title={sidebarOpen ? 'Collapse sidebar' : 'Open navigation sidebar'}
-        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-gray-900/90 hover:bg-gray-800 text-gray-200 border border-gray-700/80 shadow-xl backdrop-blur-md transition"
+        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-[#0d121f]/90 hover:bg-gray-800 text-gray-200 border border-gray-700/80 shadow-xl backdrop-blur-md transition"
       >
         {sidebarOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
       </button>
 
-      {/* Floating Floor Tag */}
-      <div className="absolute top-4 left-16 z-20 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gray-900/90 border border-gray-700/80 shadow-xl backdrop-blur-md">
-        <Layers className="w-4 h-4 text-emerald-400" />
-        <span className="text-xs font-bold text-white tracking-wide">{floorMeta.name}</span>
+      {/* Floating Floor Selector Tabs */}
+      <div className="absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1 rounded-xl bg-[#0d121f]/90 border border-gray-700/80 shadow-xl backdrop-blur-md">
+        <span className="text-xs text-gray-400 px-2 font-medium flex items-center gap-1">
+          <Layers className="w-3.5 h-3.5 text-emerald-400" /> Floor:
+        </span>
+        {availableFloors.map((floor) => {
+          const isActive = floor === currentFloor;
+          return (
+            <button
+              key={floor}
+              onClick={() => onFloorChange(floor)}
+              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+                isActive
+                  ? 'bg-emerald-500 text-gray-950 font-bold shadow-md shadow-emerald-500/30'
+                  : 'text-gray-300 hover:text-white hover:bg-gray-800'
+              }`}
+            >
+              F{floor}
+            </button>
+          );
+        })}
         {routeResult && (
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-medium">
+          <span className="text-[10px] px-2 py-0.5 ml-1 rounded-full bg-emerald-500/20 text-emerald-300 font-medium border border-emerald-500/30 hidden sm:inline-block">
             Active Route
           </span>
         )}
       </div>
 
       {/* Zoom / Viewport Controls */}
-      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-gray-900/90 p-1.5 rounded-xl border border-gray-700/80 shadow-2xl backdrop-blur-md">
+      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-[#0d121f]/90 p-1.5 rounded-xl border border-gray-700/80 shadow-2xl backdrop-blur-md">
         <button
           onClick={() => setScale((s) => Math.min(s * 1.2, 4.0))}
           title="Zoom In"
@@ -258,8 +300,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                 y2={seg.p2.y}
                 stroke="#10b981"
                 strokeWidth="12"
-                strokeOpacity="0.4"
+                strokeOpacity="0.5"
                 strokeLinecap="round"
+                filter="url(#routeGlow)"
               />
               {/* Core animated dashed path */}
               <line
@@ -286,7 +329,18 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
             if (!isRouteNode && node.type === 'junction') return null;
 
             return (
-              <g key={nodeId} className="pointer-events-auto cursor-pointer">
+              <g
+                key={nodeId}
+                className="pointer-events-auto cursor-pointer"
+                onClick={() => {
+                  if (routeResult) {
+                    const msIdx = routeResult.milestones.findIndex((m) => m.nodeId === nodeId);
+                    if (msIdx !== -1) {
+                      onSelectMilestone(msIdx);
+                    }
+                  }
+                }}
+              >
                 {/* Active pulsating beacon rings for current milestone */}
                 {isCurrentMilestone && (
                   <>
@@ -297,6 +351,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                       fill="none"
                       stroke="#06b6d4"
                       className="beacon-ring"
+                      filter="url(#beaconGlow)"
                     />
                     <circle
                       cx={node.x}
@@ -305,6 +360,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                       fill="none"
                       stroke="#10b981"
                       className="beacon-ring"
+                      filter="url(#beaconGlow)"
                       style={{ animationDelay: '0.6s' }}
                     />
                   </>

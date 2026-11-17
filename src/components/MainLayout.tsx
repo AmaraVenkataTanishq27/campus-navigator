@@ -12,7 +12,7 @@ interface MainLayoutProps {
   selectedEndId: string | null;
   onSelectStart: (id: string | null) => void;
   onSelectEnd: (id: string | null) => void;
-  onCalculateRoute: () => void;
+  onCalculateRoute: (startId?: string, endId?: string) => void;
   onClearRoute: () => void;
   routeResult: RouteResult | null;
   currentMilestoneIndex: number;
@@ -45,7 +45,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
     <div className="flex-1 flex overflow-hidden relative">
       {/* Left Sidebar (~420px) */}
       <aside
-        className={`w-full md:w-[420px] flex-shrink-0 bg-gray-900 border-r border-gray-800 flex flex-col z-20 transition-all duration-300 ease-in-out ${
+        className={`w-full md:w-[420px] flex-shrink-0 bg-[#0d121f] border-r border-gray-800/80 flex flex-col z-20 transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[420px]'
         }`}
       >

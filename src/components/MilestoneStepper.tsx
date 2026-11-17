@@ -72,9 +72,9 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
   const progressPercent = Math.round(((currentIndex + 1) / milestones.length) * 100);
 
   return (
-    <div className="flex flex-col h-full bg-gray-900 select-none">
+    <div className="flex flex-col h-full bg-[#0d121f] select-none">
       {/* Route Summary Header */}
-      <div className="p-4 bg-gray-900/95 border-b border-gray-800">
+      <div className="p-4 bg-[#0d121f]/95 border-b border-gray-800/80">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
             <span className="font-bold text-sm text-white">Milestone Checklist</span>
@@ -89,7 +89,7 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-800 rounded-full h-1.5 mb-3 overflow-hidden">
+        <div className="w-full bg-[#131b2e] rounded-full h-1.5 mb-3 overflow-hidden">
           <div
             className="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
@@ -128,8 +128,8 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
                 isCurrent
                   ? 'bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-950/50 ring-1 ring-emerald-500/30'
                   : isPassed
-                  ? 'bg-gray-800/40 border-gray-800 text-gray-500 opacity-80 hover:opacity-100'
-                  : 'bg-gray-800/70 border-gray-700/60 text-gray-300 hover:border-gray-600'
+                  ? 'bg-[#131b2e]/40 border-gray-800 text-gray-500 opacity-80 hover:opacity-100'
+                  : 'bg-[#131b2e]/80 border-gray-700/60 text-gray-300 hover:border-gray-600'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -173,7 +173,7 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
                       {ms.groupedRooms.map((room, rIdx) => (
                         <span
                           key={rIdx}
-                          className="px-2 py-0.5 rounded text-[10px] font-mono bg-gray-800 text-cyan-300 border border-cyan-500/30"
+                          className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#1a2337] text-cyan-300 border border-cyan-500/30"
                         >
                           {room}
                         </span>
@@ -198,11 +198,11 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
       </div>
 
       {/* Sticky Bottom Next Milestone Controls */}
-      <div className="p-3 bg-gray-900 border-t border-gray-800 flex items-center gap-2">
+      <div className="sticky bottom-0 p-3 bg-[#0d121f]/95 backdrop-blur-md border-t border-gray-800/80 flex items-center gap-2">
         <button
           onClick={onPrevMilestone}
           disabled={currentIndex === 0}
-          className="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed text-gray-300 hover:text-white border border-gray-700 transition"
+          className="p-2.5 rounded-xl bg-[#131b2e] hover:bg-[#1a2337] disabled:opacity-30 disabled:cursor-not-allowed text-gray-300 hover:text-white border border-gray-700/80 transition"
           title="Previous Milestone"
         >
           <ChevronLeft className="w-5 h-5" />
