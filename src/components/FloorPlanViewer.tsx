@@ -1,5 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { ZoomIn, ZoomOut, Maximize2, Crosshair, Layers, ChevronRight, ChevronLeft } from 'lucide-react';
+import {
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Crosshair,
+  Layers,
+  ChevronRight,
+  ChevronLeft,
+  Navigation,
+  ArrowRight,
+  Target,
+  CheckCircle2
+} from 'lucide-react';
 import { CampusGraph, RouteResult } from '../types/navigation';
 
 interface FloorPlanViewerProps {
@@ -9,6 +21,8 @@ interface FloorPlanViewerProps {
   currentMilestoneIndex: number;
   onFloorChange: (floor: number) => void;
   onSelectMilestone: (index: number) => void;
+  onNextMilestone?: () => void;
+  onPrevMilestone?: () => void;
   sidebarOpen: boolean;
   onToggleSidebar: () => void;
 }
@@ -20,6 +34,8 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   currentMilestoneIndex,
   onFloorChange,
   onSelectMilestone,
+  onNextMilestone,
+  onPrevMilestone,
   sidebarOpen,
   onToggleSidebar
 }) => {
@@ -158,7 +174,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     }
   };
 
-  // Reset to Fit
+  // Reset to Fit Whole Floor
   const handleResetView = () => {
     if (containerRef.current) {
       const { clientWidth, clientHeight } = containerRef.current;
@@ -170,6 +186,64 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       });
     }
   };
+
+  // Fit active route on screen with ideal framing
+  const handleFitToRoute = () => {
+    if (!containerRef.current) return;
+    const { clientWidth, clientHeight } = containerRef.current;
+
+    const currentFloorNodes = (routeResult?.pathNodeIds || [])
+      .map((id) => graph.nodes[id])
+      .filter((n) => n && n.floor === currentFloor);
+
+    if (currentFloorNodes.length === 0) {
+      handleResetView();
+      return;
+    }
+
+    const xs = currentFloorNodes.map((n) => n.x);
+    const ys = currentFloorNodes.map((n) => n.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+
+    const pad = 160;
+    const boxW = Math.max(maxX - minX + pad * 2, 320);
+    const boxH = Math.max(maxY - minY + pad * 2, 260);
+
+    const fitScale = Math.min(
+      Math.max(Math.min(clientWidth / boxW, clientHeight / boxH), 0.45),
+      2.5
+    );
+
+    const midX = (minX + maxX) / 2;
+    const midY = (minY + maxY) / 2;
+
+    setScale(fitScale);
+    setPosition({
+      x: clientWidth / 2 - midX * fitScale,
+      y: clientHeight / 2 - midY * fitScale
+    });
+  };
+
+  // Just-in-time transition: ONLY active when current milestone has actually arrived at elevator/stairs
+  const activeElevatorTransition = React.useMemo(() => {
+    if (!routeResult || !currentMilestone) return null;
+
+    if (currentMilestone.type === 'elevator' || currentMilestone.type === 'stairs') {
+      const nextMilestone = routeResult.milestones[currentMilestoneIndex + 1];
+      if (nextMilestone) {
+        return {
+          fromFloor: currentMilestone.floor,
+          toFloor: nextMilestone.floor,
+          type: currentMilestone.type,
+          nodeId: currentMilestone.nodeId
+        };
+      }
+    }
+    return null;
+  }, [routeResult, currentMilestone, currentMilestoneIndex]);
 
   const floorNodes = Object.entries(graph.nodes).filter(([_, node]) => node.floor === currentFloor);
 
@@ -304,6 +378,16 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
         )}
       </div>
 
+      {/* Compass Rose & North Orientation */}
+      <div
+        title="North orientation"
+        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-xl bg-white border border-slate-300 shadow-md flex flex-col items-center justify-center pointer-events-none select-none"
+      >
+        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[9px] border-b-red-600 mb-0.5" />
+        <span className="text-[10px] font-black text-slate-800 tracking-tighter leading-none">N</span>
+        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[9px] border-t-slate-400 mt-0.5" />
+      </div>
+
       {/* Zoom / Viewport Controls */}
       <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-white p-1.5 rounded-xl border border-slate-300 shadow-xl">
         <button
@@ -322,10 +406,17 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
         </button>
         <button
           onClick={handleResetView}
-          title="Reset to Fit"
+          title="Reset to Fit Whole Floor"
           className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
         >
           <Maximize2 className="w-4 h-4 stroke-[2.5]" />
+        </button>
+        <button
+          onClick={handleFitToRoute}
+          title="Fit Active Route on Screen"
+          className="p-2 rounded-lg hover:bg-blue-50 text-slate-800 hover:text-blue-600 transition"
+        >
+          <Target className="w-4 h-4 stroke-[2.5]" />
         </button>
         {currentMilestone && currentMilestone.floor === currentFloor && (
           <button
@@ -345,6 +436,72 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           </button>
         )}
       </div>
+
+      {/* Floating On-Map Turn-by-Turn Guidance HUD */}
+      {routeResult && currentMilestone && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[94%] max-w-lg bg-white/95 backdrop-blur-md border border-slate-300/90 rounded-2xl shadow-2xl p-3 sm:px-4 sm:py-3 flex items-center justify-between gap-3 text-slate-900 transition-all">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+              {currentMilestoneIndex === routeResult.milestones.length - 1 ? (
+                <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
+              ) : (
+                <Navigation className="w-5 h-5 fill-white stroke-white" />
+              )}
+            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                  Step {currentMilestoneIndex + 1} of {routeResult.milestones.length}
+                </span>
+                {currentMilestone.distanceToNextMeters > 0 && (
+                  <span className="text-[11px] font-bold text-slate-500">
+                    +{currentMilestone.distanceToNextMeters.toFixed(1)}m
+                  </span>
+                )}
+              </div>
+              <div className="text-xs sm:text-sm font-extrabold text-slate-900 truncate mt-0.5">
+                {currentMilestone.action || currentMilestone.label}
+              </div>
+              <div className="text-[11px] text-slate-500 font-medium truncate">
+                {currentMilestone.subtext}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            {onPrevMilestone && (
+              <button
+                onClick={onPrevMilestone}
+                disabled={currentMilestoneIndex === 0}
+                title="Previous milestone"
+                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:pointer-events-none text-slate-800 transition"
+              >
+                <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            )}
+            {activeElevatorTransition ? (
+              <button
+                onClick={() => {
+                  onFloorChange(activeElevatorTransition.toFloor);
+                  if (onNextMilestone) onNextMilestone();
+                }}
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs shadow-lg transition flex items-center gap-1.5 animate-pulse hover:animate-none border border-amber-400"
+              >
+                <span>Take {activeElevatorTransition.type === 'stairs' ? 'Stairs' : 'Elevator'} to Floor {activeElevatorTransition.toFloor === 0 ? 'G' : `F${activeElevatorTransition.toFloor}`}</span>
+                <ArrowRight className="w-4 h-4 stroke-[3]" />
+              </button>
+            ) : onNextMilestone && (
+              <button
+                onClick={onNextMilestone}
+                className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1"
+              >
+                <span>{currentMilestoneIndex === routeResult.milestones.length - 1 ? 'Done' : 'Next'}</span>
+                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Map Pan & Zoom Container */}
       <div
@@ -475,12 +632,17 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               const isDest = routeResult?.pathNodeIds[routeResult.pathNodeIds.length - 1] === nodeId;
               const isCurrentMilestone = currentMilestone?.nodeId === nodeId;
               const isFloorChange = !isStart && !isDest;
+              const isTransitionActive = Boolean(isCurrentMilestone && activeElevatorTransition?.nodeId === nodeId);
 
               let pillText = node.label;
-              if (isStart) pillText = `Start: ${node.label}`;
-              else if (isDest) pillText = `Destination: ${node.label}`;
-              else if (isFloorChange) {
-                pillText = node.type === 'elevator' ? `Elevator Transfer` : `Stairs Transfer`;
+              if (isTransitionActive && activeElevatorTransition) {
+                pillText = `Take ${activeElevatorTransition.type === 'stairs' ? 'Stairs' : 'Elevator'} to Floor ${activeElevatorTransition.toFloor === 0 ? 'G' : `F${activeElevatorTransition.toFloor}`} ➔`;
+              } else if (isStart) {
+                pillText = `Start: ${node.label}`;
+              } else if (isDest) {
+                pillText = `Destination: ${node.label}`;
+              } else if (isFloorChange) {
+                pillText = node.type === 'elevator' ? `Elevator` : `Stairs`;
               }
 
               return (
@@ -488,6 +650,11 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                   key={nodeId}
                   className="pointer-events-auto cursor-pointer"
                   onClick={() => {
+                    if (isTransitionActive && activeElevatorTransition) {
+                      onFloorChange(activeElevatorTransition.toFloor);
+                      if (onNextMilestone) onNextMilestone();
+                      return;
+                    }
                     if (routeResult) {
                       const msIdx = routeResult.milestones.findIndex((m) => m.nodeId === nodeId);
                       if (msIdx !== -1) {
@@ -556,14 +723,14 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                   {/* High-Contrast Bold Label Tag (Elevated above circle to prevent overlapping) */}
                   <g transform={`translate(${node.x}, ${node.y - 32})`}>
                     <rect
-                      x={-((pillText.length * 8 + 24) / 2)}
+                      x={-((pillText.length * 7.5 + 24) / 2)}
                       y="-14"
-                      width={pillText.length * 8 + 24}
+                      width={pillText.length * 7.5 + 24}
                       height="26"
                       rx="13"
-                      fill="#0F172A"
-                      stroke={isDest ? '#EF4444' : isStart ? '#38BDF8' : '#60A5FA'}
-                      strokeWidth="2"
+                      fill={isTransitionActive ? '#D97706' : '#0F172A'}
+                      stroke={isTransitionActive ? '#FCD34D' : isDest ? '#EF4444' : isStart ? '#38BDF8' : '#60A5FA'}
+                      strokeWidth={isTransitionActive ? 2.5 : 2}
                       filter="url(#balancedRouteGlow)"
                     />
                     <text

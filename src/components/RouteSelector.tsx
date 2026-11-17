@@ -1,6 +1,23 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpDown, Navigation, MapPin, Sparkles, ChevronDown, Check, X } from 'lucide-react';
 import { CampusGraph } from '../types/navigation';
+
+export const getRoomCategory = (label: string, roomNumber?: string) => {
+  const l = `${label} ${roomNumber || ''}`.toLowerCase();
+  if (l.includes('lab') || l.includes('physics') || l.includes('chemistry') || l.includes('computer')) {
+    return { name: 'Lab', color: 'bg-teal-50 text-teal-700 border-teal-200' };
+  }
+  if (l.includes('office') || l.includes('principal') || l.includes('dean') || l.includes('board') || l.includes('doctoral')) {
+    return { name: 'Office', color: 'bg-purple-50 text-purple-700 border-purple-200' };
+  }
+  if (l.includes('auditorium') || l.includes('seminar') || l.includes('hall')) {
+    return { name: 'Hall', color: 'bg-amber-50 text-amber-700 border-amber-200' };
+  }
+  if (l.includes('library')) {
+    return { name: 'Library', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' };
+  }
+  return { name: 'Classroom', color: 'bg-blue-50 text-blue-700 border-blue-200' };
+};
 
 interface RouteSelectorProps {
   graph: CampusGraph;
@@ -25,6 +42,16 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   const [endQuery, setEndQuery] = useState('');
   const [activeDropdown, setActiveDropdown] = useState<'start' | 'end' | null>(null);
   const [filterFloor, setFilterFloor] = useState<number | 'all'>('all');
+
+  const isRouteActive = Boolean(selectedStartId && selectedEndId);
+  const [presetsExpanded, setPresetsExpanded] = useState(!isRouteActive);
+
+  // Auto-collapse presets when route becomes active to give full space to milestone stepper
+  useEffect(() => {
+    if (isRouteActive) {
+      setPresetsExpanded(false);
+    }
+  }, [isRouteActive]);
 
   // Filter ONLY rooms
   const roomNodes = useMemo(() => {
@@ -224,9 +251,19 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                             </span>
                           )}
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono font-bold text-[10px] border border-slate-300 flex-shrink-0">
-                          {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {(() => {
+                            const cat = getRoomCategory(room.label, room.roomNumber);
+                            return (
+                              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${cat.color}`}>
+                                {cat.name}
+                              </span>
+                            );
+                          })()}
+                          <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono font-bold text-[10px] border border-slate-300">
+                            {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
+                          </span>
+                        </div>
                       </button>
                     );
                   })
@@ -329,9 +366,19 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                             </span>
                           )}
                         </div>
-                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono font-bold text-[10px] border border-slate-300 flex-shrink-0">
-                          {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {(() => {
+                            const cat = getRoomCategory(room.label, room.roomNumber);
+                            return (
+                              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${cat.color}`}>
+                                {cat.name}
+                              </span>
+                            );
+                          })()}
+                          <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono font-bold text-[10px] border border-slate-300">
+                            {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
+                          </span>
+                        </div>
                       </button>
                     );
                   })
@@ -375,26 +422,37 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
         )}
       </div>
 
-      {/* Quick Route Presets */}
+      {/* Quick Route Presets (Collapsible to save vertical room for milestones) */}
       <div className="pt-2 border-t border-slate-200 relative z-10">
-        <div className="flex items-center gap-1.5 text-xs text-slate-700 font-extrabold mb-2 uppercase tracking-wider">
-          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-          <span>Quick Presets:</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {presets.map((preset, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSelectPreset(preset.from, preset.to)}
-              className="sharp-card px-3 py-2.5 rounded-xl text-left text-xs transition border border-slate-200 hover:border-blue-500 bg-white group shadow-sm"
-            >
-              <div className="font-extrabold text-slate-900 group-hover:text-blue-600 truncate transition">
-                {preset.label}
-              </div>
-              <div className="text-[11px] text-blue-600 font-bold mt-0.5">{preset.desc}</div>
-            </button>
-          ))}
-        </div>
+        <button
+          type="button"
+          onClick={() => setPresetsExpanded(!presetsExpanded)}
+          className="w-full flex items-center justify-between text-xs text-slate-700 font-extrabold mb-1.5 uppercase tracking-wider hover:text-slate-950 transition"
+        >
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+            <span>Quick Presets {isRouteActive && !presetsExpanded && '(4)'}</span>
+          </div>
+          <span className="text-[11px] font-bold text-blue-600 normal-case">
+            {presetsExpanded ? 'Collapse ▲' : 'Show (4) ▼'}
+          </span>
+        </button>
+        {presetsExpanded && (
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            {presets.map((preset, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSelectPreset(preset.from, preset.to)}
+                className="sharp-card px-3 py-2.5 rounded-xl text-left text-xs transition border border-slate-200 hover:border-blue-500 bg-white group shadow-sm"
+              >
+                <div className="font-extrabold text-slate-900 group-hover:text-blue-600 truncate transition">
+                  {preset.label}
+                </div>
+                <div className="text-[11px] text-blue-600 font-bold mt-0.5">{preset.desc}</div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -100,6 +100,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           currentMilestoneIndex={currentMilestoneIndex}
           onFloorChange={onFloorChange}
           onSelectMilestone={onSelectMilestone}
+          onNextMilestone={onNextMilestone}
+          onPrevMilestone={onPrevMilestone}
           sidebarOpen={sidebarOpen}
           onToggleSidebar={onToggleSidebar}
         />
