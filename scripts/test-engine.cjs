@@ -271,4 +271,11 @@ const usesVerticalStairs = test4Accessible.pathNodeIds.some((id, idx) => {
 console.log('Accessible path verified (No vertical stairs or inaccessible edges)?', !usesVerticalStairs);
 console.log('Path nodes:', test4Accessible.pathNodeIds.map(id => graph.nodes[id].label).join(' -> '));
 
+// Test 5: Full building vertical traversal (Floor 3 Seminar Hall 316 -> Floor 7 Apex Library)
+console.log('\n--- Test 5: Multi-Floor Span (Floor 3 Seminar Hall 316 -> Floor 7 Apex Library) ---');
+const test5 = findShortestPath(graph, 'R_AB_316', 'R_APEX_LIB');
+console.log('Distance:', test5.totalDistance, 'm');
+const milestones5 = generateMilestones(graph, test5.pathNodeIds);
+milestones5.forEach((m, idx) => console.log(`  ${idx + 1}. [Floor ${m.floor}] [${m.icon}] ${m.label}`));
+
 console.log('\nAll tests passed successfully!');

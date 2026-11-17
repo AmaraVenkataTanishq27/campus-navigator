@@ -78,6 +78,84 @@ const nodes = {
   "STAIRS_F6_SE": { label: "Southeast Stairwell", floor: 6, type: "stairs", x: 1075, y: 950, aliases: ["SE Stairs", "Main Staircase"] },
 
   // ==========================================
+  // FLOOR 3 - Academic Block 3rd Floor
+  // ==========================================
+  "J_F3_SW": { label: "Southwest Junction (F3)", floor: 3, type: "junction", x: 305, y: 1035, aliases: ["SW Corner Floor 3"] },
+  "J_F3_NW": { label: "Northwest Junction (F3)", floor: 3, type: "junction", x: 305, y: 330, aliases: ["NW Corner Floor 3"] },
+  "J_F3_NE": { label: "Northeast Junction (F3)", floor: 3, type: "junction", x: 1075, y: 330, aliases: ["NE Corner Floor 3"] },
+  "J_F3_SE": { label: "Southeast Lobby Junction (F3)", floor: 3, type: "junction", x: 1075, y: 1035, aliases: ["SE Lobby Floor 3"] },
+  "J_F3_SKY": { label: "Skybridge Passage (F3)", floor: 3, type: "junction", x: 1220, y: 1035, aliases: ["Auditorium Skybridge Floor 3"] },
+
+  // South Corridor Floor 3
+  "R_AB_303": { label: "Room 303", roomNumber: "303", floor: 3, type: "room", x: 380, y: 1035, aliases: ["Classroom 303", "AB 303", "303"] },
+  "R_AB_302": { label: "Room 302", roomNumber: "302", floor: 3, type: "room", x: 520, y: 1035, aliases: ["Classroom 302", "AB 302", "302"] },
+  "R_AB_301": { label: "Room 301", roomNumber: "301", floor: 3, type: "room", x: 800, y: 1035, aliases: ["Classroom 301", "AB 301", "301"] },
+  "LIFT_F3_S": { label: "South Elevators (F3)", floor: 3, type: "elevator", x: 940, y: 1035, aliases: ["South Lift Floor 3"] },
+  "STAIRS_F3_S": { label: "South Stairwell (F3)", floor: 3, type: "stairs", x: 1010, y: 1035, aliases: ["South Stairs Floor 3"] },
+  "R_AB_316": { label: "Room 316 (Seminar Hall)", roomNumber: "316", floor: 3, type: "room", x: 1350, y: 1200, aliases: ["Seminar Hall 316", "Room 316", "Audi 316", "316"] },
+
+  // West Corridor Floor 3
+  "R_AB_304": { label: "Room 304", roomNumber: "304", floor: 3, type: "room", x: 305, y: 930, aliases: ["Classroom 304", "AB 304", "304"] },
+  "STAIRS_F3_W": { label: "West Stairwell (F3)", floor: 3, type: "stairs", x: 305, y: 750, aliases: ["West Stairs Floor 3"] },
+  "LIFT_F3_W": { label: "West Courtyard Elevator (F3)", floor: 3, type: "elevator", x: 305, y: 620, aliases: ["West Lift Floor 3"] },
+  "R_AB_305": { label: "Room 305", roomNumber: "305", floor: 3, type: "room", x: 305, y: 460, aliases: ["Classroom 305", "AB 305", "305"] },
+
+  // North Corridor Floor 3
+  "R_AB_306": { label: "Room 306", roomNumber: "306", floor: 3, type: "room", x: 380, y: 330, aliases: ["Classroom 306", "AB 306", "306"] },
+  "R_AB_307": { label: "Room 307", roomNumber: "307", floor: 3, type: "room", x: 460, y: 330, aliases: ["Classroom 307", "AB 307", "307"] },
+  "R_AB_308": { label: "Room 308", roomNumber: "308", floor: 3, type: "room", x: 580, y: 330, aliases: ["Classroom 308", "AB 308", "308"] },
+  "STAIRS_F3_N": { label: "North Stairwell (F3)", floor: 3, type: "stairs", x: 680, y: 330, aliases: ["North Stairs Floor 3"] },
+  "LIFT_F3_N": { label: "Courtyard North Elevator (F3)", floor: 3, type: "elevator", x: 780, y: 330, aliases: ["North Lift Floor 3"] },
+  "R_AB_310": { label: "Room 310", roomNumber: "310", floor: 3, type: "room", x: 880, y: 330, aliases: ["Classroom 310", "AB 310", "310"] },
+  "R_AB_311": { label: "Room 311", roomNumber: "311", floor: 3, type: "room", x: 980, y: 330, aliases: ["Classroom 311", "AB 311", "311"] },
+
+  // East Corridor Floor 3
+  "R_AB_312": { label: "Room 312", roomNumber: "312", floor: 3, type: "room", x: 1075, y: 420, aliases: ["Classroom 312", "AB 312", "312"] },
+  "R_AB_314": { label: "Room 314", roomNumber: "314", floor: 3, type: "room", x: 1075, y: 540, aliases: ["Classroom 314", "AB 314", "314"] },
+  "R_AB_315": { label: "Room 315", roomNumber: "315", floor: 3, type: "room", x: 1075, y: 720, aliases: ["Classroom 315", "AB 315", "315"] },
+  "LIFT_F3_SE": { label: "Southeast Elevators (F3)", floor: 3, type: "elevator", x: 1075, y: 870, aliases: ["SE Lift Floor 3"] },
+  "STAIRS_F3_SE": { label: "Southeast Stairwell (F3)", floor: 3, type: "stairs", x: 1075, y: 950, aliases: ["SE Stairs Floor 3"] },
+
+  // ==========================================
+  // FLOOR 4 - Academic Block 4th Floor
+  // ==========================================
+  "J_F4_SW": { label: "Southwest Junction (F4)", floor: 4, type: "junction", x: 305, y: 1035, aliases: ["SW Corner Floor 4"] },
+  "J_F4_NW": { label: "Northwest Junction (F4)", floor: 4, type: "junction", x: 305, y: 330, aliases: ["NW Corner Floor 4"] },
+  "J_F4_NE": { label: "Northeast Junction (F4)", floor: 4, type: "junction", x: 1075, y: 330, aliases: ["NE Corner Floor 4"] },
+  "J_F4_SE": { label: "Southeast Lobby Junction (F4)", floor: 4, type: "junction", x: 1075, y: 1035, aliases: ["SE Lobby Floor 4"] },
+  "J_F4_SKY": { label: "Skybridge Passage (F4)", floor: 4, type: "junction", x: 1220, y: 1035, aliases: ["Lab Skybridge Floor 4"] },
+
+  // South Corridor Floor 4
+  "R_AB_403": { label: "Room 403", roomNumber: "403", floor: 4, type: "room", x: 380, y: 1035, aliases: ["Classroom 403", "AB 403", "403"] },
+  "R_AB_402": { label: "Room 402", roomNumber: "402", floor: 4, type: "room", x: 520, y: 1035, aliases: ["Classroom 402", "AB 402", "402"] },
+  "R_AB_401": { label: "Room 401", roomNumber: "401", floor: 4, type: "room", x: 800, y: 1035, aliases: ["Classroom 401", "AB 401", "401"] },
+  "LIFT_F4_S": { label: "South Elevators (F4)", floor: 4, type: "elevator", x: 940, y: 1035, aliases: ["South Lift Floor 4"] },
+  "STAIRS_F4_S": { label: "South Stairwell (F4)", floor: 4, type: "stairs", x: 1010, y: 1035, aliases: ["South Stairs Floor 4"] },
+  "R_AB_416": { label: "Room 416 (Electronics Lab)", roomNumber: "416", floor: 4, type: "room", x: 1350, y: 1200, aliases: ["Electronics Lab 416", "Room 416", "ECE Lab 416", "416"] },
+
+  // West Corridor Floor 4
+  "R_AB_404": { label: "Room 404", roomNumber: "404", floor: 4, type: "room", x: 305, y: 930, aliases: ["Classroom 404", "AB 404", "404"] },
+  "STAIRS_F4_W": { label: "West Stairwell (F4)", floor: 4, type: "stairs", x: 305, y: 750, aliases: ["West Stairs Floor 4"] },
+  "LIFT_F4_W": { label: "West Courtyard Elevator (F4)", floor: 4, type: "elevator", x: 305, y: 620, aliases: ["West Lift Floor 4"] },
+  "R_AB_405": { label: "Room 405 (Embedded Systems Lab)", roomNumber: "405", floor: 4, type: "room", x: 305, y: 460, aliases: ["Embedded Systems Lab", "Lab 405", "405"] },
+
+  // North Corridor Floor 4
+  "R_AB_406": { label: "Room 406", roomNumber: "406", floor: 4, type: "room", x: 380, y: 330, aliases: ["Classroom 406", "AB 406", "406"] },
+  "R_AB_407": { label: "Room 407 (Microprocessor Lab)", roomNumber: "407", floor: 4, type: "room", x: 460, y: 330, aliases: ["Microprocessor Lab", "MP Lab", "407"] },
+  "R_AB_408": { label: "Room 408", roomNumber: "408", floor: 4, type: "room", x: 580, y: 330, aliases: ["Classroom 408", "AB 408", "408"] },
+  "STAIRS_F4_N": { label: "North Stairwell (F4)", floor: 4, type: "stairs", x: 680, y: 330, aliases: ["North Stairs Floor 4"] },
+  "LIFT_F4_N": { label: "Courtyard North Elevator (F4)", floor: 4, type: "elevator", x: 780, y: 330, aliases: ["North Lift Floor 4"] },
+  "R_AB_410": { label: "Room 410", roomNumber: "410", floor: 4, type: "room", x: 880, y: 330, aliases: ["Classroom 410", "AB 410", "410"] },
+  "R_AB_411": { label: "Room 411", roomNumber: "411", floor: 4, type: "room", x: 980, y: 330, aliases: ["Classroom 411", "AB 411", "411"] },
+
+  // East Corridor Floor 4
+  "R_AB_412": { label: "Room 412", roomNumber: "412", floor: 4, type: "room", x: 1075, y: 420, aliases: ["Classroom 412", "AB 412", "412"] },
+  "R_AB_414": { label: "Room 414", roomNumber: "414", floor: 4, type: "room", x: 1075, y: 540, aliases: ["Classroom 414", "AB 414", "414"] },
+  "R_AB_415": { label: "Room 415", roomNumber: "415", floor: 4, type: "room", x: 1075, y: 720, aliases: ["Classroom 415", "AB 415", "415"] },
+  "LIFT_F4_SE": { label: "Southeast Elevators (F4)", floor: 4, type: "elevator", x: 1075, y: 870, aliases: ["SE Lift Floor 4"] },
+  "STAIRS_F4_SE": { label: "Southeast Stairwell (F4)", floor: 4, type: "stairs", x: 1075, y: 950, aliases: ["SE Stairs Floor 4"] },
+
+  // ==========================================
   // FLOOR 5 - Academic Block 5th Floor
   // ==========================================
   "J_F5_SW": { label: "Southwest Junction (F5)", floor: 5, type: "junction", x: 305, y: 1035, aliases: ["SW Corner Floor 5"] },
@@ -165,6 +243,26 @@ const corridorChains = [
   // Floor 6 East Corridor: NE Junction -> Washroom -> Room 610 -> Room 611 -> SE Lift -> SE Stairs -> SE Junction
   ["J_F6_NE", "WASHROOM_F6_M", "R_AB_610", "R_AB_611", "LIFT_F6_SE", "STAIRS_F6_SE", "J_F6_SE"],
 
+  // Floor 3 South Corridor
+  ["J_F3_SW", "R_AB_303", "R_AB_302", "R_AB_301", "LIFT_F3_S", "STAIRS_F3_S", "J_F3_SE"],
+  ["J_F3_SE", "J_F3_SKY", "R_AB_316"],
+  // Floor 3 West Corridor
+  ["J_F3_SW", "R_AB_304", "STAIRS_F3_W", "LIFT_F3_W", "R_AB_305", "J_F3_NW"],
+  // Floor 3 North Corridor
+  ["J_F3_NW", "R_AB_306", "R_AB_307", "R_AB_308", "STAIRS_F3_N", "LIFT_F3_N", "R_AB_310", "R_AB_311", "J_F3_NE"],
+  // Floor 3 East Corridor
+  ["J_F3_NE", "R_AB_312", "R_AB_314", "R_AB_315", "LIFT_F3_SE", "STAIRS_F3_SE", "J_F3_SE"],
+
+  // Floor 4 South Corridor
+  ["J_F4_SW", "R_AB_403", "R_AB_402", "R_AB_401", "LIFT_F4_S", "STAIRS_F4_S", "J_F4_SE"],
+  ["J_F4_SE", "J_F4_SKY", "R_AB_416"],
+  // Floor 4 West Corridor
+  ["J_F4_SW", "R_AB_404", "STAIRS_F4_W", "LIFT_F4_W", "R_AB_405", "J_F4_NW"],
+  // Floor 4 North Corridor
+  ["J_F4_NW", "R_AB_406", "R_AB_407", "R_AB_408", "STAIRS_F4_N", "LIFT_F4_N", "R_AB_410", "R_AB_411", "J_F4_NE"],
+  // Floor 4 East Corridor
+  ["J_F4_NE", "R_AB_412", "R_AB_414", "R_AB_415", "LIFT_F4_SE", "STAIRS_F4_SE", "J_F4_SE"],
+
   // Floor 5 South Corridor
   ["J_F5_SW", "R_AB_503", "R_AB_502", "R_AB_501", "LIFT_F5_S", "STAIRS_F5_S", "J_F5_SE"],
   ["J_F5_SE", "J_F5_SKY", "R_AB_516"],
@@ -229,28 +327,44 @@ for (const chain of corridorChains) {
 // Multi-floor vertical edges: Elevators (weight 15 m) & Stairs (weight 25 m)
 const verticalConnections = [
   // SE Elevators
+  { from: "LIFT_F3_SE", to: "LIFT_F4_SE", type: "elevator", weight: 15, isAccessible: true },
+  { from: "LIFT_F4_SE", to: "LIFT_F5_SE", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F5_SE", to: "LIFT_F6_SE", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F6_SE", to: "LIFT_F7_SE", type: "elevator", weight: 15, isAccessible: true },
   // South Elevators
+  { from: "LIFT_F3_S", to: "LIFT_F4_S", type: "elevator", weight: 15, isAccessible: true },
+  { from: "LIFT_F4_S", to: "LIFT_F5_S", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F5_S", to: "LIFT_F6_S", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F6_S", to: "LIFT_F7_S", type: "elevator", weight: 15, isAccessible: true },
   // West Elevators
+  { from: "LIFT_F3_W", to: "LIFT_F4_W", type: "elevator", weight: 15, isAccessible: true },
+  { from: "LIFT_F4_W", to: "LIFT_F5_W", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F5_W", to: "LIFT_F6_W", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F6_W", to: "LIFT_F7_W", type: "elevator", weight: 15, isAccessible: true },
   // North Elevators
+  { from: "LIFT_F3_N", to: "LIFT_F4_N", type: "elevator", weight: 15, isAccessible: true },
+  { from: "LIFT_F4_N", to: "LIFT_F5_N", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F5_N", to: "LIFT_F6_N", type: "elevator", weight: 15, isAccessible: true },
   { from: "LIFT_F6_N", to: "LIFT_F7_N", type: "elevator", weight: 15, isAccessible: true },
 
   // SE Stairs
+  { from: "STAIRS_F3_SE", to: "STAIRS_F4_SE", type: "stairs", weight: 25, isAccessible: false },
+  { from: "STAIRS_F4_SE", to: "STAIRS_F5_SE", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F5_SE", to: "STAIRS_F6_SE", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F6_SE", to: "STAIRS_F7_SE", type: "stairs", weight: 25, isAccessible: false },
   // South Stairs
+  { from: "STAIRS_F3_S", to: "STAIRS_F4_S", type: "stairs", weight: 25, isAccessible: false },
+  { from: "STAIRS_F4_S", to: "STAIRS_F5_S", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F5_S", to: "STAIRS_F6_S", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F6_S", to: "STAIRS_F7_S", type: "stairs", weight: 25, isAccessible: false },
   // West Stairs
+  { from: "STAIRS_F3_W", to: "STAIRS_F4_W", type: "stairs", weight: 25, isAccessible: false },
+  { from: "STAIRS_F4_W", to: "STAIRS_F5_W", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F5_W", to: "STAIRS_F6_W", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F6_W", to: "STAIRS_F7_W", type: "stairs", weight: 25, isAccessible: false },
   // North Stairs
+  { from: "STAIRS_F3_N", to: "STAIRS_F4_N", type: "stairs", weight: 25, isAccessible: false },
+  { from: "STAIRS_F4_N", to: "STAIRS_F5_N", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F5_N", to: "STAIRS_F6_N", type: "stairs", weight: 25, isAccessible: false },
   { from: "STAIRS_F6_N", to: "STAIRS_F7_N", type: "stairs", weight: 25, isAccessible: false }
 ];
@@ -262,6 +376,18 @@ for (const conn of verticalConnections) {
 
 const campusGraph = {
   floors: {
+    "3": {
+      name: "Academic Block - Floor 3",
+      planImage: "/assets/floor-plans/reference/ab-3rd-floor-plan.jpeg",
+      width: 1600,
+      height: 1515
+    },
+    "4": {
+      name: "Academic Block - Floor 4",
+      planImage: "/assets/floor-plans/reference/ab-4th-floor-plan.jpeg",
+      width: 1600,
+      height: 1515
+    },
     "5": {
       name: "Academic Block - Floor 5",
       planImage: "/assets/floor-plans/reference/ab-5th-floor-plan.jpeg",

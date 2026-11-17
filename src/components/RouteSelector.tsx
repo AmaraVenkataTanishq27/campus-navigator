@@ -73,10 +73,10 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
   // Preset quick navigation pairs across floors using valid graph node IDs
   const presets = [
-    { label: 'AB 501 → AB 603', from: 'R_AB_501', to: 'R_AB_603', desc: 'Floor 5 to 6' },
-    { label: 'AB 601 → AB 702', from: 'R_AB_601', to: 'R_AB_702', desc: 'Floor 6 to 7' },
-    { label: 'AB 502 → AB 504', from: 'R_AB_502', to: 'R_AB_504', desc: 'Same Floor (5)' },
-    { label: 'AB 701 → AB 503', from: 'R_AB_701', to: 'R_AB_503', desc: 'Floor 7 to 5' }
+    { label: 'AB 301 → AB 402', from: 'R_AB_301', to: 'R_AB_402', desc: 'Floor 3 to 4' },
+    { label: 'AB 401 → AB 603', from: 'R_AB_401', to: 'R_AB_603', desc: 'Floor 4 to 6' },
+    { label: 'AB 501 → AB 303', from: 'R_AB_501', to: 'R_AB_303', desc: 'Floor 5 to 3' },
+    { label: 'AB 601 → AB 702', from: 'R_AB_601', to: 'R_AB_702', desc: 'Floor 6 to 7' }
   ];
 
   const handleSelectPreset = (from: string, to: string) => {
@@ -100,20 +100,20 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
       {/* Invisible backdrop to dismiss dropdown when clicked outside */}
       {activeDropdown && (
         <div
-          className="fixed inset-0 z-20"
+          className="fixed inset-0 z-30"
           onClick={() => setActiveDropdown(null)}
         />
       )}
 
       {/* Floor Filter Tabs for Room Selection */}
-      <div className="flex items-center justify-between text-xs pb-1 relative z-30">
+      <div className="flex items-center justify-between text-xs pb-1 relative z-20">
         <span className="text-gray-400 font-medium">Filter Rooms by Floor:</span>
         <div className="flex items-center gap-1 bg-[#131b2e] p-0.5 rounded-lg border border-gray-700/60">
-          {(['all', 5, 6, 7] as const).map((f) => (
+          {(['all', 3, 4, 5, 6, 7] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilterFloor(f)}
-              className={`px-2.5 py-0.5 rounded font-medium text-xs transition ${
+              className={`px-2 py-0.5 rounded font-medium text-xs transition ${
                 filterFloor === f
                   ? 'bg-emerald-500 text-gray-950 font-bold shadow-sm'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800'
@@ -126,10 +126,10 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
       </div>
 
       {/* Start and End Inputs with dedicated Swap Button */}
-      <div className="flex items-center gap-2 relative z-30">
+      <div className={`flex items-center gap-2 relative ${activeDropdown ? 'z-40' : 'z-20'}`}>
         <div className="flex-1 space-y-2">
           {/* Start Room Input */}
-          <div className="relative">
+          <div className={`relative ${activeDropdown === 'start' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('start')}
               className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500/30 transition shadow-inner cursor-text"
@@ -183,10 +183,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
             {/* Start Dropdown */}
             {activeDropdown === 'start' && (
-              <div className="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700/90 rounded-xl shadow-2xl z-50 divide-y divide-gray-800">
+              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700 rounded-xl shadow-2xl z-50 divide-y divide-gray-800/80">
                 {filteredStartRooms.length > 0 ? (
                   filteredStartRooms.map((room) => {
                     const isSelected = room.id === selectedStartId;
+                    const showSecondary = room.roomNumber && !room.label.toLowerCase().includes(room.roomNumber.toLowerCase());
                     return (
                       <button
                         key={room.id}
@@ -199,18 +200,24 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                             onCalculateRoute(room.id, selectedEndId);
                           }
                         }}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between text-xs transition ${
+                        className={`w-full text-left px-3 py-2.5 flex items-center justify-between text-xs transition ${
                           isSelected
-                            ? 'bg-emerald-950/50 text-emerald-300 font-semibold border-l-2 border-emerald-500'
-                            : 'hover:bg-[#1f2940] text-gray-200'
+                            ? 'bg-emerald-950/60 text-emerald-300 font-semibold border-l-2 border-emerald-500'
+                            : 'hover:bg-[#1c2742] text-gray-200'
                         }`}
                       >
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 min-w-0 pr-2">
                           {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />}
-                          <span className={isSelected ? 'text-emerald-300' : 'text-white'}>{room.label}</span>
-                          <span className="text-gray-400 text-[11px]">Room {room.roomNumber}</span>
+                          <span className={`truncate ${isSelected ? 'text-emerald-300 font-semibold' : 'text-white'}`}>
+                            {room.label}
+                          </span>
+                          {showSecondary && (
+                            <span className="text-gray-400 text-[11px] flex-shrink-0">
+                              (Room {room.roomNumber})
+                            </span>
+                          )}
                         </div>
-                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-emerald-400 font-mono text-[10px] border border-emerald-500/30">
+                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-emerald-400 font-mono text-[10px] border border-emerald-500/30 flex-shrink-0">
                           Floor {room.floor}
                         </span>
                       </button>
@@ -224,7 +231,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           </div>
 
           {/* Destination Room Input */}
-          <div className="relative">
+          <div className={`relative ${activeDropdown === 'end' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('end')}
               className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500/30 transition shadow-inner cursor-text"
@@ -278,10 +285,11 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
             {/* Destination Dropdown */}
             {activeDropdown === 'end' && (
-              <div className="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700/90 rounded-xl shadow-2xl z-50 divide-y divide-gray-800">
+              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700 rounded-xl shadow-2xl z-50 divide-y divide-gray-800/80">
                 {filteredEndRooms.length > 0 ? (
                   filteredEndRooms.map((room) => {
                     const isSelected = room.id === selectedEndId;
+                    const showSecondary = room.roomNumber && !room.label.toLowerCase().includes(room.roomNumber.toLowerCase());
                     return (
                       <button
                         key={room.id}
@@ -294,18 +302,24 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                             onCalculateRoute(selectedStartId, room.id);
                           }
                         }}
-                        className={`w-full text-left px-3 py-2 flex items-center justify-between text-xs transition ${
+                        className={`w-full text-left px-3 py-2.5 flex items-center justify-between text-xs transition ${
                           isSelected
-                            ? 'bg-cyan-950/50 text-cyan-300 font-semibold border-l-2 border-cyan-500'
-                            : 'hover:bg-[#1f2940] text-gray-200'
+                            ? 'bg-cyan-950/60 text-cyan-300 font-semibold border-l-2 border-cyan-500'
+                            : 'hover:bg-[#1c2742] text-gray-200'
                         }`}
                       >
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex items-center gap-1.5 min-w-0 pr-2">
                           {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />}
-                          <span className={isSelected ? 'text-cyan-300' : 'text-white'}>{room.label}</span>
-                          <span className="text-gray-400 text-[11px]">Room {room.roomNumber}</span>
+                          <span className={`truncate ${isSelected ? 'text-cyan-300 font-semibold' : 'text-white'}`}>
+                            {room.label}
+                          </span>
+                          {showSecondary && (
+                            <span className="text-gray-400 text-[11px] flex-shrink-0">
+                              (Room {room.roomNumber})
+                            </span>
+                          )}
                         </div>
-                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400 font-mono text-[10px] border border-cyan-500/30">
+                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400 font-mono text-[10px] border border-cyan-500/30 flex-shrink-0">
                           Floor {room.floor}
                         </span>
                       </button>
@@ -331,7 +345,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2 relative z-30">
+      <div className="flex gap-2 relative z-10">
         <button
           onClick={() => onCalculateRoute()}
           disabled={!selectedStartId || !selectedEndId}
@@ -352,7 +366,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
       </div>
 
       {/* Quick Route Presets */}
-      <div className="pt-2 border-t border-gray-800/80 relative z-30">
+      <div className="pt-2 border-t border-gray-800/80 relative z-10">
         <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mb-2">
           <Sparkles className="w-3.5 h-3.5 text-amber-400" />
           <span className="font-semibold uppercase tracking-wider text-[10px]">Quick Room Presets:</span>
@@ -362,7 +376,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
             <button
               key={idx}
               onClick={() => handleSelectPreset(preset.from, preset.to)}
-              className="px-2.5 py-2 rounded-xl bg-[#131b2e]/90 hover:bg-[#1c2742] border border-gray-700/60 hover:border-emerald-500/40 text-left text-xs transition shadow-sm group"
+              className="px-2.5 py-2 rounded-xl bg-[#131b2e] hover:bg-[#1c2742] border border-gray-700/60 hover:border-emerald-500/40 text-left text-xs transition shadow-sm group"
             >
               <div className="font-semibold text-gray-200 group-hover:text-emerald-300 truncate transition">
                 {preset.label}

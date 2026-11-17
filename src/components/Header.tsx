@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({
               Visual Milestones
             </span>
           </div>
-          <p className="text-xs text-gray-400">Indoor Landmark Navigation (Floors 5, 6, 7)</p>
+          <p className="text-xs text-gray-400">Indoor Landmark Navigation (Floors 3, 4, 5, 6, 7)</p>
         </div>
       </div>
 
