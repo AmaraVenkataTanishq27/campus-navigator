@@ -6,7 +6,7 @@ import { RouteResult } from '../types/navigation';
 interface ArrivalModalProps {
   isOpen: boolean;
   onClose: () => void;
-  routeResult: RouteResult;
+  routeResult?: RouteResult;
   destLabel: string;
   theme?: 'cyberpunk' | 'beige';
 }
@@ -14,7 +14,6 @@ interface ArrivalModalProps {
 export const ArrivalModal: React.FC<ArrivalModalProps> = ({
   isOpen,
   onClose,
-  routeResult,
   destLabel,
   theme = 'cyberpunk'
 }) => {
@@ -40,7 +39,7 @@ export const ArrivalModal: React.FC<ArrivalModalProps> = ({
     <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-md animate-fade-in ${
       isCyber ? 'bg-black/80' : 'bg-[#181614]/60'
     }`}>
-      <div className={`rounded-3xl max-w-md w-full p-6 text-center transition-all ${
+      <div className={`rounded-3xl max-w-sm w-full p-6 text-center transition-all ${
         isCyber
           ? 'bg-[#0B1120] border border-[#00F0FF]/40 shadow-[0_0_50px_rgba(0,240,255,0.25)]'
           : 'bg-[#FAF8F5] border border-[#E7E2DA] shadow-2xl shadow-stone-900/20'
@@ -59,30 +58,12 @@ export const ArrivalModal: React.FC<ArrivalModalProps> = ({
         }`}>
           Destination Reached!
         </h3>
-        <p className={`text-sm font-extrabold mb-5 flex items-center justify-center gap-1.5 ${
+        <p className={`text-sm font-extrabold mb-6 flex items-center justify-center gap-1.5 ${
           isCyber ? 'text-[#00F0FF]' : 'text-blue-700'
         }`}>
           <MapPin className={`w-4 h-4 stroke-[2.2] ${isCyber ? 'text-[#FF007F] drop-shadow-[0_0_6px_#FF007F]' : 'text-red-500'}`} />
           <span>{destLabel}</span>
         </p>
-
-        {/* Route Stats Card without distance/time */}
-        <div className={`rounded-2xl p-4 mb-6 grid grid-cols-2 gap-3 text-center border ${
-          isCyber
-            ? 'bg-[#070B14] border-[#1E293B]'
-            : 'bg-[#F2EEE9] border-[#E2DDD5]'
-        }`}>
-          <div>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Milestones</div>
-            <div className={`text-base font-black ${isCyber ? 'text-white' : 'text-stone-900'}`}>{routeResult.milestones.length} Steps</div>
-          </div>
-          <div>
-            <div className={`text-[10px] font-bold uppercase tracking-wider ${isCyber ? 'text-slate-400' : 'text-stone-500'}`}>Floors Traversed</div>
-            <div className={`text-base font-black ${isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}`}>
-              {routeResult.floorsTraversed.length} ({routeResult.floorsTraversed.map(f => f === 0 ? 'G' : `F${f}`).join(' → ')})
-            </div>
-          </div>
-        </div>
 
         {/* Action Button */}
         <button
