@@ -62,7 +62,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       const targetY = clientHeight / 2 - currentMilestone.coords.y * scale;
       setPosition({ x: targetX, y: targetY });
     }
-  }, [currentMilestoneIndex, currentFloor]);
+  }, [currentMilestoneIndex, currentFloor, routeResult]);
 
   // Handle Drag / Pan (Mouse)
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -81,7 +81,17 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
 
   const handleMouseUp = () => setIsDragging(false);
 
-  // Handle Drag / Pan (Touch for mobile / tablet)
+  // Dual-touch state for pinch zoom
+  const [touchDistance, setTouchDistance] = useState<number | null>(null);
+
+  const getTouchDistance = (e: React.TouchEvent) => {
+    if (e.touches.length < 2) return null;
+    const dx = e.touches[0].clientX - e.touches[1].clientX;
+    const dy = e.touches[0].clientY - e.touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  };
+
+  // Handle Drag / Pan & Pinch Zoom (Touch for mobile / tablet)
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       setIsDragging(true);
@@ -89,18 +99,42 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
         x: e.touches[0].clientX - position.x,
         y: e.touches[0].clientY - position.y
       });
+      setTouchDistance(null);
+    } else if (e.touches.length === 2) {
+      setIsDragging(false);
+      setTouchDistance(getTouchDistance(e));
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    setPosition({
-      x: e.touches[0].clientX - dragStart.x,
-      y: e.touches[0].clientY - dragStart.y
-    });
+    if (e.touches.length === 1 && isDragging) {
+      setPosition({
+        x: e.touches[0].clientX - dragStart.x,
+        y: e.touches[0].clientY - dragStart.y
+      });
+    } else if (e.touches.length === 2) {
+      const newDist = getTouchDistance(e);
+      if (newDist && touchDistance && touchDistance > 0 && containerRef.current) {
+        const factor = newDist / touchDistance;
+        const newScale = Math.min(Math.max(scale * factor, 0.25), 4.0);
+        const rect = containerRef.current.getBoundingClientRect();
+        const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+        const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+
+        const newX = midX - ((midX - position.x) * newScale) / scale;
+        const newY = midY - ((midY - position.y) * newScale) / scale;
+
+        setScale(newScale);
+        setPosition({ x: newX, y: newY });
+        setTouchDistance(newDist);
+      }
+    }
   };
 
-  const handleTouchEnd = () => setIsDragging(false);
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setTouchDistance(null);
+  };
 
   // Handle Wheel Zoom
   const handleWheel = (e: React.WheelEvent) => {

@@ -185,7 +185,7 @@ export const MilestoneStepper: React.FC<MilestoneStepperProps> = ({
                 {/* Distance and Floor Tag */}
                 <div className="text-right flex-shrink-0">
                   <span className="text-[10px] text-gray-400 font-mono block">
-                    +{ms.distanceToNextMeters} m
+                    {ms.distanceToNextMeters > 0 ? `+${ms.distanceToNextMeters} m` : 'Arrived'}
                   </span>
                   <span className="text-[9px] px-1.5 py-0.5 rounded bg-gray-800 text-gray-300 font-medium border border-gray-700 mt-1 inline-block">
                     F{ms.floor}

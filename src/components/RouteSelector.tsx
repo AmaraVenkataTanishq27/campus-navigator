@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, Navigation, MapPin, Sparkles } from 'lucide-react';
+import { ArrowUpDown, Navigation, MapPin, Sparkles, ChevronDown, Check, X } from 'lucide-react';
 import { CampusGraph } from '../types/navigation';
 
 interface RouteSelectorProps {
@@ -58,6 +58,9 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   const handleSwap = () => {
     const tempStart = selectedStartId;
     const tempEnd = selectedEndId;
+    setStartQuery('');
+    setEndQuery('');
+    setActiveDropdown(null);
     onSelectStart(tempEnd);
     onSelectEnd(tempStart);
     if (tempEnd && tempStart) {
@@ -77,9 +80,19 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   ];
 
   const handleSelectPreset = (from: string, to: string) => {
+    setStartQuery('');
+    setEndQuery('');
+    setActiveDropdown(null);
     onSelectStart(from);
     onSelectEnd(to);
     onCalculateRoute(from, to);
+  };
+
+  const handleClearAll = () => {
+    setStartQuery('');
+    setEndQuery('');
+    setActiveDropdown(null);
+    onClearRoute();
   };
 
   return (
@@ -112,174 +125,209 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
         </div>
       </div>
 
-      {/* Start and End Inputs */}
-      <div className="relative space-y-2.5 z-30">
-        {/* Start Room Input */}
-        <div className="relative">
-          <div className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2.5 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500/30 transition shadow-inner">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-2 flex-shrink-0 shadow-sm shadow-emerald-400/50" />
-            <input
-              type="text"
-              placeholder="Start: Type room no (e.g. 501, 601)..."
-              value={startNode ? `${startNode.label} (Floor ${startNode.floor})` : startQuery}
-              onChange={(e) => {
-                setStartQuery(e.target.value);
-                onSelectStart(null);
-                setActiveDropdown('start');
-              }}
-              onFocus={() => setActiveDropdown('start')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  if (filteredStartRooms.length > 0) {
-                    const sel = filteredStartRooms[0];
-                    onSelectStart(sel.id);
-                    setStartQuery('');
-                    setActiveDropdown(null);
-                    if (selectedEndId) {
-                      onCalculateRoute(sel.id, selectedEndId);
-                    }
-                  }
-                } else if (e.key === 'Escape') {
-                  setActiveDropdown(null);
-                }
-              }}
-              className="bg-transparent text-sm text-white placeholder-gray-500 w-full focus:outline-none"
-            />
-            {startNode && (
-              <button
-                onClick={() => {
+      {/* Start and End Inputs with dedicated Swap Button */}
+      <div className="flex items-center gap-2 relative z-30">
+        <div className="flex-1 space-y-2">
+          {/* Start Room Input */}
+          <div className="relative">
+            <div
+              onClick={() => setActiveDropdown('start')}
+              className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500/30 transition shadow-inner cursor-text"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-2 flex-shrink-0 shadow-sm shadow-emerald-400/50" />
+              <input
+                type="text"
+                placeholder="Start room (e.g. 501, 601)..."
+                value={startQuery !== '' ? startQuery : startNode ? `${startNode.label} (Floor ${startNode.floor})` : ''}
+                onChange={(e) => {
+                  setStartQuery(e.target.value);
                   onSelectStart(null);
-                  setStartQuery('');
+                  setActiveDropdown('start');
                 }}
-                title="Clear starting room"
-                className="text-xs text-gray-400 hover:text-gray-100 ml-1 px-1.5 py-0.5 rounded bg-gray-700/80"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {/* Start Dropdown */}
-          {activeDropdown === 'start' && !startNode && (
-            <div className="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700/90 rounded-xl shadow-2xl z-50 divide-y divide-gray-800">
-              {filteredStartRooms.length > 0 ? (
-                filteredStartRooms.map((room) => (
-                  <button
-                    key={room.id}
-                    onClick={() => {
-                      onSelectStart(room.id);
+                onFocus={() => setActiveDropdown('start')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (filteredStartRooms.length > 0) {
+                      const sel = filteredStartRooms[0];
+                      onSelectStart(sel.id);
                       setStartQuery('');
                       setActiveDropdown(null);
                       if (selectedEndId) {
-                        onCalculateRoute(room.id, selectedEndId);
+                        onCalculateRoute(sel.id, selectedEndId);
                       }
-                    }}
-                    className="w-full text-left px-3.5 py-2 hover:bg-[#1f2940] flex items-center justify-between text-xs transition"
-                  >
-                    <div>
-                      <span className="font-semibold text-white">{room.label}</span>
-                      <span className="text-gray-400 ml-2">Room {room.roomNumber}</span>
-                    </div>
-                    <span className="px-1.5 py-0.5 rounded bg-gray-800 text-emerald-400 font-mono text-[10px] border border-emerald-500/30">
-                      Floor {room.floor}
-                    </span>
-                  </button>
-                ))
+                    }
+                  } else if (e.key === 'Escape') {
+                    setActiveDropdown(null);
+                  }
+                }}
+                className="bg-transparent text-xs text-white placeholder-gray-500 w-full focus:outline-none pr-1"
+              />
+              {startNode || startQuery ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectStart(null);
+                    setStartQuery('');
+                    setActiveDropdown('start');
+                  }}
+                  title="Clear start room"
+                  className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition flex-shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               ) : (
-                <div className="p-3 text-center text-xs text-gray-500">No rooms found matching "{startQuery}"</div>
+                <ChevronDown className="w-3.5 h-3.5 text-gray-500 flex-shrink-0 pointer-events-none" />
               )}
             </div>
-          )}
-        </div>
 
-        {/* Swap Button */}
-        <div className="absolute right-3 top-[28px] z-30">
-          <button
-            onClick={handleSwap}
-            title="Swap start & destination"
-            className="p-1.5 rounded-full bg-gray-800/90 border border-gray-600 text-gray-300 hover:text-white hover:bg-emerald-600 transition shadow"
-          >
-            <ArrowUpDown className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Destination Room Input */}
-        <div className="relative">
-          <div className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2.5 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500/30 transition shadow-inner">
-            <MapPin className="w-3.5 h-3.5 text-cyan-400 mr-2 flex-shrink-0" />
-            <input
-              type="text"
-              placeholder="Destination: Type room no (e.g. 603, 702)..."
-              value={endNode ? `${endNode.label} (Floor ${endNode.floor})` : endQuery}
-              onChange={(e) => {
-                setEndQuery(e.target.value);
-                onSelectEnd(null);
-                setActiveDropdown('end');
-              }}
-              onFocus={() => setActiveDropdown('end')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  if (filteredEndRooms.length > 0) {
-                    const sel = filteredEndRooms[0];
-                    onSelectEnd(sel.id);
-                    setEndQuery('');
-                    setActiveDropdown(null);
-                    if (selectedStartId) {
-                      onCalculateRoute(selectedStartId, sel.id);
-                    }
-                  }
-                } else if (e.key === 'Escape') {
-                  setActiveDropdown(null);
-                }
-              }}
-              className="bg-transparent text-sm text-white placeholder-gray-500 w-full focus:outline-none"
-            />
-            {endNode && (
-              <button
-                onClick={() => {
-                  onSelectEnd(null);
-                  setEndQuery('');
-                }}
-                title="Clear destination room"
-                className="text-xs text-gray-400 hover:text-gray-100 ml-1 px-1.5 py-0.5 rounded bg-gray-700/80"
-              >
-                ✕
-              </button>
+            {/* Start Dropdown */}
+            {activeDropdown === 'start' && (
+              <div className="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700/90 rounded-xl shadow-2xl z-50 divide-y divide-gray-800">
+                {filteredStartRooms.length > 0 ? (
+                  filteredStartRooms.map((room) => {
+                    const isSelected = room.id === selectedStartId;
+                    return (
+                      <button
+                        key={room.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectStart(room.id);
+                          setStartQuery('');
+                          setActiveDropdown(null);
+                          if (selectedEndId) {
+                            onCalculateRoute(room.id, selectedEndId);
+                          }
+                        }}
+                        className={`w-full text-left px-3 py-2 flex items-center justify-between text-xs transition ${
+                          isSelected
+                            ? 'bg-emerald-950/50 text-emerald-300 font-semibold border-l-2 border-emerald-500'
+                            : 'hover:bg-[#1f2940] text-gray-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />}
+                          <span className={isSelected ? 'text-emerald-300' : 'text-white'}>{room.label}</span>
+                          <span className="text-gray-400 text-[11px]">Room {room.roomNumber}</span>
+                        </div>
+                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-emerald-400 font-mono text-[10px] border border-emerald-500/30">
+                          Floor {room.floor}
+                        </span>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="p-3 text-center text-xs text-gray-500">No rooms found matching "{startQuery}"</div>
+                )}
+              </div>
             )}
           </div>
 
-          {/* Destination Dropdown */}
-          {activeDropdown === 'end' && !endNode && (
-            <div className="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700/90 rounded-xl shadow-2xl z-50 divide-y divide-gray-800">
-              {filteredEndRooms.length > 0 ? (
-                filteredEndRooms.map((room) => (
-                  <button
-                    key={room.id}
-                    onClick={() => {
-                      onSelectEnd(room.id);
+          {/* Destination Room Input */}
+          <div className="relative">
+            <div
+              onClick={() => setActiveDropdown('end')}
+              className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500/30 transition shadow-inner cursor-text"
+            >
+              <MapPin className="w-3.5 h-3.5 text-cyan-400 mr-2 flex-shrink-0" />
+              <input
+                type="text"
+                placeholder="Destination room (e.g. 603, 702)..."
+                value={endQuery !== '' ? endQuery : endNode ? `${endNode.label} (Floor ${endNode.floor})` : ''}
+                onChange={(e) => {
+                  setEndQuery(e.target.value);
+                  onSelectEnd(null);
+                  setActiveDropdown('end');
+                }}
+                onFocus={() => setActiveDropdown('end')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (filteredEndRooms.length > 0) {
+                      const sel = filteredEndRooms[0];
+                      onSelectEnd(sel.id);
                       setEndQuery('');
                       setActiveDropdown(null);
                       if (selectedStartId) {
-                        onCalculateRoute(selectedStartId, room.id);
+                        onCalculateRoute(selectedStartId, sel.id);
                       }
-                    }}
-                    className="w-full text-left px-3.5 py-2 hover:bg-[#1f2940] flex items-center justify-between text-xs transition"
-                  >
-                    <div>
-                      <span className="font-semibold text-white">{room.label}</span>
-                      <span className="text-gray-400 ml-2">Room {room.roomNumber}</span>
-                    </div>
-                    <span className="px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400 font-mono text-[10px] border border-cyan-500/30">
-                      Floor {room.floor}
-                    </span>
-                  </button>
-                ))
+                    }
+                  } else if (e.key === 'Escape') {
+                    setActiveDropdown(null);
+                  }
+                }}
+                className="bg-transparent text-xs text-white placeholder-gray-500 w-full focus:outline-none pr-1"
+              />
+              {endNode || endQuery ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelectEnd(null);
+                    setEndQuery('');
+                    setActiveDropdown('end');
+                  }}
+                  title="Clear destination room"
+                  className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition flex-shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
               ) : (
-                <div className="p-3 text-center text-xs text-gray-500">No rooms found matching "{endQuery}"</div>
+                <ChevronDown className="w-3.5 h-3.5 text-gray-500 flex-shrink-0 pointer-events-none" />
               )}
             </div>
-          )}
+
+            {/* Destination Dropdown */}
+            {activeDropdown === 'end' && (
+              <div className="absolute top-full left-0 right-0 mt-1 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700/90 rounded-xl shadow-2xl z-50 divide-y divide-gray-800">
+                {filteredEndRooms.length > 0 ? (
+                  filteredEndRooms.map((room) => {
+                    const isSelected = room.id === selectedEndId;
+                    return (
+                      <button
+                        key={room.id}
+                        type="button"
+                        onClick={() => {
+                          onSelectEnd(room.id);
+                          setEndQuery('');
+                          setActiveDropdown(null);
+                          if (selectedStartId) {
+                            onCalculateRoute(selectedStartId, room.id);
+                          }
+                        }}
+                        className={`w-full text-left px-3 py-2 flex items-center justify-between text-xs transition ${
+                          isSelected
+                            ? 'bg-cyan-950/50 text-cyan-300 font-semibold border-l-2 border-cyan-500'
+                            : 'hover:bg-[#1f2940] text-gray-200'
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5">
+                          {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />}
+                          <span className={isSelected ? 'text-cyan-300' : 'text-white'}>{room.label}</span>
+                          <span className="text-gray-400 text-[11px]">Room {room.roomNumber}</span>
+                        </div>
+                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400 font-mono text-[10px] border border-cyan-500/30">
+                          Floor {room.floor}
+                        </span>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="p-3 text-center text-xs text-gray-500">No rooms found matching "{endQuery}"</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Dedicated Swap Button */}
+        <button
+          type="button"
+          onClick={handleSwap}
+          title="Swap start & destination rooms"
+          className="p-3 rounded-xl bg-[#131b2e] hover:bg-[#1c2742] active:scale-95 border border-gray-700/80 hover:border-emerald-500/40 text-gray-300 hover:text-emerald-400 transition shadow-md flex items-center justify-center self-stretch flex-shrink-0"
+        >
+          <ArrowUpDown className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Action Buttons */}
@@ -287,7 +335,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
         <button
           onClick={() => onCalculateRoute()}
           disabled={!selectedStartId || !selectedEndId}
-          className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition"
+          className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition"
         >
           <Navigation className="w-4 h-4" />
           <span>Find Route</span>
@@ -295,7 +343,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
 
         {(selectedStartId || selectedEndId) && (
           <button
-            onClick={onClearRoute}
+            onClick={handleClearAll}
             className="px-3.5 py-2.5 bg-[#131b2e] hover:bg-[#1a2337] text-gray-300 text-xs font-medium rounded-xl border border-gray-700/80 transition"
           >
             Clear

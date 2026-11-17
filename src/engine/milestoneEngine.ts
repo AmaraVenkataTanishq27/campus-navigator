@@ -86,8 +86,11 @@ export function generateMilestones(
   for (let i = 0; i < pathNodeIds.length - 1; i++) {
     const u = nodes[pathNodeIds[i]];
     const v = nodes[pathNodeIds[i + 1]];
+    const edge = graph.edges.find((e) => e.from === pathNodeIds[i] && e.to === pathNodeIds[i + 1]);
     let d = 0;
-    if (u.floor === v.floor) {
+    if (edge && typeof edge.weight === 'number') {
+      d = Math.round(edge.weight * 10) / 10;
+    } else if (u && v && u.floor === v.floor) {
       const dx = v.x - u.x;
       const dy = v.y - u.y;
       d = Math.round((Math.sqrt(dx * dx + dy * dy) / PIXELS_PER_METER) * 10) / 10;
@@ -96,6 +99,11 @@ export function generateMilestones(
     }
     segmentDistances.push(d);
   }
+
+  // Helper for cumulative and span distances
+  const getSpanDistance = (startIdx: number, endIdx: number) => {
+    return Math.round(segmentDistances.slice(startIdx, endIdx).reduce((a, b) => a + b, 0) * 10) / 10;
+  };
 
   // 2. Add Start Milestone
   const startNode = nodes[pathNodeIds[0]];
@@ -115,7 +123,6 @@ export function generateMilestones(
 
   // 3. Process intermediate path nodes with grouping
   let i = 1;
-  let runningDist = 0;
 
   while (i < pathNodeIds.length - 1) {
     const currId = pathNodeIds[i];
@@ -125,8 +132,6 @@ export function generateMilestones(
     const currNode = nodes[currId];
     const prevNode = nodes[prevId];
     const nextNode = nodes[nextId];
-
-    runningDist += segmentDistances[i - 1];
 
     // Check if vertical floor change
     if (currNode.floor !== nextNode.floor) {
@@ -146,8 +151,8 @@ export function generateMilestones(
         icon: isElevator ? 'chevrons-up-down' : 'footprints',
         floor: currNode.floor,
         coords: { x: currNode.x, y: currNode.y },
-        distanceToNextMeters: segmentDistances[i],
-        cumulativeDistanceMeters: runningDist
+        distanceToNextMeters: segmentDistances[i] || 0,
+        cumulativeDistanceMeters: getSpanDistance(0, i)
       });
       i++;
       continue;
@@ -165,8 +170,8 @@ export function generateMilestones(
         icon: 'door-open',
         floor: currNode.floor,
         coords: { x: currNode.x, y: currNode.y },
-        distanceToNextMeters: segmentDistances[i],
-        cumulativeDistanceMeters: runningDist
+        distanceToNextMeters: segmentDistances[i] || 0,
+        cumulativeDistanceMeters: getSpanDistance(0, i)
       });
       i++;
       continue;
@@ -192,8 +197,8 @@ export function generateMilestones(
           icon: turn.includes('left') ? 'corner-up-left' : 'corner-up-right',
           floor: currNode.floor,
           coords: { x: currNode.x, y: currNode.y },
-          distanceToNextMeters: segmentDistances[i],
-          cumulativeDistanceMeters: runningDist
+          distanceToNextMeters: segmentDistances[i] || 0,
+          cumulativeDistanceMeters: getSpanDistance(0, i)
         });
         i++;
         continue;
@@ -205,7 +210,6 @@ export function generateMilestones(
       const passedRooms: string[] = [currNode.roomNumber || currNode.label];
       const passedNodeIds: string[] = [currId];
       let j = i + 1;
-      let clusterDist = segmentDistances[i - 1];
 
       while (j < pathNodeIds.length - 1) {
         const candNode = nodes[pathNodeIds[j]];
@@ -221,7 +225,6 @@ export function generateMilestones(
         ) {
           passedRooms.push(candNode.roomNumber || candNode.label);
           passedNodeIds.push(pathNodeIds[j]);
-          clusterDist += segmentDistances[j - 1];
           j++;
         } else {
           break;
@@ -240,8 +243,8 @@ export function generateMilestones(
           icon: 'arrow-up',
           floor: currNode.floor,
           coords: { x: currNode.x, y: currNode.y },
-          distanceToNextMeters: segmentDistances[j - 1],
-          cumulativeDistanceMeters: runningDist,
+          distanceToNextMeters: getSpanDistance(i, j),
+          cumulativeDistanceMeters: getSpanDistance(0, i),
           groupedRooms: passedRooms
         });
         i = j;
@@ -257,8 +260,8 @@ export function generateMilestones(
           icon: 'compass',
           floor: currNode.floor,
           coords: { x: currNode.x, y: currNode.y },
-          distanceToNextMeters: segmentDistances[i],
-          cumulativeDistanceMeters: runningDist
+          distanceToNextMeters: segmentDistances[i] || 0,
+          cumulativeDistanceMeters: getSpanDistance(0, i)
         });
         i++;
         continue;
@@ -271,7 +274,7 @@ export function generateMilestones(
 
   // 4. Add Destination Milestone
   const destNode = nodes[pathNodeIds[pathNodeIds.length - 1]];
-  const totalMeters = segmentDistances.reduce((a, b) => a + b, 0);
+  const totalMeters = getSpanDistance(0, pathNodeIds.length - 1);
 
   milestones.push({
     id: `ms-dest`,
@@ -305,8 +308,8 @@ export function buildRouteResult(
     floorsSet.add(graph.nodes[id].floor);
   }
 
-  // Calculate total meters
-  const totalDistMeters = Math.round((pathResult.totalDistance / PIXELS_PER_METER) * 10) / 10;
+  // Calculate total meters (pathResult.totalDistance from Dijkstra is already in meters)
+  const totalDistMeters = Math.round(pathResult.totalDistance * 10) / 10;
   const estimatedMins = Math.max(1, Math.round((totalDistMeters / WALKING_SPEED_METERS_PER_MIN) * 10) / 10);
 
   return {

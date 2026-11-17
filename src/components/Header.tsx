@@ -45,27 +45,10 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Center: Floor Switcher */}
-      <div className="hidden md:flex items-center gap-1.5 bg-[#131b2e] p-1 rounded-xl border border-gray-700/60 shadow-inner">
-        <span className="text-xs text-gray-400 px-2 font-medium flex items-center gap-1">
-          <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Floor:
-        </span>
-        {availableFloors.map((floor) => {
-          const isActive = floor === currentFloor;
-          return (
-            <button
-              key={floor}
-              onClick={() => onFloorChange(floor)}
-              className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all ${
-                isActive
-                  ? 'bg-emerald-500 text-gray-950 font-bold shadow-md shadow-emerald-500/30'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-800'
-              }`}
-            >
-              Floor {floor}
-            </button>
-          );
-        })}
+      {/* Center: Current Floor Indicator */}
+      <div className="hidden md:flex items-center gap-2 text-xs text-gray-400 bg-[#131b2e] px-3.5 py-1.5 rounded-xl border border-gray-700/60 shadow-inner">
+        <MapPin className="w-3.5 h-3.5 text-emerald-400" />
+        <span>Currently viewing <span className="text-white font-bold">Floor {currentFloor}</span></span>
       </div>
 
       {/* Right Actions */}
