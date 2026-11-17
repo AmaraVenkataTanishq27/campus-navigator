@@ -32,11 +32,14 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
   const floorMeta = graph.floors[String(currentFloor)] || {
-    name: `Floor ${currentFloor}`,
-    planImage: `/assets/floor-plans/reference/ab-${currentFloor}th-floor-plan.jpeg`,
-    width: 1600,
-    height: 1515
+    name: currentFloor === 0 ? 'Apex Block - Ground Floor' : `Apex Block - Floor ${currentFloor}`,
+    planImage: `/assets/floor-plans/reference/apex-${currentFloor}th-floor.png`,
+    width: (currentFloor === 0 || currentFloor === 1 || currentFloor === 6) ? 1587 : 1600,
+    height: (currentFloor === 0 || currentFloor === 1 || currentFloor === 6) ? 2244 : 1515
   };
+
+  const imgWidth = floorMeta.width || 1600;
+  const imgHeight = floorMeta.height || 1515;
 
   const currentMilestone = routeResult?.milestones[currentMilestoneIndex];
   const availableFloors = Object.keys(graph.floors).map(Number).sort((a, b) => a - b);
@@ -45,14 +48,14 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   useEffect(() => {
     if (containerRef.current) {
       const { clientWidth, clientHeight } = containerRef.current;
-      const initialScale = Math.min(clientWidth / 1600, clientHeight / 1515) * 0.95;
+      const initialScale = Math.min(clientWidth / imgWidth, clientHeight / imgHeight) * 0.95;
       setScale(initialScale || 0.7);
       setPosition({
-        x: (clientWidth - 1600 * initialScale) / 2,
-        y: (clientHeight - 1515 * initialScale) / 2
+        x: (clientWidth - imgWidth * initialScale) / 2,
+        y: (clientHeight - imgHeight * initialScale) / 2
       });
     }
-  }, [currentFloor]);
+  }, [currentFloor, imgWidth, imgHeight]);
 
   // Focus view on current milestone when it changes
   useEffect(() => {
@@ -159,11 +162,11 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
   const handleResetView = () => {
     if (containerRef.current) {
       const { clientWidth, clientHeight } = containerRef.current;
-      const fitScale = Math.min(clientWidth / 1600, clientHeight / 1515) * 0.95;
+      const fitScale = Math.min(clientWidth / imgWidth, clientHeight / imgHeight) * 0.95;
       setScale(fitScale);
       setPosition({
-        x: (clientWidth - 1600 * fitScale) / 2,
-        y: (clientHeight - 1515 * fitScale) / 2
+        x: (clientWidth - imgWidth * fitScale) / 2,
+        y: (clientHeight - imgHeight * fitScale) / 2
       });
     }
   };
@@ -232,7 +235,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                   : 'text-gray-300 hover:text-white hover:bg-gray-800'
               }`}
             >
-              F{floor}
+              {floor === 0 ? 'G' : `F${floor}`}
             </button>
           );
         })}
@@ -290,8 +293,8 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
         style={{
           transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
           transformOrigin: '0 0',
-          width: 1600,
-          height: 1515,
+          width: imgWidth,
+          height: imgHeight,
           position: 'absolute'
         }}
         className="transition-transform duration-75"
@@ -300,7 +303,8 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
         <img
           src={floorMeta.planImage}
           alt={`Floor Plan ${currentFloor}`}
-          className="absolute top-0 left-0 w-[1600px] h-[1515px] pointer-events-none select-none rounded-lg shadow-2xl object-cover"
+          style={{ width: `${imgWidth}px`, height: `${imgHeight}px` }}
+          className="absolute top-0 left-0 pointer-events-none select-none rounded-lg shadow-2xl object-cover"
           draggable={false}
           onError={(e) => {
             // Fallback placeholder if image load fails
@@ -310,8 +314,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
 
         {/* SVG Route & Milestone Layer */}
         <svg
-          viewBox="0 0 1600 1515"
-          className="absolute top-0 left-0 w-[1600px] h-[1515px] pointer-events-none"
+          viewBox={`0 0 ${imgWidth} ${imgHeight}`}
+          style={{ width: `${imgWidth}px`, height: `${imgHeight}px` }}
+          className="absolute top-0 left-0 pointer-events-none"
         >
           <defs>
             {/* Glowing filter for active path */}

@@ -38,17 +38,17 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-bold tracking-tight text-white">Campus Navigator</h1>
             <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30">
-              Visual Milestones
+              Apex Block
             </span>
           </div>
-          <p className="text-xs text-gray-400">Indoor Landmark Navigation (Floors 5, 6, 7)</p>
+          <p className="text-xs text-gray-400">Indoor Landmark Navigation (Floors 0–6)</p>
         </div>
       </div>
 
       {/* Center: Current Floor Indicator */}
       <div className="hidden md:flex items-center gap-2 text-xs text-gray-400 bg-[#131b2e] px-3.5 py-1.5 rounded-xl border border-gray-700/60 shadow-inner">
         <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-        <span>Currently viewing <span className="text-white font-bold">Floor {currentFloor}</span></span>
+        <span>Currently viewing <span className="text-white font-bold">{currentFloor === 0 ? 'Ground Floor' : `Floor ${currentFloor}`}</span></span>
       </div>
 
       {/* Right Actions */}

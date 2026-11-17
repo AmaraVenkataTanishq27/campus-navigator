@@ -239,11 +239,13 @@
       <div class="form-group">
         <label>Active Floor Plan</label>
         <select id="floor-select">
-          <option value="6">Academic Block - Floor 6</option>
-          <option value="5">Academic Block - Floor 5</option>
-          <option value="7">Academic Block - Floor 7</option>
-          <option value="admin">Administration Block</option>
-          <option value="mca">MCA Block</option>
+          <option value="0">Apex Block - Ground Floor</option>
+          <option value="1">Apex Block - Floor 1</option>
+          <option value="2">Apex Block - Floor 2</option>
+          <option value="3">Apex Block - Floor 3</option>
+          <option value="4" selected>Apex Block - Floor 4</option>
+          <option value="5">Apex Block - Floor 5</option>
+          <option value="6">Apex Block - Floor 6</option>
         </select>
       </div>
 
@@ -308,7 +310,7 @@
 
   <div id="viewport">
     <div id="canvas-container">
-      <img id="floor-img" src="/assets/floor-plans/reference/ab-6th-floor-plan.jpeg" alt="Floor Plan" />
+      <img id="floor-img" src="/assets/floor-plans/reference/apex-4th-floor.jpeg" alt="Floor Plan" />
       <svg id="svg-layer"></svg>
     </div>
 
@@ -320,7 +322,7 @@
     </div>
 
     <div class="hud">
-      <div>Floor: <span id="hud-floor" class="coord-badge">6</span></div>
+      <div>Floor: <span id="hud-floor" class="coord-badge">4</span></div>
       <div>Pixel Coords: <span id="hud-coords" class="coord-badge">0, 0</span></div>
       <div>Scale: <span id="hud-zoom" class="coord-badge">100%</span></div>
       <div id="edge-tip" style="color: #f59e0b; display: none;">Click 1st node to start link...</div>
@@ -329,24 +331,30 @@
 
   <script>
     const floorImages = {
-      "6": "/assets/floor-plans/reference/ab-6th-floor-plan.jpeg",
-      "5": "/assets/floor-plans/reference/ab-5th-floor-plan.jpeg",
-      "7": "/assets/floor-plans/reference/ab-7th-floor-plan.jpeg",
-      "admin": "/assets/floor-plans/reference/administration-plan.jpeg",
-      "mca": "/assets/floor-plans/reference/mca-plan.jpeg"
+      "0": "/assets/floor-plans/reference/apex-0th-floor.png",
+      "1": "/assets/floor-plans/reference/apex-1st-floor.png",
+      "2": "/assets/floor-plans/reference/apex-2nd-floor.jpeg",
+      "3": "/assets/floor-plans/reference/apex-3rd-floor.jpeg",
+      "4": "/assets/floor-plans/reference/apex-4th-floor.jpeg",
+      "5": "/assets/floor-plans/reference/apex-5th-floor.jpeg",
+      "6": "/assets/floor-plans/reference/apex-6th-floor.png"
     };
 
     let graphData = {
       floors: {
-        "6": { name: "Academic Block - Floor 6", planImage: floorImages["6"], width: 1600, height: 1515 },
-        "5": { name: "Academic Block - Floor 5", planImage: floorImages["5"], width: 1600, height: 1515 },
-        "7": { name: "Academic Block - Floor 7", planImage: floorImages["7"], width: 1600, height: 1515 }
+        "0": { name: "Apex Block - Ground Floor", planImage: floorImages["0"], width: 1587, height: 2244 },
+        "1": { name: "Apex Block - Floor 1", planImage: floorImages["1"], width: 1587, height: 2244 },
+        "2": { name: "Apex Block - Floor 2", planImage: floorImages["2"], width: 1600, height: 1515 },
+        "3": { name: "Apex Block - Floor 3", planImage: floorImages["3"], width: 1600, height: 1515 },
+        "4": { name: "Apex Block - Floor 4", planImage: floorImages["4"], width: 1600, height: 1515 },
+        "5": { name: "Apex Block - Floor 5", planImage: floorImages["5"], width: 1600, height: 1515 },
+        "6": { name: "Apex Block - Floor 6", planImage: floorImages["6"], width: 1587, height: 2244 }
       },
       nodes: {},
       edges: []
     };
 
-    let currentFloor = "6";
+    let currentFloor = "4";
     let currentMode = "add_node";
     let selectedFirstNode = null;
 

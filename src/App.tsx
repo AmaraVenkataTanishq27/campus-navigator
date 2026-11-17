@@ -9,7 +9,7 @@ import { ArrivalModal } from './components/ArrivalModal';
 const graph = rawGraphData as unknown as CampusGraph;
 
 export const App: React.FC = () => {
-  const [currentFloor, setCurrentFloor] = useState<number>(6);
+  const [currentFloor, setCurrentFloor] = useState<number>(4);
   const [selectedStartId, setSelectedStartId] = useState<string | null>('R_AB_601');
   const [selectedEndId, setSelectedEndId] = useState<string | null>('R_AB_603');
   const [accessibleOnly, setAccessibleOnly] = useState<boolean>(false);

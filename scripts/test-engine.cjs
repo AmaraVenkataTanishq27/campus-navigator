@@ -253,7 +253,7 @@ const milestones2 = generateMilestones(graph, test2.pathNodeIds);
 milestones2.forEach((m, idx) => console.log(`  ${idx + 1}. [${m.icon}] ${m.label}`));
 
 // Test 3: Multi-floor transition
-console.log('\n--- Test 3: Multi-Floor Transition (Floor 5 Lecture Hall 516 -> Floor 7 Apex Library) ---');
+console.log('\n--- Test 3: Multi-Floor Transition (Floor 3 Seminar Hall 516 -> Floor 5 Apex Library) ---');
 const test3 = findShortestPath(graph, 'R_AB_516', 'R_APEX_LIB');
 console.log('Distance:', test3.totalDistance, 'm');
 const milestones3 = generateMilestones(graph, test3.pathNodeIds);
@@ -270,5 +270,19 @@ const usesVerticalStairs = test4Accessible.pathNodeIds.some((id, idx) => {
 });
 console.log('Accessible path verified (No vertical stairs or inaccessible edges)?', !usesVerticalStairs);
 console.log('Path nodes:', test4Accessible.pathNodeIds.map(id => graph.nodes[id].label).join(' -> '));
+
+// Test 5: Full building vertical traversal (Floor 1 Doctoral Office 316 -> Floor 5 Apex Library)
+console.log('\n--- Test 5: Multi-Floor Span (Floor 1 Doctoral Office 316 -> Floor 5 Apex Library) ---');
+const test5 = findShortestPath(graph, 'R_AB_316', 'R_APEX_LIB');
+console.log('Distance:', test5.totalDistance, 'm');
+const milestones5 = generateMilestones(graph, test5.pathNodeIds);
+milestones5.forEach((m, idx) => console.log(`  ${idx + 1}. [Floor ${m.floor}] [${m.icon}] ${m.label}`));
+
+// Test 6: Ground Floor to 6th Floor Auditorium (Full Apex Block Span)
+console.log('\n--- Test 6: Full Apex Block Span (Ground Floor AB 201 -> 6th Floor Auditorium) ---');
+const test6 = findShortestPath(graph, 'R_AB_201', 'R_AUDITORIUM');
+console.log('Distance:', test6.totalDistance, 'm');
+const milestones6 = generateMilestones(graph, test6.pathNodeIds);
+milestones6.forEach((m, idx) => console.log(`  ${idx + 1}. [Floor ${m.floor}] [${m.icon}] ${m.label}`));
 
 console.log('\nAll tests passed successfully!');
