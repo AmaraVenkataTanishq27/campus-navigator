@@ -42,10 +42,10 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   onToggleSidebar
 }) => {
   return (
-    <div className="flex-1 flex overflow-hidden relative bg-[#F6F3ED]">
+    <div className="flex-1 flex overflow-hidden relative bg-[#050811]">
       {/* Left Sidebar */}
       <aside
-        className={`w-full md:w-[420px] flex-shrink-0 bg-white border-r border-slate-300 flex flex-col z-20 transition-all duration-300 ease-in-out shadow-lg ${
+        className={`w-full md:w-[420px] flex-shrink-0 bg-[#0B1120] border-r border-[#1E293B] flex flex-col z-20 transition-all duration-300 ease-in-out shadow-[0_0_30px_rgba(0,0,0,0.8)] ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[420px]'
         }`}
       >
@@ -61,7 +61,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         />
 
         {/* Milestone Stepper or Empty Prompt */}
-        <div className="flex-1 overflow-hidden bg-slate-50/50">
+        <div className="flex-1 overflow-hidden bg-[#070B14]">
           {routeResult ? (
             <MilestoneStepper
               routeResult={routeResult}
@@ -72,7 +72,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
             />
           ) : (
             <div className="h-full flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-blue-50 border-2 border-blue-200 flex items-center justify-center mb-4 text-blue-600 shadow-sm">
+              <div className="w-16 h-16 rounded-2xl bg-cyan-950/50 border border-cyan-500/40 flex items-center justify-center mb-4 text-[#00F0FF] shadow-[0_0_20px_rgba(0,240,255,0.25)]">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -82,8 +82,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                   />
                 </svg>
               </div>
-              <h4 className="text-base font-extrabold text-slate-900 mb-1 tracking-tight">Indoor Landmark Guidance</h4>
-              <p className="text-xs text-slate-600 max-w-xs leading-relaxed font-semibold">
+              <h4 className="text-base font-extrabold text-white mb-1 tracking-tight">Indoor Landmark Guidance</h4>
+              <p className="text-xs text-slate-400 max-w-xs leading-relaxed font-medium">
                 Select your starting room and destination room above to calculate an indoor route across Apex Block.
               </p>
             </div>

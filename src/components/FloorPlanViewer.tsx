@@ -339,21 +339,21 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
-      className="relative flex-1 h-full w-full bg-[#EAE5DC] overflow-hidden cursor-grab active:cursor-grabbing select-none"
+      className="relative flex-1 h-full w-full bg-[#050811] overflow-hidden cursor-grab active:cursor-grabbing select-none"
     >
       {/* Sidebar toggle button */}
       <button
         onClick={onToggleSidebar}
         title={sidebarOpen ? 'Collapse sidebar' : 'Open navigation sidebar'}
-        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 shadow-md transition"
+        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-[#0B1120] hover:bg-[#1E293B] text-[#00F0FF] border border-[#1E293B] hover:border-[#00F0FF]/50 shadow-lg transition"
       >
         {sidebarOpen ? <ChevronLeft className="w-5 h-5 stroke-[2.5]" /> : <ChevronRight className="w-5 h-5 stroke-[2.5]" />}
       </button>
 
       {/* Floating Floor Selector Dock */}
-      <div className="absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1.5 rounded-xl bg-white border border-slate-300 shadow-md">
-        <span className="text-xs text-slate-800 px-2 font-black flex items-center gap-1.5">
-          <Layers className="w-4 h-4 text-blue-600 stroke-[2.5]" /> Floor:
+      <div className="absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1.5 rounded-xl bg-[#0B1120]/95 backdrop-blur-md border border-[#1E293B] shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+        <span className="text-xs text-slate-300 px-2 font-black flex items-center gap-1.5">
+          <Layers className="w-4 h-4 text-[#00F0FF] stroke-[2.5]" /> Floor:
         </span>
         {availableFloors.map((floor) => {
           const isActive = floor === currentFloor;
@@ -363,8 +363,8 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               onClick={() => onFloorChange(floor)}
               className={`px-3 py-1.5 text-xs font-black rounded-lg transition-all ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-slate-800 hover:text-slate-950 hover:bg-slate-100'
+                  ? 'bg-[#00F0FF] text-slate-950 shadow-[0_0_12px_rgba(0,240,255,0.5)]'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800'
               }`}
             >
               {floor === 0 ? 'G' : `F${floor}`}
@@ -372,7 +372,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           );
         })}
         {routeResult && (
-          <span className="text-xs px-2.5 py-1 ml-1 rounded-full bg-blue-100 text-blue-800 font-extrabold border border-blue-300 hidden sm:inline-block">
+          <span className="text-xs px-2.5 py-1 ml-1 rounded-full bg-cyan-950/80 text-[#00F0FF] font-extrabold border border-cyan-800/80 hidden sm:inline-block shadow-[0_0_8px_rgba(0,240,255,0.25)]">
             Active Route
           </span>
         )}
@@ -381,40 +381,40 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       {/* Compass Rose & North Orientation */}
       <div
         title="North orientation"
-        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-xl bg-white border border-slate-300 shadow-md flex flex-col items-center justify-center pointer-events-none select-none"
+        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-xl bg-[#0B1120] border border-[#1E293B] shadow-lg flex flex-col items-center justify-center pointer-events-none select-none"
       >
-        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[9px] border-b-red-600 mb-0.5" />
-        <span className="text-[10px] font-black text-slate-800 tracking-tighter leading-none">N</span>
-        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[9px] border-t-slate-400 mt-0.5" />
+        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[9px] border-b-[#00F0FF] mb-0.5" />
+        <span className="text-[10px] font-black text-[#00F0FF] tracking-tighter leading-none">N</span>
+        <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[9px] border-t-slate-600 mt-0.5" />
       </div>
 
       {/* Zoom / Viewport Controls */}
-      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-white p-1.5 rounded-xl border border-slate-300 shadow-xl">
+      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-[#0B1120]/95 backdrop-blur-md p-1.5 rounded-xl border border-[#1E293B] shadow-2xl">
         <button
           onClick={() => setScale((s) => Math.min(s * 1.2, 4.0))}
           title="Zoom In"
-          className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
+          className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
         >
           <ZoomIn className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={() => setScale((s) => Math.max(s * 0.8, 0.25))}
           title="Zoom Out"
-          className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
+          className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
         >
           <ZoomOut className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={handleResetView}
           title="Reset to Fit Whole Floor"
-          className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
+          className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition"
         >
           <Maximize2 className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={handleFitToRoute}
           title="Fit Active Route on Screen"
-          className="p-2 rounded-lg hover:bg-blue-50 text-slate-800 hover:text-blue-600 transition"
+          className="p-2 rounded-lg hover:bg-cyan-950/50 text-slate-300 hover:text-[#00F0FF] transition"
         >
           <Target className="w-4 h-4 stroke-[2.5]" />
         </button>
@@ -430,7 +430,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               }
             }}
             title="Focus Current Milestone"
-            className="p-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-300 transition shadow-sm"
+            className="p-2 rounded-lg bg-cyan-950/80 text-[#00F0FF] hover:bg-cyan-900 border border-cyan-700 transition shadow-[0_0_10px_rgba(0,240,255,0.3)]"
           >
             <Crosshair className="w-4 h-4 stroke-[2.5]" />
           </button>
@@ -439,30 +439,30 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
 
       {/* Floating On-Map Turn-by-Turn Guidance HUD */}
       {routeResult && currentMilestone && (
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[94%] max-w-lg bg-white/95 backdrop-blur-md border border-slate-300/90 rounded-2xl shadow-2xl p-3 sm:px-4 sm:py-3 flex items-center justify-between gap-3 text-slate-900 transition-all">
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 w-[94%] max-w-lg bg-[#0B1120]/95 backdrop-blur-md border border-[#00F0FF]/40 shadow-[0_0_30px_rgba(0,240,255,0.2)] rounded-2xl p-3 sm:px-4 sm:py-3 flex items-center justify-between gap-3 text-white transition-all">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center flex-shrink-0 shadow-md">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] text-slate-950 flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(0,240,255,0.5)]">
               {currentMilestoneIndex === routeResult.milestones.length - 1 ? (
                 <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
               ) : (
-                <Navigation className="w-5 h-5 fill-white stroke-white" />
+                <Navigation className="w-5 h-5 fill-slate-950 stroke-slate-950" />
               )}
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#00F0FF] bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/80 shadow-[0_0_6px_rgba(0,240,255,0.2)]">
                   Step {currentMilestoneIndex + 1} of {routeResult.milestones.length}
                 </span>
                 {currentMilestone.distanceToNextMeters > 0 && (
-                  <span className="text-[11px] font-bold text-slate-500">
+                  <span className="text-[11px] font-bold text-slate-400">
                     +{currentMilestone.distanceToNextMeters.toFixed(1)}m
                   </span>
                 )}
               </div>
-              <div className="text-xs sm:text-sm font-extrabold text-slate-900 truncate mt-0.5">
+              <div className="text-xs sm:text-sm font-extrabold text-white truncate mt-0.5">
                 {currentMilestone.action || currentMilestone.label}
               </div>
-              <div className="text-[11px] text-slate-500 font-medium truncate">
+              <div className="text-[11px] text-slate-400 font-medium truncate">
                 {currentMilestone.subtext}
               </div>
             </div>
@@ -474,7 +474,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                 onClick={onPrevMilestone}
                 disabled={currentMilestoneIndex === 0}
                 title="Previous milestone"
-                className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-30 disabled:pointer-events-none text-slate-800 transition"
+                className="p-2 rounded-xl bg-[#070B14] hover:bg-[#1E293B] disabled:opacity-30 disabled:pointer-events-none text-slate-300 transition border border-[#1E293B]"
               >
                 <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
               </button>
@@ -485,7 +485,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                   onFloorChange(activeElevatorTransition.toFloor);
                   if (onNextMilestone) onNextMilestone();
                 }}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-black text-xs shadow-lg transition flex items-center gap-1.5 animate-pulse hover:animate-none border border-amber-400"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 active:scale-95 text-slate-950 font-black text-xs shadow-[0_0_15px_rgba(245,158,11,0.5)] transition flex items-center gap-1.5 animate-pulse hover:animate-none border border-amber-400"
               >
                 <span>Take {activeElevatorTransition.type === 'stairs' ? 'Stairs' : 'Elevator'} to Floor {activeElevatorTransition.toFloor === 0 ? 'G' : `F${activeElevatorTransition.toFloor}`}</span>
                 <ArrowRight className="w-4 h-4 stroke-[3]" />
@@ -493,7 +493,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
             ) : onNextMilestone && (
               <button
                 onClick={onNextMilestone}
-                className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1"
+                className="px-3.5 py-2 rounded-xl sharp-btn-royal active:scale-95 text-slate-950 font-black text-xs shadow-md transition flex items-center gap-1"
               >
                 <span>{currentMilestoneIndex === routeResult.milestones.length - 1 ? 'Done' : 'Next'}</span>
                 <ChevronRight className="w-4 h-4 stroke-[2.5]" />
@@ -514,12 +514,16 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
         }}
         className="transition-transform duration-75"
       >
-        {/* Floor Plan Background Image */}
+        {/* Floor Plan Background Image (Dark Blueprint Inversion for Cyberpunk) */}
         <img
           src={floorMeta.planImage}
           alt={`Floor Plan ${currentFloor}`}
-          style={{ width: `${imgWidth}px`, height: `${imgHeight}px` }}
-          className="absolute top-0 left-0 pointer-events-none select-none rounded-xl shadow-2xl object-cover bg-white"
+          style={{
+            width: `${imgWidth}px`,
+            height: `${imgHeight}px`,
+            filter: 'invert(0.92) hue-rotate(190deg) contrast(1.15) brightness(0.92)'
+          }}
+          className="absolute top-0 left-0 pointer-events-none select-none rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.95)] object-cover bg-[#090D1A]"
           draggable={false}
           onError={(e) => {
             (e.target as HTMLElement).style.display = 'none';
@@ -533,52 +537,51 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           className="absolute top-0 left-0 pointer-events-none"
         >
           <defs>
-            {/* Balanced Ambient Glow Filter (Middle brightness: comfortable, luminous, no harsh glare) */}
-            <filter id="balancedRouteGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#3B82F6" floodOpacity="0.4" />
+            {/* Cyberpunk Start Beacon filter */}
+            <filter id="beaconGlowCyan" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#00F0FF" floodOpacity="0.85" />
             </filter>
 
-            {/* Start Beacon filter */}
-            <filter id="beaconGlowSharp" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#2563EB" floodOpacity="0.6" />
+            {/* Cyberpunk Destination Beacon filter */}
+            <filter id="beaconGlowPink" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#FF007F" floodOpacity="0.85" />
             </filter>
           </defs>
 
-          {/* CONTINUOUS NEON ROUTE TUBE (Middle brightness: 4.8px rich royal cobalt body, soft luminous aura, no white-hot burnout, no dark rails) */}
+          {/* CONTINUOUS CYBERPUNK NEON ROUTE TUBE (Guaranteed visible with CSS drop-shadow) */}
           {currentFloorSvgPaths.map((dPath, idx) => (
-            <g key={`neon-path-${idx}`}>
-              {/* Layer 1: Ambient Colored Glow Aura (Soft, diffused cobalt glow) */}
+            <g key={`neon-path-${idx}`} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5))' }}>
+              {/* Layer 1: Ambient Magenta/Violet Outer Aura */}
               <path
                 d={dPath}
                 fill="none"
-                stroke="#3B82F6"
-                strokeWidth="9"
+                stroke="#A855F7"
+                strokeWidth="12"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeOpacity="0.28"
-                filter="url(#balancedRouteGlow)"
+                strokeOpacity="0.55"
               />
 
-              {/* Layer 2: Core Rich Royal Blue Path (Balanced middle tone, vivid and crisp) */}
+              {/* Layer 2: Electric Cyan Solid Neon Core Tube */}
               <path
                 d={dPath}
                 fill="none"
-                stroke="#2563EB"
-                strokeWidth="4.8"
+                stroke="#00F0FF"
+                strokeWidth="5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeOpacity="0.95"
+                strokeOpacity="1"
               />
 
-              {/* Layer 3: Soft Luminous Core Highlight (Gentle sky-blue, not blinding white) */}
+              {/* Layer 3: Ultra-Luminous Laser Filament Core */}
               <path
                 d={dPath}
                 fill="none"
-                stroke="#93C5FD"
-                strokeWidth="1.6"
+                stroke="#FFFFFF"
+                strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeOpacity="0.6"
+                strokeOpacity="0.9"
               />
             </g>
           ))}
@@ -586,40 +589,39 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           {/* Fallback line segments */}
           {currentFloorSvgPaths.length === 0 &&
             currentFloorPathSegments.map((seg, idx) => (
-              <g key={`fallback-seg-${idx}`}>
+              <g key={`fallback-seg-${idx}`} style={{ filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.8)) drop-shadow(0 0 16px rgba(168, 85, 247, 0.5))' }}>
                 <line
                   x1={seg.p1.x}
                   y1={seg.p1.y}
                   x2={seg.p2.x}
                   y2={seg.p2.y}
-                  stroke="#3B82F6"
-                  strokeWidth="9"
+                  stroke="#A855F7"
+                  strokeWidth="12"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeOpacity="0.28"
-                  filter="url(#balancedRouteGlow)"
+                  strokeOpacity="0.55"
                 />
                 <line
                   x1={seg.p1.x}
                   y1={seg.p1.y}
                   x2={seg.p2.x}
                   y2={seg.p2.y}
-                  stroke="#2563EB"
-                  strokeWidth="4.8"
+                  stroke="#00F0FF"
+                  strokeWidth="5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeOpacity="0.95"
+                  strokeOpacity="1"
                 />
                 <line
                   x1={seg.p1.x}
                   y1={seg.p1.y}
                   x2={seg.p2.x}
                   y2={seg.p2.y}
-                  stroke="#93C5FD"
-                  strokeWidth="1.6"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.8"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeOpacity="0.6"
+                  strokeOpacity="0.9"
                 />
               </g>
             ))}
@@ -671,18 +673,18 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                         cy={node.y}
                         r="18"
                         fill="none"
-                        stroke={isDest ? '#EF4444' : '#2563EB'}
+                        stroke={isDest ? '#FF007F' : '#00F0FF'}
                         className="beacon-ring-sharp"
-                        filter="url(#beaconGlowSharp)"
+                        filter={isDest ? 'url(#beaconGlowPink)' : 'url(#beaconGlowCyan)'}
                       />
                       <circle
                         cx={node.x}
                         cy={node.y}
                         r="32"
                         fill="none"
-                        stroke={isDest ? '#F97316' : '#60A5FA'}
+                        stroke={isDest ? '#FF007F' : '#38BDF8'}
                         className="beacon-ring-sharp"
-                        filter="url(#beaconGlowSharp)"
+                        filter={isDest ? 'url(#beaconGlowPink)' : 'url(#beaconGlowCyan)'}
                         style={{ animationDelay: '0.6s' }}
                       />
                     </>
@@ -695,8 +697,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                       cy={node.y}
                       r="44"
                       fill="none"
-                      stroke="#EF4444"
+                      stroke="#FF007F"
                       className="beacon-ring-sharp"
+                      filter="url(#beaconGlowPink)"
                       style={{ animationDelay: '1s' }}
                     />
                   )}
@@ -706,10 +709,10 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                     cx={node.x}
                     cy={node.y}
                     r={isStart || isDest ? 14 : 11}
-                    fill={isDest ? '#DC2626' : isStart ? '#2563EB' : '#1D4ED8'}
+                    fill={isDest ? '#FF007F' : isStart ? '#00F0FF' : '#0284C7'}
                     stroke="#FFFFFF"
-                    strokeWidth={3}
-                    filter="url(#balancedRouteGlow)"
+                    strokeWidth={2.5}
+                    filter={isDest ? 'url(#beaconGlowPink)' : 'url(#beaconGlowCyan)'}
                   />
 
                   {/* Center Core Dot */}
@@ -717,10 +720,10 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                     cx={node.x}
                     cy={node.y}
                     r={isStart || isDest ? 5 : 4}
-                    fill="#FFFFFF"
+                    fill="#050811"
                   />
 
-                  {/* High-Contrast Bold Label Tag (Elevated above circle to prevent overlapping) */}
+                  {/* Cyberpunk High-Contrast Tag */}
                   <g transform={`translate(${node.x}, ${node.y - 32})`}>
                     <rect
                       x={-((pillText.length * 7.5 + 24) / 2)}
@@ -728,10 +731,10 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                       width={pillText.length * 7.5 + 24}
                       height="26"
                       rx="13"
-                      fill={isTransitionActive ? '#D97706' : '#0F172A'}
-                      stroke={isTransitionActive ? '#FCD34D' : isDest ? '#EF4444' : isStart ? '#38BDF8' : '#60A5FA'}
+                      fill={isTransitionActive ? '#B45309' : '#050811'}
+                      stroke={isTransitionActive ? '#F59E0B' : isDest ? '#FF007F' : isStart ? '#00F0FF' : '#38BDF8'}
                       strokeWidth={isTransitionActive ? 2.5 : 2}
-                      filter="url(#balancedRouteGlow)"
+                      filter="url(#cyberRouteGlow)"
                     />
                     <text
                       textAnchor="middle"

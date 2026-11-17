@@ -135,7 +135,7 @@ export const App: React.FC = () => {
   const destNode = selectedEndId ? graph.nodes[selectedEndId] : null;
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-[#F6F3ED] text-[#1E293B] overflow-hidden font-sans">
+    <div className="flex flex-col h-screen w-screen bg-[#050811] text-[#F1F5F9] overflow-hidden font-sans">
       {/* Top Header */}
       <Header
         graph={graph}
