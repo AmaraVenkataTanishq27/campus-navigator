@@ -32,6 +32,7 @@ interface CampusContextType {
   endNavigation: () => void;
   nextStep: () => void;
   prevStep: () => void;
+  goToStep: (index: number) => void;
   recalculateRoute: () => void;
   preferences: UserPreferences;
   updatePreferences: (newPrefs: Partial<UserPreferences>) => void;
@@ -157,13 +158,33 @@ export const CampusProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const nextStep = () => {
     if (activeRoute && currentStepIndex < activeRoute.instructions.length - 1) {
-      setCurrentStepIndex((prev) => prev + 1);
+      const newIdx = currentStepIndex + 1;
+      setCurrentStepIndex(newIdx);
+      const step = activeRoute.instructions[newIdx];
+      if (step?.floorLevel && step.floorLevel !== activeFloorLevel) {
+        setActiveFloorLevel(step.floorLevel);
+      }
     }
   };
 
   const prevStep = () => {
     if (currentStepIndex > 0) {
-      setCurrentStepIndex((prev) => prev - 1);
+      const newIdx = currentStepIndex - 1;
+      setCurrentStepIndex(newIdx);
+      const step = activeRoute?.instructions[newIdx];
+      if (step?.floorLevel && step.floorLevel !== activeFloorLevel) {
+        setActiveFloorLevel(step.floorLevel);
+      }
+    }
+  };
+
+  const goToStep = (index: number) => {
+    if (activeRoute && index >= 0 && index < activeRoute.instructions.length) {
+      setCurrentStepIndex(index);
+      const step = activeRoute.instructions[index];
+      if (step?.floorLevel && step.floorLevel !== activeFloorLevel) {
+        setActiveFloorLevel(step.floorLevel);
+      }
     }
   };
 
@@ -203,6 +224,7 @@ export const CampusProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         endNavigation,
         nextStep,
         prevStep,
+        goToStep,
         recalculateRoute,
         preferences,
         updatePreferences,

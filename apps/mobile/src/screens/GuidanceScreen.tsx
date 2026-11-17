@@ -10,6 +10,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { THEME } from '../constants/theme';
 import { useCampus } from '../context/CampusContext';
 import { Header } from '../components/Header';
+import { InteractiveFloorMap } from '../components/InteractiveFloorMap';
+import { CampusService } from '../services/campusService';
 
 export const GuidanceScreen: React.FC = () => {
   const {
@@ -18,13 +20,18 @@ export const GuidanceScreen: React.FC = () => {
     currentStepIndex,
     nextStep,
     prevStep,
+    goToStep,
     endNavigation,
     isNavigating,
     pauseNavigation,
     startNavigation,
     navigate,
-    recalculateRoute,
+    activeFloorLevel,
+    currentFloorInfo,
+    originNode,
   } = useCampus();
+
+  const floorRooms = CampusService.getRoomsByFloor(activeFloorLevel);
 
   if (!activeRoute) {
     return (
@@ -40,6 +47,7 @@ export const GuidanceScreen: React.FC = () => {
   const instructions = activeRoute.instructions;
   const currentStep = instructions[currentStepIndex] || instructions[0];
   const progressRatio = (currentStepIndex + 1) / instructions.length;
+  const activeStepNodeId = currentStep?.targetNodeId || null;
 
   const getDirectionIcon = (direction: string) => {
     switch (direction) {
@@ -64,7 +72,7 @@ export const GuidanceScreen: React.FC = () => {
     <View style={styles.container}>
       <Header
         title={`Navigating to ${selectedRoom?.roomNumber || 'Destination'}`}
-        subtitle={`Floor ${activeRoute.startFloor} • ${activeRoute.totalDistanceMeters} m • ~${activeRoute.estimatedTimeMinutes} min`}
+        subtitle={`Floor ${activeFloorLevel} • ${activeRoute.totalDistanceMeters} m • ~${activeRoute.estimatedTimeMinutes} min`}
         showBack={true}
         onBackPress={endNavigation}
         rightAction={
@@ -120,22 +128,17 @@ export const GuidanceScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Realistic Corridor Visual Viewport with Projected Arrow */}
-        <View style={styles.corridorVisualCard}>
-          <View style={styles.corridorViewport}>
-            {/* Visual Floor Perspective Canvas */}
-            <View style={styles.corridorFloor}>
-              {/* Projected illuminated green navigation arrow */}
-              <View style={styles.projectedArrow}>
-                <Ionicons name="arrow-up" size={54} color="#00E676" />
-                <View style={styles.arrowGlow} />
-              </View>
-            </View>
-            <View style={styles.corridorBadge}>
-              <Ionicons name="eye-outline" size={14} color={THEME.colors.card} />
-              <Text style={styles.corridorBadgeText}>Visual Corridor Heading</Text>
-            </View>
-          </View>
+        {/* Interactive Floor Map during navigation */}
+        <View style={styles.mapSection}>
+          <InteractiveFloorMap
+            floorInfo={currentFloorInfo}
+            rooms={floorRooms}
+            route={activeRoute}
+            selectedRoom={selectedRoom}
+            startNode={originNode}
+            activeNodeId={activeStepNodeId}
+            height={280}
+          />
         </View>
 
         {/* Turn-by-Turn Instruction List */}
@@ -153,6 +156,7 @@ export const GuidanceScreen: React.FC = () => {
                   isCurrent && styles.instructionRowActive,
                   isCompleted && styles.instructionRowCompleted,
                 ]}
+                onPress={() => goToStep(idx)}
                 activeOpacity={0.7}
               >
                 <View
@@ -234,10 +238,11 @@ export const GuidanceScreen: React.FC = () => {
 
         <TouchableOpacity
           style={styles.recalcBtn}
-          onPress={recalculateRoute}
+          onPress={() => goToStep(currentStepIndex)}
           activeOpacity={0.7}
+          accessibilityLabel="Recenter map on current step"
         >
-          <Ionicons name="refresh" size={18} color={THEME.colors.primary} />
+          <Ionicons name="locate" size={20} color={THEME.colors.primary} />
         </TouchableOpacity>
       </View>
     </View>
@@ -333,7 +338,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: 4,
   },
-  corridorVisualCard: {
+  mapSection: {
     marginHorizontal: THEME.spacing.lg,
     marginTop: THEME.spacing.md,
     borderRadius: THEME.borderRadius.lg,
@@ -341,50 +346,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.colors.cardBorder,
     ...THEME.shadows.subtle,
-  },
-  corridorViewport: {
-    height: 180,
-    backgroundColor: '#1E2D27',
-    position: 'relative',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  corridorFloor: {
-    width: '100%',
-    height: 110,
-    backgroundColor: '#273830',
-    borderTopWidth: 2,
-    borderTopColor: '#394E44',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  projectedArrow: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  arrowGlow: {
-    width: 40,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: 'rgba(0, 230, 118, 0.4)',
-    marginTop: -4,
-  },
-  corridorBadge: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: THEME.borderRadius.round,
-    gap: 6,
-  },
-  corridorBadgeText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: THEME.colors.card,
   },
   instructionsSection: {
     paddingHorizontal: THEME.spacing.lg,

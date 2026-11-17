@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -31,6 +31,8 @@ interface InteractiveFloorMapProps {
   selectedRoom: RoomItem | null;
   onSelectRoom?: (room: RoomItem) => void;
   startNode?: NavNode | null;
+  activeNodeId?: string | null;
+  height?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -45,42 +47,140 @@ export const InteractiveFloorMap: React.FC<InteractiveFloorMapProps> = ({
   selectedRoom,
   onSelectRoom,
   startNode,
+  activeNodeId,
+  height = MAP_CONTAINER_HEIGHT,
 }) => {
-  const [scale, setScale] = useState<number>(0.95);
+  // Dynamically measured viewport dimensions (defaults to screen width minus margin)
+  const [viewportSize, setViewportSize] = useState({
+    width: Math.max(SCREEN_WIDTH - 32, 320),
+    height,
+  });
+
+  // Calculate exact fit-to-screen scale for 1600x1515 canvas
+  const fitScale = useMemo(() => {
+    const scaleX = (viewportSize.width - 16) / ORIGINAL_WIDTH;
+    const scaleY = (viewportSize.height - 16) / ORIGINAL_HEIGHT;
+    return Math.max(0.18, Math.min(scaleX, scaleY));
+  }, [viewportSize.width, viewportSize.height]);
+
+  const minScale = useMemo(() => Math.max(fitScale * 0.75, 0.15), [fitScale]);
+  const maxScale = 2.5;
+
+  const [scale, setScale] = useState<number>(fitScale);
   const [translateX, setTranslateX] = useState<number>(0);
   const [translateY, setTranslateY] = useState<number>(0);
 
+  // Sync refs to avoid stale closures in PanResponder
+  const scaleRef = useRef(scale);
+  scaleRef.current = scale;
+  const translateRef = useRef({ x: translateX, y: translateY });
+  translateRef.current = { x: translateX, y: translateY };
+  const minScaleRef = useRef(minScale);
+  minScaleRef.current = minScale;
+  const maxScaleRef = useRef(maxScale);
+  maxScaleRef.current = maxScale;
+
   const lastOffset = useRef({ x: 0, y: 0 });
+  const touchDistance = useRef<number | null>(null);
+  const touchStartScale = useRef<number>(fitScale);
+
+  // Find active navigation node if activeNodeId is passed
+  const activeNode = useMemo(() => {
+    if (!activeNodeId) return null;
+    return NAVIGATION_GRAPH.nodes.find(
+      (n) => n.id === activeNodeId && n.floorLevel === (floorInfo?.level || '6')
+    );
+  }, [activeNodeId, floorInfo?.level]);
+
+  // Auto-center on active step node, selected room, or fit entire floor
+  useEffect(() => {
+    if (activeNode) {
+      const focusScale = Math.max(fitScale * 2.2, 0.55);
+      setScale(focusScale);
+      setTranslateX(ORIGINAL_WIDTH / 2 - activeNode.x);
+      setTranslateY(ORIGINAL_HEIGHT / 2 - activeNode.y);
+    } else if (selectedRoom && selectedRoom.floorLevel === floorInfo?.level) {
+      const targetX = selectedRoom.coordinates.x;
+      const targetY = selectedRoom.coordinates.y;
+      const focusScale = Math.max(fitScale * 2.2, 0.52);
+      setScale(focusScale);
+      setTranslateX(ORIGINAL_WIDTH / 2 - targetX);
+      setTranslateY(ORIGINAL_HEIGHT / 2 - targetY);
+    } else {
+      setScale(fitScale);
+      setTranslateX(0);
+      setTranslateY(0);
+    }
+  }, [floorInfo?.level, selectedRoom?.id, activeNode, fitScale]);
+
+  const getPinchDistance = (event: GestureResponderEvent): number | null => {
+    const touches = event.nativeEvent.touches;
+    if (touches && touches.length >= 2) {
+      const dx = touches[0].pageX - touches[1].pageX;
+      const dy = touches[0].pageY - touches[1].pageY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    return null;
+  };
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onMoveShouldSetPanResponder: (_: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-        return Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2;
+        return Math.abs(gestureState.dx) > 1 || Math.abs(gestureState.dy) > 1;
       },
-      onPanResponderGrant: () => {
-        lastOffset.current = { x: translateX, y: translateY };
+      onPanResponderGrant: (event: GestureResponderEvent) => {
+        lastOffset.current = { x: translateRef.current.x, y: translateRef.current.y };
+        const dist = getPinchDistance(event);
+        if (dist !== null) {
+          touchDistance.current = dist;
+          touchStartScale.current = scaleRef.current;
+        } else {
+          touchDistance.current = null;
+        }
       },
-      onPanResponderMove: (_: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-        setTranslateX(lastOffset.current.x + gestureState.dx);
-        setTranslateY(lastOffset.current.y + gestureState.dy);
+      onPanResponderMove: (event: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+        const touches = event.nativeEvent.touches;
+        if (touches && touches.length >= 2) {
+          const currentDist = getPinchDistance(event);
+          if (currentDist !== null && touchDistance.current !== null && touchDistance.current > 0) {
+            const factor = currentDist / touchDistance.current;
+            const newScale = Math.min(
+              Math.max(touchStartScale.current * factor, minScaleRef.current),
+              maxScaleRef.current
+            );
+            setScale(newScale);
+          }
+        } else {
+          setTranslateX(lastOffset.current.x + gestureState.dx);
+          setTranslateY(lastOffset.current.y + gestureState.dy);
+        }
       },
-      onPanResponderRelease: () => {},
+      onPanResponderRelease: () => {
+        touchDistance.current = null;
+      },
     })
   ).current;
 
   const handleZoomIn = () => {
-    setScale((prev) => Math.min(prev + 0.25, 3.0));
+    setScale((prev) => Math.min(prev + 0.18, maxScale));
   };
 
   const handleZoomOut = () => {
-    setScale((prev) => Math.max(prev - 0.25, 0.7));
+    setScale((prev) => Math.max(prev - 0.18, minScale));
   };
 
   const handleResetZoom = () => {
-    setScale(0.95);
-    setTranslateX(0);
-    setTranslateY(0);
+    if (activeNode) {
+      const focusScale = Math.max(fitScale * 2.2, 0.55);
+      setScale(focusScale);
+      setTranslateX(ORIGINAL_WIDTH / 2 - activeNode.x);
+      setTranslateY(ORIGINAL_HEIGHT / 2 - activeNode.y);
+    } else {
+      setScale(fitScale);
+      setTranslateX(0);
+      setTranslateY(0);
+    }
   };
 
   // Convert route coordinates to SVG points string for the current floor
@@ -108,12 +208,23 @@ export const InteractiveFloorMap: React.FC<InteractiveFloorMapProps> = ({
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.mapViewport} {...panResponder.panHandlers}>
+      <View
+        style={styles.mapViewport}
+        onLayout={(e) => {
+          const { width, height } = e.nativeEvent.layout;
+          if (width > 0 && height > 0) {
+            setViewportSize({ width, height });
+          }
+        }}
+        {...panResponder.panHandlers}
+      >
         {floorInfo?.hasInteractiveMap && floorInfo.referenceAsset ? (
           <View
             style={[
               styles.transformContainer,
               {
+                left: -(ORIGINAL_WIDTH - viewportSize.width) / 2,
+                top: -(ORIGINAL_HEIGHT - viewportSize.height) / 2,
                 transform: [
                   { translateX },
                   { translateY },
@@ -253,6 +364,38 @@ export const InteractiveFloorMap: React.FC<InteractiveFloorMapProps> = ({
                 </G>
               ) : null}
 
+              {/* Active Navigation Step Marker */}
+              {activeNode ? (
+                <G>
+                  <Circle
+                    cx={activeNode.x}
+                    cy={activeNode.y}
+                    r={28}
+                    fill="rgba(38, 117, 232, 0.3)"
+                  />
+                  <Circle
+                    cx={activeNode.x}
+                    cy={activeNode.y}
+                    r={16}
+                    fill={THEME.colors.card}
+                    stroke={THEME.colors.routeBlue}
+                    strokeWidth={3}
+                  />
+                  <Circle
+                    cx={activeNode.x}
+                    cy={activeNode.y}
+                    r={10}
+                    fill={THEME.colors.routeBlue}
+                  />
+                  <Circle
+                    cx={activeNode.x}
+                    cy={activeNode.y}
+                    r={4}
+                    fill={THEME.colors.card}
+                  />
+                </G>
+              ) : null}
+
               {/* Destination Marker */}
               {hasDestinationOnThisFloor && selectedRoom ? (
                 <G>
@@ -384,8 +527,6 @@ const styles = StyleSheet.create({
     width: ORIGINAL_WIDTH,
     height: ORIGINAL_HEIGHT,
     position: 'absolute',
-    top: -(ORIGINAL_HEIGHT - MAP_CONTAINER_HEIGHT) / 2,
-    left: -(ORIGINAL_WIDTH - SCREEN_WIDTH) / 2,
   },
   mapImage: {
     width: ORIGINAL_WIDTH,
