@@ -48,8 +48,9 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <h1 className={`text-base font-extrabold tracking-tight flex items-center gap-1.5 ${isCyber ? 'text-white' : 'text-slate-900'}`}>
-              Campus Navigator
+            <h1 className={`text-base font-black tracking-tight flex items-center gap-1.5 ${isCyber ? 'text-white' : 'text-slate-900'}`}>
+              <span className="tracking-wide">HURRY!</span>
+              <span className={isCyber ? 'text-[#00F0FF]' : 'text-blue-700'}>MSRIT</span>
             </h1>
             <span className={`px-2.5 py-0.5 text-[11px] font-black rounded-full border tracking-wider ${
               isCyber
@@ -138,22 +139,6 @@ export const Header: React.FC<HeaderProps> = ({
         >
           {voiceEnabled ? <Volume2 className={`w-4 h-4 stroke-[2.2] ${isCyber ? 'text-[#00F0FF]' : 'text-blue-600'}`} /> : <VolumeX className="w-4 h-4" />}
         </button>
-
-        {/* Mapper Tool Link */}
-        <a
-          href="/mapper.html"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Open Visual Coordinate Mapper Tool"
-          className={`hidden xl:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-xl border transition shadow-sm ${
-            isCyber
-              ? 'bg-[#0F172A] hover:bg-[#1E293B] text-slate-300 hover:text-[#00F0FF] border-[#1E293B]'
-              : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300'
-          }`}
-        >
-          <span>Map Grid</span>
-          <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-        </a>
       </div>
     </header>
   );

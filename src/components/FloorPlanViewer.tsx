@@ -70,6 +70,11 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     height: (currentFloor === 0 || currentFloor === 1 || currentFloor === 6) ? 2244 : 1515
   };
 
+  const baseUrl = ((import.meta as any).env?.BASE_URL || './').replace(/\/$/, '');
+  const planImageSrc = floorMeta.planImage.startsWith('http')
+    ? floorMeta.planImage
+    : `${baseUrl}/${floorMeta.planImage.replace(/^\//, '')}`;
+
   const imgWidth = floorMeta.width || 1600;
   const imgHeight = floorMeta.height || 1515;
 
@@ -645,7 +650,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       >
         {/* Floor Plan Background Image (Adaptive Theme: Dark Blueprint on Cyber, Clean White on Beige) */}
         <img
-          src={floorMeta.planImage}
+          src={planImageSrc}
           alt={`Floor Plan ${currentFloor}`}
           style={{
             width: `${imgWidth}px`,
