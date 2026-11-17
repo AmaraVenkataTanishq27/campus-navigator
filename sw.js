@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hurry-msrit-v1';
+const CACHE_NAME = 'hurry-msrit-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -31,10 +31,18 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Network first with cache fallback
+  // Network first strategy with cache fallback
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });
