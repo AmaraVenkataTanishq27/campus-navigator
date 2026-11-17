@@ -42,14 +42,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   onToggleSidebar
 }) => {
   return (
-    <div className="flex-1 flex overflow-hidden relative">
-      {/* Left Sidebar (~420px) */}
+    <div className="flex-1 flex overflow-hidden relative bg-[#F6F3ED]">
+      {/* Left Sidebar */}
       <aside
-        className={`w-full md:w-[420px] flex-shrink-0 bg-[#0d121f] border-r border-gray-800/80 flex flex-col z-20 transition-all duration-300 ease-in-out ${
+        className={`w-full md:w-[420px] flex-shrink-0 bg-white border-r border-slate-300 flex flex-col z-20 transition-all duration-300 ease-in-out shadow-lg ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:-ml-[420px]'
         }`}
       >
-        {/* Route Selector (Start & Destination Room Search) */}
+        {/* Route Selector */}
         <RouteSelector
           graph={graph}
           selectedStartId={selectedStartId}
@@ -61,7 +61,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
         />
 
         {/* Milestone Stepper or Empty Prompt */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden bg-slate-50/50">
           {routeResult ? (
             <MilestoneStepper
               routeResult={routeResult}
@@ -71,9 +71,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
               onPrevMilestone={onPrevMilestone}
             />
           ) : (
-            <div className="h-full flex flex-col items-center justify-center p-6 text-center text-gray-500">
-              <div className="w-12 h-12 rounded-2xl bg-gray-800 flex items-center justify-center mb-3 text-emerald-400">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-blue-50 border-2 border-blue-200 flex items-center justify-center mb-4 text-blue-600 shadow-sm">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -82,16 +82,16 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
                   />
                 </svg>
               </div>
-              <h4 className="text-sm font-semibold text-gray-300 mb-1">Visual Milestone Navigation</h4>
-              <p className="text-xs text-gray-400 max-w-xs">
-                Select your starting room and destination room above to calculate your milestone route.
+              <h4 className="text-base font-extrabold text-slate-900 mb-1 tracking-tight">Indoor Landmark Guidance</h4>
+              <p className="text-xs text-slate-600 max-w-xs leading-relaxed font-semibold">
+                Select your starting room and destination room above to calculate an indoor route across Apex Block.
               </p>
             </div>
           )}
         </div>
       </aside>
 
-      {/* Right Map Viewport (Expansive Floor Plan) */}
+      {/* Right Map Viewport */}
       <main className="flex-1 relative h-full overflow-hidden">
         <FloorPlanViewer
           graph={graph}

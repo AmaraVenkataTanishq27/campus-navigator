@@ -26,7 +26,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   const [activeDropdown, setActiveDropdown] = useState<'start' | 'end' | null>(null);
   const [filterFloor, setFilterFloor] = useState<number | 'all'>('all');
 
-  // Filter ONLY rooms (Requirement: start and end points should be only room no)
+  // Filter ONLY rooms
   const roomNodes = useMemo(() => {
     return Object.entries(graph.nodes)
       .filter(([_, node]) => node.type === 'room')
@@ -75,7 +75,7 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   const startNode = selectedStartId ? graph.nodes[selectedStartId] : null;
   const endNode = selectedEndId ? graph.nodes[selectedEndId] : null;
 
-  // Preset quick navigation pairs across floors using valid graph node IDs
+  // Preset quick navigation pairs
   const presets = [
     { label: 'AB 601 → AB 603', from: 'R_AB_601', to: 'R_AB_603', desc: 'Floor 4 Hallway' },
     { label: 'AB 601 → AB 608', from: 'R_AB_601', to: 'R_AB_608', desc: 'Floor 4 Corner' },
@@ -100,8 +100,8 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
   };
 
   return (
-    <div className="relative bg-[#0d121f] border-b border-gray-800/80 p-4 space-y-3 z-30">
-      {/* Invisible backdrop to dismiss dropdown when clicked outside */}
+    <div className="relative bg-white border-b border-slate-300 p-4 space-y-3.5 z-30 shadow-sm">
+      {/* Invisible backdrop to dismiss dropdown */}
       {activeDropdown && (
         <div
           className="fixed inset-0 z-30"
@@ -109,18 +109,18 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
         />
       )}
 
-      {/* Floor Filter Tabs for Room Selection */}
+      {/* Floor Filter Tabs */}
       <div className="flex items-center justify-between text-xs pb-1 relative z-20">
-        <span className="text-gray-400 font-medium">Filter Rooms by Floor:</span>
-        <div className="flex items-center gap-1 bg-[#131b2e] p-0.5 rounded-lg border border-gray-700/60">
+        <span className="text-slate-700 font-bold uppercase tracking-wider text-[11px]">Filter by Floor:</span>
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-300">
           {(['all', ...availableFloors] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilterFloor(f)}
-              className={`px-2 py-0.5 rounded font-medium text-xs transition ${
+              className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all ${
                 filterFloor === f
-                  ? 'bg-emerald-500 text-gray-950 font-bold shadow-sm'
-                  : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'text-slate-700 hover:text-slate-950 hover:bg-slate-200'
               }`}
             >
               {f === 'all' ? 'All' : f === 0 ? 'G' : `F${f}`}
@@ -129,43 +129,46 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
         </div>
       </div>
 
-      {/* Start and End Inputs with dedicated Swap Button */}
+      {/* Start and End Inputs */}
       <div className={`flex items-center gap-2 relative ${activeDropdown ? 'z-40' : 'z-20'}`}>
         <div className="flex-1 space-y-2">
           {/* Start Room Input */}
           <div className={`relative ${activeDropdown === 'start' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('start')}
-              className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2 focus-within:border-emerald-500 focus-within:ring-1 focus-within:ring-emerald-500/30 transition shadow-inner cursor-text"
+              className="sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all bg-white border border-slate-300"
             >
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-2 flex-shrink-0 shadow-sm shadow-emerald-400/50" />
-              <input
-                type="text"
-                placeholder="Start room (e.g. 201, 601)..."
-                value={startQuery !== '' ? startQuery : startNode ? `${startNode.label} (${startNode.floor === 0 ? 'Ground' : `Floor ${startNode.floor}`})` : ''}
-                onChange={(e) => {
-                  setStartQuery(e.target.value);
-                  onSelectStart(null);
-                  setActiveDropdown('start');
-                }}
-                onFocus={() => setActiveDropdown('start')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    if (filteredStartRooms.length > 0) {
-                      const sel = filteredStartRooms[0];
-                      onSelectStart(sel.id);
-                      setStartQuery('');
-                      setActiveDropdown(null);
-                      if (selectedEndId) {
-                        onCalculateRoute(sel.id, selectedEndId);
+              <span className="w-3 h-3 rounded-full bg-blue-600 mr-2.5 flex-shrink-0 shadow-sm shadow-blue-500/50" />
+              <div className="flex-1 flex flex-col min-w-0">
+                <span className="text-[10px] uppercase font-extrabold text-blue-700 tracking-wider leading-tight">Start Room</span>
+                <input
+                  type="text"
+                  placeholder="Select or enter room..."
+                  value={startQuery !== '' ? startQuery : startNode ? `${startNode.label} (${startNode.floor === 0 ? 'Ground' : `Floor ${startNode.floor}`})` : ''}
+                  onChange={(e) => {
+                    setStartQuery(e.target.value);
+                    onSelectStart(null);
+                    setActiveDropdown('start');
+                  }}
+                  onFocus={() => setActiveDropdown('start')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (filteredStartRooms.length > 0) {
+                        const sel = filteredStartRooms[0];
+                        onSelectStart(sel.id);
+                        setStartQuery('');
+                        setActiveDropdown(null);
+                        if (selectedEndId) {
+                          onCalculateRoute(sel.id, selectedEndId);
+                        }
                       }
+                    } else if (e.key === 'Escape') {
+                      setActiveDropdown(null);
                     }
-                  } else if (e.key === 'Escape') {
-                    setActiveDropdown(null);
-                  }
-                }}
-                className="bg-transparent text-xs text-white placeholder-gray-500 w-full focus:outline-none pr-1"
-              />
+                  }}
+                  className="bg-transparent text-sm text-slate-950 font-bold placeholder-slate-400 w-full focus:outline-none pr-1 truncate"
+                />
+              </div>
               {startNode || startQuery ? (
                 <button
                   type="button"
@@ -176,18 +179,18 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                     setActiveDropdown('start');
                   }}
                   title="Clear start room"
-                  className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition flex-shrink-0"
+                  className="p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition flex-shrink-0"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4 stroke-[2.5]" />
                 </button>
               ) : (
-                <ChevronDown className="w-3.5 h-3.5 text-gray-500 flex-shrink-0 pointer-events-none" />
+                <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0 pointer-events-none stroke-[2.5]" />
               )}
             </div>
 
             {/* Start Dropdown */}
             {activeDropdown === 'start' && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700 rounded-xl shadow-2xl z-50 divide-y divide-gray-800/80">
+              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-white border border-slate-300 rounded-xl shadow-xl z-50 divide-y divide-slate-100">
                 {filteredStartRooms.length > 0 ? (
                   filteredStartRooms.map((room) => {
                     const isSelected = room.id === selectedStartId;
@@ -204,31 +207,31 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                             onCalculateRoute(room.id, selectedEndId);
                           }
                         }}
-                        className={`w-full text-left px-3 py-2.5 flex items-center justify-between text-xs transition ${
+                        className={`w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs font-semibold transition ${
                           isSelected
-                            ? 'bg-emerald-950/60 text-emerald-300 font-semibold border-l-2 border-emerald-500'
-                            : 'hover:bg-[#1c2742] text-gray-200'
+                            ? 'bg-blue-50 text-blue-800 font-bold border-l-4 border-blue-600'
+                            : 'hover:bg-slate-50 text-slate-800'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 min-w-0 pr-2">
-                          {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />}
-                          <span className={`truncate ${isSelected ? 'text-emerald-300 font-semibold' : 'text-white'}`}>
+                          {isSelected && <Check className="w-4 h-4 text-blue-600 flex-shrink-0 stroke-[2.5]" />}
+                          <span className={`truncate ${isSelected ? 'text-blue-900 font-extrabold' : 'text-slate-900'}`}>
                             {room.label}
                           </span>
                           {showSecondary && (
-                            <span className="text-gray-400 text-[11px] flex-shrink-0">
+                            <span className="text-slate-500 text-[11px] flex-shrink-0">
                               (Room {room.roomNumber})
                             </span>
                           )}
                         </div>
-                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-emerald-400 font-mono text-[10px] border border-emerald-500/30 flex-shrink-0">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono font-bold text-[10px] border border-slate-300 flex-shrink-0">
                           {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
                         </span>
                       </button>
                     );
                   })
                 ) : (
-                  <div className="p-3 text-center text-xs text-gray-500">No rooms found matching "{startQuery}"</div>
+                  <div className="p-3.5 text-center text-xs text-slate-500 font-semibold">No rooms found matching "{startQuery}"</div>
                 )}
               </div>
             )}
@@ -238,36 +241,39 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
           <div className={`relative ${activeDropdown === 'end' ? 'z-50' : 'z-20'}`}>
             <div
               onClick={() => setActiveDropdown('end')}
-              className="flex items-center bg-[#131b2e] border border-gray-700/80 rounded-xl px-3 py-2 focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500/30 transition shadow-inner cursor-text"
+              className="sharp-input flex items-center rounded-xl px-3.5 py-2.5 cursor-text transition-all bg-white border border-slate-300"
             >
-              <MapPin className="w-3.5 h-3.5 text-cyan-400 mr-2 flex-shrink-0" />
-              <input
-                type="text"
-                placeholder="Destination room (e.g. 603, 701)..."
-                value={endQuery !== '' ? endQuery : endNode ? `${endNode.label} (${endNode.floor === 0 ? 'Ground' : `Floor ${endNode.floor}`})` : ''}
-                onChange={(e) => {
-                  setEndQuery(e.target.value);
-                  onSelectEnd(null);
-                  setActiveDropdown('end');
-                }}
-                onFocus={() => setActiveDropdown('end')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    if (filteredEndRooms.length > 0) {
-                      const sel = filteredEndRooms[0];
-                      onSelectEnd(sel.id);
-                      setEndQuery('');
-                      setActiveDropdown(null);
-                      if (selectedStartId) {
-                        onCalculateRoute(selectedStartId, sel.id);
+              <MapPin className="w-4 h-4 text-orange-600 mr-2.5 flex-shrink-0 stroke-[2.2]" />
+              <div className="flex-1 flex flex-col min-w-0">
+                <span className="text-[10px] uppercase font-extrabold text-orange-700 tracking-wider leading-tight">Destination</span>
+                <input
+                  type="text"
+                  placeholder="Select or enter destination..."
+                  value={endQuery !== '' ? endQuery : endNode ? `${endNode.label} (${endNode.floor === 0 ? 'Ground' : `Floor ${endNode.floor}`})` : ''}
+                  onChange={(e) => {
+                    setEndQuery(e.target.value);
+                    onSelectEnd(null);
+                    setActiveDropdown('end');
+                  }}
+                  onFocus={() => setActiveDropdown('end')}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      if (filteredEndRooms.length > 0) {
+                        const sel = filteredEndRooms[0];
+                        onSelectEnd(sel.id);
+                        setEndQuery('');
+                        setActiveDropdown(null);
+                        if (selectedStartId) {
+                          onCalculateRoute(selectedStartId, sel.id);
+                        }
                       }
+                    } else if (e.key === 'Escape') {
+                      setActiveDropdown(null);
                     }
-                  } else if (e.key === 'Escape') {
-                    setActiveDropdown(null);
-                  }
-                }}
-                className="bg-transparent text-xs text-white placeholder-gray-500 w-full focus:outline-none pr-1"
-              />
+                  }}
+                  className="bg-transparent text-sm text-slate-950 font-bold placeholder-slate-400 w-full focus:outline-none pr-1 truncate"
+                />
+              </div>
               {endNode || endQuery ? (
                 <button
                   type="button"
@@ -278,18 +284,18 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                     setActiveDropdown('end');
                   }}
                   title="Clear destination room"
-                  className="p-1 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition flex-shrink-0"
+                  className="p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition flex-shrink-0"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4 stroke-[2.5]" />
                 </button>
               ) : (
-                <ChevronDown className="w-3.5 h-3.5 text-gray-500 flex-shrink-0 pointer-events-none" />
+                <ChevronDown className="w-4 h-4 text-slate-500 flex-shrink-0 pointer-events-none stroke-[2.5]" />
               )}
             </div>
 
             {/* Destination Dropdown */}
             {activeDropdown === 'end' && (
-              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-[#131b2e] border border-gray-700 rounded-xl shadow-2xl z-50 divide-y divide-gray-800/80">
+              <div className="absolute top-full left-0 right-0 mt-1.5 max-h-56 overflow-y-auto bg-white border border-slate-300 rounded-xl shadow-xl z-50 divide-y divide-slate-100">
                 {filteredEndRooms.length > 0 ? (
                   filteredEndRooms.map((room) => {
                     const isSelected = room.id === selectedEndId;
@@ -306,63 +312,63 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
                             onCalculateRoute(selectedStartId, room.id);
                           }
                         }}
-                        className={`w-full text-left px-3 py-2.5 flex items-center justify-between text-xs transition ${
+                        className={`w-full text-left px-3.5 py-2.5 flex items-center justify-between text-xs font-semibold transition ${
                           isSelected
-                            ? 'bg-cyan-950/60 text-cyan-300 font-semibold border-l-2 border-cyan-500'
-                            : 'hover:bg-[#1c2742] text-gray-200'
+                            ? 'bg-orange-50 text-orange-800 font-bold border-l-4 border-orange-500'
+                            : 'hover:bg-slate-50 text-slate-800'
                         }`}
                       >
                         <div className="flex items-center gap-1.5 min-w-0 pr-2">
-                          {isSelected && <Check className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />}
-                          <span className={`truncate ${isSelected ? 'text-cyan-300 font-semibold' : 'text-white'}`}>
+                          {isSelected && <Check className="w-4 h-4 text-orange-600 flex-shrink-0 stroke-[2.5]" />}
+                          <span className={`truncate ${isSelected ? 'text-orange-950 font-extrabold' : 'text-slate-900'}`}>
                             {room.label}
                           </span>
                           {showSecondary && (
-                            <span className="text-gray-400 text-[11px] flex-shrink-0">
+                            <span className="text-slate-500 text-[11px] flex-shrink-0">
                               (Room {room.roomNumber})
                             </span>
                           )}
                         </div>
-                        <span className="px-1.5 py-0.5 rounded bg-gray-800 text-cyan-400 font-mono text-[10px] border border-cyan-500/30 flex-shrink-0">
+                        <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-800 font-mono font-bold text-[10px] border border-slate-300 flex-shrink-0">
                           {room.floor === 0 ? 'Ground' : `Floor ${room.floor}`}
                         </span>
                       </button>
                     );
                   })
                 ) : (
-                  <div className="p-3 text-center text-xs text-gray-500">No rooms found matching "{endQuery}"</div>
+                  <div className="p-3.5 text-center text-xs text-slate-500 font-semibold">No rooms found matching "{endQuery}"</div>
                 )}
               </div>
             )}
           </div>
         </div>
 
-        {/* Dedicated Swap Button */}
+        {/* Swap Button */}
         <button
           type="button"
           onClick={handleSwap}
           title="Swap start & destination rooms"
-          className="p-3 rounded-xl bg-[#131b2e] hover:bg-[#1c2742] active:scale-95 border border-gray-700/80 hover:border-emerald-500/40 text-gray-300 hover:text-emerald-400 transition shadow-md flex items-center justify-center self-stretch flex-shrink-0"
+          className="p-3 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 border border-slate-300 text-slate-800 hover:text-blue-600 transition shadow-sm flex items-center justify-center self-stretch flex-shrink-0"
         >
-          <ArrowUpDown className="w-4 h-4" />
+          <ArrowUpDown className="w-5 h-5 stroke-[2.2]" />
         </button>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2 relative z-10">
+      <div className="flex gap-2 relative z-10 pt-1">
         <button
           onClick={() => onCalculateRoute()}
           disabled={!selectedStartId || !selectedEndId}
-          className="flex-1 py-2.5 px-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2 transition"
+          className="flex-1 py-3 px-4 sharp-btn-royal font-extrabold text-sm rounded-xl flex items-center justify-center gap-2 tracking-wide shadow-md"
         >
-          <Navigation className="w-4 h-4" />
+          <Navigation className="w-4 h-4 fill-white stroke-white" />
           <span>Find Route</span>
         </button>
 
         {(selectedStartId || selectedEndId) && (
           <button
             onClick={handleClearAll}
-            className="px-3.5 py-2.5 bg-[#131b2e] hover:bg-[#1a2337] text-gray-300 text-xs font-medium rounded-xl border border-gray-700/80 transition"
+            className="px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl border border-slate-300 transition"
           >
             Clear
           </button>
@@ -370,22 +376,22 @@ export const RouteSelector: React.FC<RouteSelectorProps> = ({
       </div>
 
       {/* Quick Route Presets */}
-      <div className="pt-2 border-t border-gray-800/80 relative z-10">
-        <div className="flex items-center gap-1.5 text-[11px] text-gray-400 mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-          <span className="font-semibold uppercase tracking-wider text-[10px]">Quick Room Presets:</span>
+      <div className="pt-2 border-t border-slate-200 relative z-10">
+        <div className="flex items-center gap-1.5 text-xs text-slate-700 font-extrabold mb-2 uppercase tracking-wider">
+          <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+          <span>Quick Presets:</span>
         </div>
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="grid grid-cols-2 gap-2">
           {presets.map((preset, idx) => (
             <button
               key={idx}
               onClick={() => handleSelectPreset(preset.from, preset.to)}
-              className="px-2.5 py-2 rounded-xl bg-[#131b2e] hover:bg-[#1c2742] border border-gray-700/60 hover:border-emerald-500/40 text-left text-xs transition shadow-sm group"
+              className="sharp-card px-3 py-2.5 rounded-xl text-left text-xs transition border border-slate-200 hover:border-blue-500 bg-white group shadow-sm"
             >
-              <div className="font-semibold text-gray-200 group-hover:text-emerald-300 truncate transition">
+              <div className="font-extrabold text-slate-900 group-hover:text-blue-600 truncate transition">
                 {preset.label}
               </div>
-              <div className="text-[10px] text-emerald-400/80 mt-0.5">{preset.desc}</div>
+              <div className="text-[11px] text-blue-600 font-bold mt-0.5">{preset.desc}</div>
             </button>
           ))}
         </div>

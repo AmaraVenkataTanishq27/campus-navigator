@@ -3,17 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #0a0e17;
-  --bg-surface: #111827;
-  --bg-card: #1f2937;
-  --bg-hover: #374151;
-  --border-color: #374151;
-  --accent-emerald: #10b981;
-  --accent-cyan: #06b6d4;
-  --accent-blue: #3b82f6;
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --bg-primary: #F6F3ED;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --border-color: #CBD5E1;
+  --accent-royal: #2563EB;
+  --accent-cyan: #0284C7;
 }
 
 * {
@@ -25,7 +23,7 @@ body {
   padding: 0;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden;
   height: 100vh;
   width: 100vw;
@@ -37,6 +35,60 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
+  color: #0F172A;
+}
+
+/* Sharp Card & Panel Styling */
+.sharp-panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid #CBD5E1;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+}
+
+.sharp-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+  transition: all 0.2s ease;
+}
+
+.sharp-card:hover {
+  border-color: #2563EB;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+.sharp-input {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  color: #0F172A;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+
+.sharp-input:focus-within {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.sharp-btn-royal {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s ease;
+}
+
+.sharp-btn-royal:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+  transform: translateY(-1px);
+}
+
+.sharp-btn-royal:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* Custom Scrollbar */
@@ -45,74 +97,37 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(17, 24, 39, 0.6);
+  background: #F1EFEA;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(75, 85, 99, 0.7);
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(107, 114, 128, 0.9);
+  background: #94A3B8;
 }
 
-/* Animations */
-@keyframes beacon-pulse {
+/* Concentric Beacon rings */
+@keyframes beaconRings {
   0% {
-    r: 12;
-    transform: scale(0.6);
-    opacity: 0.95;
-    stroke-width: 4;
+    r: 14;
+    opacity: 0.9;
+    stroke-width: 3.5;
   }
   50% {
-    r: 28;
-    transform: scale(1.1);
-    opacity: 0.45;
-    stroke-width: 2.5;
+    r: 30;
+    opacity: 0.4;
+    stroke-width: 2;
   }
   100% {
-    r: 40;
-    transform: scale(1.6);
+    r: 44;
     opacity: 0;
     stroke-width: 1;
   }
 }
 
-.beacon-ring {
-  animation: beacon-pulse 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+.beacon-ring-sharp {
+  animation: beaconRings 2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
   transform-box: fill-box;
   transform-origin: center;
-}
-
-@keyframes dash-animation {
-  to {
-    stroke-dashoffset: -40;
-  }
-}
-
-.route-poly-dash {
-  stroke-dasharray: 10, 8;
-  animation: dash-animation 1.5s linear infinite;
-}
-
-/* Glassmorphism surfaces */
-.glass-panel {
-  background: rgba(17, 24, 39, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.glass-card {
-  background: rgba(31, 41, 55, 0.65);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.glass-card:hover {
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-/* Custom transitions */
-.smooth-transition {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -94,7 +94,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     return Math.sqrt(dx * dx + dy * dy);
   };
 
-  // Handle Drag / Pan & Pinch Zoom (Touch for mobile / tablet)
+  // Handle Touch
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       setIsDragging(true);
@@ -158,7 +158,7 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     }
   };
 
-  // Center / Reset View
+  // Reset to Fit
   const handleResetView = () => {
     if (containerRef.current) {
       const { clientWidth, clientHeight } = containerRef.current;
@@ -171,14 +171,39 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     }
   };
 
-  // Filter path nodes on current floor
   const floorNodes = Object.entries(graph.nodes).filter(([_, node]) => node.floor === currentFloor);
 
-  // Build SVG path segments for the current floor
+  // Build continuous SVG path data strings (M x y L x y ...) for the current floor
+  const currentFloorSvgPaths = React.useMemo(() => {
+    if (!routeResult || routeResult.pathNodeIds.length < 2) return [];
+
+    const paths: string[] = [];
+    let currentSegment: { x: number; y: number }[] = [];
+
+    for (let i = 0; i < routeResult.pathNodeIds.length; i++) {
+      const node = graph.nodes[routeResult.pathNodeIds[i]];
+      if (node && node.floor === currentFloor) {
+        currentSegment.push({ x: node.x, y: node.y });
+      } else {
+        if (currentSegment.length >= 2) {
+          paths.push('M ' + currentSegment.map((p) => `${p.x} ${p.y}`).join(' L '));
+        }
+        currentSegment = [];
+      }
+    }
+
+    if (currentSegment.length >= 2) {
+      paths.push('M ' + currentSegment.map((p) => `${p.x} ${p.y}`).join(' L '));
+    }
+
+    return paths;
+  }, [routeResult, currentFloor, graph]);
+
+  // Fallback pairwise segments
   const currentFloorPathSegments = React.useMemo(() => {
     if (!routeResult || routeResult.pathNodeIds.length < 2) return [];
 
-    const segments: { p1: { x: number; y: number }; p2: { x: number; y: number }; isVertical: boolean }[] = [];
+    const segments: { p1: { x: number; y: number }; p2: { x: number; y: number } }[] = [];
     const ids = routeResult.pathNodeIds;
 
     for (let i = 0; i < ids.length - 1; i++) {
@@ -188,19 +213,14 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       if (n1 && n2 && n1.floor === currentFloor && n2.floor === currentFloor) {
         segments.push({
           p1: { x: n1.x, y: n1.y },
-          p2: { x: n2.x, y: n2.y },
-          isVertical: false
+          p2: { x: n2.x, y: n2.y }
         });
       }
     }
     return segments;
   }, [routeResult, currentFloor, graph]);
 
-  // Hide extra intermediate nodes and only show:
-  // 1. Start room (on its floor)
-  // 2. Floor transition departure (where leaving current floor)
-  // 3. Floor transition arrival (where entering current floor)
-  // 4. Destination room (on its floor)
+  // Key Milestones visible: Start, Floor Transition Departure/Arrival, Destination
   const visibleKeyNodeIds = React.useMemo(() => {
     if (!routeResult || routeResult.pathNodeIds.length === 0) {
       return new Set<string>();
@@ -245,21 +265,21 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onWheel={handleWheel}
-      className="relative flex-1 h-full w-full bg-[#0a0e17] overflow-hidden cursor-grab active:cursor-grabbing select-none"
+      className="relative flex-1 h-full w-full bg-[#EAE5DC] overflow-hidden cursor-grab active:cursor-grabbing select-none"
     >
-      {/* Sidebar toggle button (floating on map) */}
+      {/* Sidebar toggle button */}
       <button
         onClick={onToggleSidebar}
         title={sidebarOpen ? 'Collapse sidebar' : 'Open navigation sidebar'}
-        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-[#0d121f]/90 hover:bg-gray-800 text-gray-200 border border-gray-700/80 shadow-xl backdrop-blur-md transition"
+        className="absolute top-4 left-4 z-20 p-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 shadow-md transition"
       >
-        {sidebarOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+        {sidebarOpen ? <ChevronLeft className="w-5 h-5 stroke-[2.5]" /> : <ChevronRight className="w-5 h-5 stroke-[2.5]" />}
       </button>
 
-      {/* Floating Floor Selector Tabs */}
-      <div className="absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1 rounded-xl bg-[#0d121f]/90 border border-gray-700/80 shadow-xl backdrop-blur-md">
-        <span className="text-xs text-gray-400 px-2 font-medium flex items-center gap-1">
-          <Layers className="w-3.5 h-3.5 text-emerald-400" /> Floor:
+      {/* Floating Floor Selector Dock */}
+      <div className="absolute top-4 left-16 z-20 flex items-center gap-1.5 p-1.5 rounded-xl bg-white border border-slate-300 shadow-md">
+        <span className="text-xs text-slate-800 px-2 font-black flex items-center gap-1.5">
+          <Layers className="w-4 h-4 text-blue-600 stroke-[2.5]" /> Floor:
         </span>
         {availableFloors.map((floor) => {
           const isActive = floor === currentFloor;
@@ -267,10 +287,10 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
             <button
               key={floor}
               onClick={() => onFloorChange(floor)}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all ${
+              className={`px-3 py-1.5 text-xs font-black rounded-lg transition-all ${
                 isActive
-                  ? 'bg-emerald-500 text-gray-950 font-bold shadow-md shadow-emerald-500/30'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-800'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'text-slate-800 hover:text-slate-950 hover:bg-slate-100'
               }`}
             >
               {floor === 0 ? 'G' : `F${floor}`}
@@ -278,34 +298,34 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           );
         })}
         {routeResult && (
-          <span className="text-[10px] px-2 py-0.5 ml-1 rounded-full bg-emerald-500/20 text-emerald-300 font-medium border border-emerald-500/30 hidden sm:inline-block">
+          <span className="text-xs px-2.5 py-1 ml-1 rounded-full bg-blue-100 text-blue-800 font-extrabold border border-blue-300 hidden sm:inline-block">
             Active Route
           </span>
         )}
       </div>
 
       {/* Zoom / Viewport Controls */}
-      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-[#0d121f]/90 p-1.5 rounded-xl border border-gray-700/80 shadow-2xl backdrop-blur-md">
+      <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-1.5 bg-white p-1.5 rounded-xl border border-slate-300 shadow-xl">
         <button
           onClick={() => setScale((s) => Math.min(s * 1.2, 4.0))}
           title="Zoom In"
-          className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white transition"
+          className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
         >
-          <ZoomIn className="w-4 h-4" />
+          <ZoomIn className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={() => setScale((s) => Math.max(s * 0.8, 0.25))}
           title="Zoom Out"
-          className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white transition"
+          className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
         >
-          <ZoomOut className="w-4 h-4" />
+          <ZoomOut className="w-4 h-4 stroke-[2.5]" />
         </button>
         <button
           onClick={handleResetView}
           title="Reset to Fit"
-          className="p-2 rounded-lg hover:bg-gray-800 text-gray-300 hover:text-white transition"
+          className="p-2 rounded-lg hover:bg-slate-100 text-slate-800 hover:text-slate-950 transition"
         >
-          <Maximize2 className="w-4 h-4" />
+          <Maximize2 className="w-4 h-4 stroke-[2.5]" />
         </button>
         {currentMilestone && currentMilestone.floor === currentFloor && (
           <button
@@ -319,9 +339,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
               }
             }}
             title="Focus Current Milestone"
-            className="p-2 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 transition"
+            className="p-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-300 transition shadow-sm"
           >
-            <Crosshair className="w-4 h-4" />
+            <Crosshair className="w-4 h-4 stroke-[2.5]" />
           </button>
         )}
       </div>
@@ -342,10 +362,9 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           src={floorMeta.planImage}
           alt={`Floor Plan ${currentFloor}`}
           style={{ width: `${imgWidth}px`, height: `${imgHeight}px` }}
-          className="absolute top-0 left-0 pointer-events-none select-none rounded-lg shadow-2xl object-cover"
+          className="absolute top-0 left-0 pointer-events-none select-none rounded-xl shadow-2xl object-cover bg-white"
           draggable={false}
           onError={(e) => {
-            // Fallback placeholder if image load fails
             (e.target as HTMLElement).style.display = 'none';
           }}
         />
@@ -357,45 +376,98 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
           className="absolute top-0 left-0 pointer-events-none"
         >
           <defs>
-            {/* Glowing filter for active path */}
-            <filter id="routeGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#10b981" floodOpacity="0.8" />
+            {/* Balanced Ambient Glow Filter (Middle brightness: comfortable, luminous, no harsh glare) */}
+            <filter id="balancedRouteGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#3B82F6" floodOpacity="0.4" />
             </filter>
-            <filter id="beaconGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="0" stdDeviation="8" floodColor="#06b6d4" floodOpacity="0.9" />
+
+            {/* Start Beacon filter */}
+            <filter id="beaconGlowSharp" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#2563EB" floodOpacity="0.6" />
             </filter>
           </defs>
 
-          {/* Drawn Polyline Segments */}
-          {currentFloorPathSegments.map((seg, idx) => (
-            <g key={`path-${idx}`}>
-              {/* Outer path glow */}
-              <line
-                x1={seg.p1.x}
-                y1={seg.p1.y}
-                x2={seg.p2.x}
-                y2={seg.p2.y}
-                stroke="#10b981"
-                strokeWidth="12"
-                strokeOpacity="0.5"
+          {/* CONTINUOUS NEON ROUTE TUBE (Middle brightness: 4.8px rich royal cobalt body, soft luminous aura, no white-hot burnout, no dark rails) */}
+          {currentFloorSvgPaths.map((dPath, idx) => (
+            <g key={`neon-path-${idx}`}>
+              {/* Layer 1: Ambient Colored Glow Aura (Soft, diffused cobalt glow) */}
+              <path
+                d={dPath}
+                fill="none"
+                stroke="#3B82F6"
+                strokeWidth="9"
                 strokeLinecap="round"
-                filter="url(#routeGlow)"
+                strokeLinejoin="round"
+                strokeOpacity="0.28"
+                filter="url(#balancedRouteGlow)"
               />
-              {/* Core animated dashed path */}
-              <line
-                x1={seg.p1.x}
-                y1={seg.p1.y}
-                x2={seg.p2.x}
-                y2={seg.p2.y}
-                stroke="#34d399"
-                strokeWidth="5"
+
+              {/* Layer 2: Core Rich Royal Blue Path (Balanced middle tone, vivid and crisp) */}
+              <path
+                d={dPath}
+                fill="none"
+                stroke="#2563EB"
+                strokeWidth="4.8"
                 strokeLinecap="round"
-                className="route-poly-dash"
+                strokeLinejoin="round"
+                strokeOpacity="0.95"
+              />
+
+              {/* Layer 3: Soft Luminous Core Highlight (Gentle sky-blue, not blinding white) */}
+              <path
+                d={dPath}
+                fill="none"
+                stroke="#93C5FD"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeOpacity="0.6"
               />
             </g>
           ))}
 
-          {/* Node Markers & Room Badges (Only Key Milestones: Start, Floor Transition, Destination) */}
+          {/* Fallback line segments */}
+          {currentFloorSvgPaths.length === 0 &&
+            currentFloorPathSegments.map((seg, idx) => (
+              <g key={`fallback-seg-${idx}`}>
+                <line
+                  x1={seg.p1.x}
+                  y1={seg.p1.y}
+                  x2={seg.p2.x}
+                  y2={seg.p2.y}
+                  stroke="#3B82F6"
+                  strokeWidth="9"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeOpacity="0.28"
+                  filter="url(#balancedRouteGlow)"
+                />
+                <line
+                  x1={seg.p1.x}
+                  y1={seg.p1.y}
+                  x2={seg.p2.x}
+                  y2={seg.p2.y}
+                  stroke="#2563EB"
+                  strokeWidth="4.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeOpacity="0.95"
+                />
+                <line
+                  x1={seg.p1.x}
+                  y1={seg.p1.y}
+                  x2={seg.p2.x}
+                  y2={seg.p2.y}
+                  stroke="#93C5FD"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeOpacity="0.6"
+                />
+              </g>
+            ))}
+
+          {/* Key Milestone Nodes: Start, Floor Transition Departure/Arrival, Destination */}
           {floorNodes
             .filter(([nodeId]) => visibleKeyNodeIds.has(nodeId))
             .map(([nodeId, node]) => {
@@ -424,69 +496,83 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
                     }
                   }}
                 >
-                  {/* Active pulsating beacon rings for current milestone */}
-                  {isCurrentMilestone && (
+                  {/* Concentric pulsing beacon rings for active/start */}
+                  {(isCurrentMilestone || isStart) && (
                     <>
                       <circle
                         cx={node.x}
                         cy={node.y}
                         r="18"
                         fill="none"
-                        stroke="#06b6d4"
-                        className="beacon-ring"
-                        filter="url(#beaconGlow)"
+                        stroke={isDest ? '#EF4444' : '#2563EB'}
+                        className="beacon-ring-sharp"
+                        filter="url(#beaconGlowSharp)"
                       />
                       <circle
                         cx={node.x}
                         cy={node.y}
                         r="32"
                         fill="none"
-                        stroke="#10b981"
-                        className="beacon-ring"
-                        filter="url(#beaconGlow)"
+                        stroke={isDest ? '#F97316' : '#60A5FA'}
+                        className="beacon-ring-sharp"
+                        filter="url(#beaconGlowSharp)"
                         style={{ animationDelay: '0.6s' }}
                       />
                     </>
                   )}
 
-                  {/* Base Node Circle */}
+                  {/* Destination pulsing radar ring */}
+                  {isDest && (
+                    <circle
+                      cx={node.x}
+                      cy={node.y}
+                      r="44"
+                      fill="none"
+                      stroke="#EF4444"
+                      className="beacon-ring-sharp"
+                      style={{ animationDelay: '1s' }}
+                    />
+                  )}
+
+                  {/* Node Outer Circle with Soft Glow */}
                   <circle
                     cx={node.x}
                     cy={node.y}
-                    r={isStart || isDest ? 16 : 13}
-                    fill={
-                      isDest
-                        ? '#06b6d4'
-                        : isStart
-                        ? '#10b981'
-                        : isCurrentMilestone
-                        ? '#f59e0b'
-                        : '#38bdf8'
-                    }
-                    stroke="#ffffff"
+                    r={isStart || isDest ? 14 : 11}
+                    fill={isDest ? '#DC2626' : isStart ? '#2563EB' : '#1D4ED8'}
+                    stroke="#FFFFFF"
                     strokeWidth={3}
+                    filter="url(#balancedRouteGlow)"
                   />
 
-                  {/* Node Pill Label */}
-                  <g transform={`translate(${node.x}, ${node.y - 22})`}>
+                  {/* Center Core Dot */}
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={isStart || isDest ? 5 : 4}
+                    fill="#FFFFFF"
+                  />
+
+                  {/* High-Contrast Bold Label Tag (Elevated above circle to prevent overlapping) */}
+                  <g transform={`translate(${node.x}, ${node.y - 32})`}>
                     <rect
-                      x={-((pillText.length * 7.5 + 20) / 2)}
-                      y="-13"
-                      width={pillText.length * 7.5 + 20}
-                      height="24"
-                      rx="12"
-                      fill={isCurrentMilestone ? '#06b6d4' : isStart ? '#064e3b' : isDest ? '#083344' : '#1e293b'}
-                      fillOpacity={0.95}
-                      stroke={isCurrentMilestone ? '#38bdf8' : isStart ? '#10b981' : isDest ? '#06b6d4' : '#64748b'}
+                      x={-((pillText.length * 8 + 24) / 2)}
+                      y="-14"
+                      width={pillText.length * 8 + 24}
+                      height="26"
+                      rx="13"
+                      fill="#0F172A"
+                      stroke={isDest ? '#EF4444' : isStart ? '#38BDF8' : '#60A5FA'}
                       strokeWidth="2"
+                      filter="url(#balancedRouteGlow)"
                     />
                     <text
                       textAnchor="middle"
-                      y="3"
-                      fill="#ffffff"
+                      y="4"
+                      fill="#FFFFFF"
                       fontSize="11"
-                      fontWeight="bold"
-                      fontFamily="system-ui, sans-serif"
+                      fontWeight="800"
+                      fontFamily="'Plus Jakarta Sans', system-ui, sans-serif"
                     >
                       {pillText}
                     </text>
