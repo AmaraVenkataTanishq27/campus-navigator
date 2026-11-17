@@ -1,0 +1,98 @@
+[
+  {
+    "id": "AB_FLOOR_G",
+    "buildingId": "academic-block",
+    "level": "G",
+    "floorNumber": 0,
+    "name": "Ground Floor",
+    "description": "Main entrance, reception, atrium, security desk",
+    "status": "pending_reference",
+    "referenceAsset": null,
+    "hasInteractiveMap": false,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_1",
+    "buildingId": "academic-block",
+    "level": "1",
+    "floorNumber": 1,
+    "name": "1st Floor",
+    "description": "First academic tier, seminar halls",
+    "status": "pending_reference",
+    "referenceAsset": null,
+    "hasInteractiveMap": false,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_2",
+    "buildingId": "academic-block",
+    "level": "2",
+    "floorNumber": 2,
+    "name": "2nd Floor (Administration)",
+    "description": "Administrative offices, Evaluation Center, Admission, Proctor Office, NSS & EPFO",
+    "status": "pending_verification",
+    "referenceAsset": "assets/floor-plans/reference/administration-plan.jpeg",
+    "hasInteractiveMap": true,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_3",
+    "buildingId": "academic-block",
+    "level": "3",
+    "floorNumber": 3,
+    "name": "3rd Floor (MCA Block)",
+    "description": "MCA Department, Classrooms, MCA Computer Lab, Skill Lab, MCA Library, Evaluation Center-2",
+    "status": "pending_verification",
+    "referenceAsset": "assets/floor-plans/reference/mca-plan.jpeg",
+    "hasInteractiveMap": true,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_4",
+    "buildingId": "academic-block",
+    "level": "4",
+    "floorNumber": 4,
+    "name": "4th Floor",
+    "description": "Undergraduate lecture rooms",
+    "status": "pending_reference",
+    "referenceAsset": null,
+    "hasInteractiveMap": false,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_5",
+    "buildingId": "academic-block",
+    "level": "5",
+    "floorNumber": 5,
+    "name": "5th Floor",
+    "description": "Academic lecture rooms AB 501 to AB 516",
+    "status": "verified",
+    "referenceAsset": "assets/floor-plans/reference/ab-5th-floor-plan.jpeg",
+    "hasInteractiveMap": true,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_6",
+    "buildingId": "academic-block",
+    "level": "6",
+    "floorNumber": 6,
+    "name": "6th Floor",
+    "description": "Lecture rooms AB 601-611, Physics Labs, and Executive Board Room",
+    "status": "verified",
+    "referenceAsset": "assets/floor-plans/reference/ab-6th-floor-plan.jpeg",
+    "hasInteractiveMap": true,
+    "dimensions": { "width": 1600, "height": 1515 }
+  },
+  {
+    "id": "AB_FLOOR_7",
+    "buildingId": "academic-block",
+    "level": "7",
+    "floorNumber": 7,
+    "name": "7th Floor",
+    "description": "Department of Humanities, Department of Mathematics, Staff Libraries, Computer Labs, Apex Library",
+    "status": "verified",
+    "referenceAsset": "assets/floor-plans/reference/ab-7th-floor-plan.jpeg",
+    "hasInteractiveMap": true,
+    "dimensions": { "width": 1600, "height": 1515 }
+  }
+]

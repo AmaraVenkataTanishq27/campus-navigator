@@ -1,0 +1,72 @@
+[
+  {
+    "qrCode": "AB_F6_ENTRANCE_01",
+    "name": "Main Entrance Lobby (Floor 6)",
+    "buildingId": "academic-block",
+    "floorLevel": "6",
+    "nodeId": "AB_F6_ENTRANCE_MAIN",
+    "coordinates": { "x": 1120, "y": 1100 },
+    "description": "Floor 6 primary elevator & stair entrance lobby facing southeast skybridge corridor.",
+    "status": "verified"
+  },
+  {
+    "qrCode": "AB_F6_CORRIDOR_01",
+    "name": "North Corridor Junction (AB 608)",
+    "buildingId": "academic-block",
+    "floorLevel": "6",
+    "nodeId": "AB_F6_CORR_N4",
+    "coordinates": { "x": 1040, "y": 300 },
+    "description": "Outside classroom AB 608 door along the North Corridor.",
+    "status": "verified"
+  },
+  {
+    "qrCode": "AB_F6_LIFT_01",
+    "name": "Southeast Elevator Lobby (Floor 6)",
+    "buildingId": "academic-block",
+    "floorLevel": "6",
+    "nodeId": "AB_F6_LIFT_SE",
+    "coordinates": { "x": 1120, "y": 940 },
+    "description": "Wall plaque next to the Southeast dual elevator call buttons.",
+    "status": "verified"
+  },
+  {
+    "qrCode": "AB_F6_STAIRS_01",
+    "name": "Southeast Staircase Landing (Floor 6)",
+    "buildingId": "academic-block",
+    "floorLevel": "6",
+    "nodeId": "AB_F6_STAIRS_SE",
+    "coordinates": { "x": 1260, "y": 950 },
+    "description": "Stairwell door threshold on Floor 6.",
+    "status": "verified"
+  },
+  {
+    "qrCode": "AB_F6_PHY_01",
+    "name": "Physics Laboratory Entry (West)",
+    "buildingId": "academic-block",
+    "floorLevel": "6",
+    "nodeId": "AB_F6_NODE_DOOR_PHY_W",
+    "coordinates": { "x": 280, "y": 435 },
+    "description": "Outside door of Physics Lab on West Corridor.",
+    "status": "verified"
+  },
+  {
+    "qrCode": "AB_F5_ENTRANCE_01",
+    "name": "Southeast Lobby (Floor 5)",
+    "buildingId": "academic-block",
+    "floorLevel": "5",
+    "nodeId": "AB_F5_CORR_SE_JUNCTION",
+    "coordinates": { "x": 1120, "y": 1130 },
+    "description": "Floor 5 primary elevator & stair entrance lobby.",
+    "status": "verified"
+  },
+  {
+    "qrCode": "AB_F7_ENTRANCE_01",
+    "name": "Southeast Lobby (Floor 7)",
+    "buildingId": "academic-block",
+    "floorLevel": "7",
+    "nodeId": "AB_F7_CORR_SE_JUNCTION",
+    "coordinates": { "x": 1120, "y": 1130 },
+    "description": "Floor 7 primary entrance leading to Apex Library & Mathematics Dept.",
+    "status": "verified"
+  }
+]
