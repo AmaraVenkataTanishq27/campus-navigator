@@ -196,6 +196,44 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
     return segments;
   }, [routeResult, currentFloor, graph]);
 
+  // Hide extra intermediate nodes and only show:
+  // 1. Start room (on its floor)
+  // 2. Floor transition departure (where leaving current floor)
+  // 3. Floor transition arrival (where entering current floor)
+  // 4. Destination room (on its floor)
+  const visibleKeyNodeIds = React.useMemo(() => {
+    if (!routeResult || routeResult.pathNodeIds.length === 0) {
+      return new Set<string>();
+    }
+
+    const keyIds = new Set<string>();
+    const path = routeResult.pathNodeIds;
+    const startId = path[0];
+    const destId = path[path.length - 1];
+
+    if (graph.nodes[startId]?.floor === currentFloor) {
+      keyIds.add(startId);
+    }
+    if (graph.nodes[destId]?.floor === currentFloor) {
+      keyIds.add(destId);
+    }
+
+    for (let i = 0; i < path.length - 1; i++) {
+      const u = graph.nodes[path[i]];
+      const v = graph.nodes[path[i + 1]];
+      if (u && v && u.floor !== v.floor) {
+        if (u.floor === currentFloor) {
+          keyIds.add(path[i]);
+        }
+        if (v.floor === currentFloor) {
+          keyIds.add(path[i + 1]);
+        }
+      }
+    }
+
+    return keyIds;
+  }, [routeResult, currentFloor, graph]);
+
   return (
     <div
       ref={containerRef}
@@ -357,103 +395,105 @@ export const FloorPlanViewer: React.FC<FloorPlanViewerProps> = ({
             </g>
           ))}
 
-          {/* Node Markers & Room Badges */}
-          {floorNodes.map(([nodeId, node]) => {
-            const isRouteNode = routeResult?.pathNodeIds.includes(nodeId);
-            const isStart = routeResult?.pathNodeIds[0] === nodeId;
-            const isDest = routeResult?.pathNodeIds[routeResult.pathNodeIds.length - 1] === nodeId;
-            const isCurrentMilestone = currentMilestone?.nodeId === nodeId;
+          {/* Node Markers & Room Badges (Only Key Milestones: Start, Floor Transition, Destination) */}
+          {floorNodes
+            .filter(([nodeId]) => visibleKeyNodeIds.has(nodeId))
+            .map(([nodeId, node]) => {
+              const isStart = routeResult?.pathNodeIds[0] === nodeId;
+              const isDest = routeResult?.pathNodeIds[routeResult.pathNodeIds.length - 1] === nodeId;
+              const isCurrentMilestone = currentMilestone?.nodeId === nodeId;
+              const isFloorChange = !isStart && !isDest;
 
-            // Don't clutter unrouted non-room nodes
-            if (!isRouteNode && node.type === 'junction') return null;
+              let pillText = node.label;
+              if (isStart) pillText = `Start: ${node.label}`;
+              else if (isDest) pillText = `Destination: ${node.label}`;
+              else if (isFloorChange) {
+                pillText = node.type === 'elevator' ? `Elevator Transfer` : `Stairs Transfer`;
+              }
 
-            return (
-              <g
-                key={nodeId}
-                className="pointer-events-auto cursor-pointer"
-                onClick={() => {
-                  if (routeResult) {
-                    const msIdx = routeResult.milestones.findIndex((m) => m.nodeId === nodeId);
-                    if (msIdx !== -1) {
-                      onSelectMilestone(msIdx);
+              return (
+                <g
+                  key={nodeId}
+                  className="pointer-events-auto cursor-pointer"
+                  onClick={() => {
+                    if (routeResult) {
+                      const msIdx = routeResult.milestones.findIndex((m) => m.nodeId === nodeId);
+                      if (msIdx !== -1) {
+                        onSelectMilestone(msIdx);
+                      }
                     }
-                  }
-                }}
-              >
-                {/* Active pulsating beacon rings for current milestone */}
-                {isCurrentMilestone && (
-                  <>
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r="16"
-                      fill="none"
-                      stroke="#06b6d4"
-                      className="beacon-ring"
-                      filter="url(#beaconGlow)"
-                    />
-                    <circle
-                      cx={node.x}
-                      cy={node.y}
-                      r="28"
-                      fill="none"
-                      stroke="#10b981"
-                      className="beacon-ring"
-                      filter="url(#beaconGlow)"
-                      style={{ animationDelay: '0.6s' }}
-                    />
-                  </>
-                )}
+                  }}
+                >
+                  {/* Active pulsating beacon rings for current milestone */}
+                  {isCurrentMilestone && (
+                    <>
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r="18"
+                        fill="none"
+                        stroke="#06b6d4"
+                        className="beacon-ring"
+                        filter="url(#beaconGlow)"
+                      />
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r="32"
+                        fill="none"
+                        stroke="#10b981"
+                        className="beacon-ring"
+                        filter="url(#beaconGlow)"
+                        style={{ animationDelay: '0.6s' }}
+                      />
+                    </>
+                  )}
 
-                {/* Base Node Circle */}
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r={isStart || isDest ? 14 : isRouteNode ? 10 : 7}
-                  fill={
-                    isDest
-                      ? '#06b6d4'
-                      : isStart
-                      ? '#10b981'
-                      : isCurrentMilestone
-                      ? '#f59e0b'
-                      : isRouteNode
-                      ? '#34d399'
-                      : '#4b5563'
-                  }
-                  stroke="#ffffff"
-                  strokeWidth={isRouteNode ? 3 : 1.5}
-                />
+                  {/* Base Node Circle */}
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={isStart || isDest ? 16 : 13}
+                    fill={
+                      isDest
+                        ? '#06b6d4'
+                        : isStart
+                        ? '#10b981'
+                        : isCurrentMilestone
+                        ? '#f59e0b'
+                        : '#38bdf8'
+                    }
+                    stroke="#ffffff"
+                    strokeWidth={3}
+                  />
 
-                {/* Node Pill Label */}
-                {(isRouteNode || node.type === 'room') && (
-                  <g transform={`translate(${node.x}, ${node.y - 18})`}>
+                  {/* Node Pill Label */}
+                  <g transform={`translate(${node.x}, ${node.y - 22})`}>
                     <rect
-                      x={-((node.label.length * 7.5 + 16) / 2)}
-                      y="-12"
-                      width={node.label.length * 7.5 + 16}
-                      height="20"
-                      rx="10"
-                      fill={isCurrentMilestone ? '#06b6d4' : '#111827'}
-                      fillOpacity={isCurrentMilestone ? 0.95 : 0.85}
-                      stroke={isCurrentMilestone ? '#38bdf8' : isRouteNode ? '#10b981' : '#374151'}
-                      strokeWidth="1.5"
+                      x={-((pillText.length * 7.5 + 20) / 2)}
+                      y="-13"
+                      width={pillText.length * 7.5 + 20}
+                      height="24"
+                      rx="12"
+                      fill={isCurrentMilestone ? '#06b6d4' : isStart ? '#064e3b' : isDest ? '#083344' : '#1e293b'}
+                      fillOpacity={0.95}
+                      stroke={isCurrentMilestone ? '#38bdf8' : isStart ? '#10b981' : isDest ? '#06b6d4' : '#64748b'}
+                      strokeWidth="2"
                     />
                     <text
                       textAnchor="middle"
-                      y="2"
-                      fill={isCurrentMilestone ? '#030712' : '#f9fafb'}
+                      y="3"
+                      fill="#ffffff"
                       fontSize="11"
                       fontWeight="bold"
                       fontFamily="system-ui, sans-serif"
                     >
-                      {node.label}
+                      {pillText}
                     </text>
                   </g>
-                )}
-              </g>
-            );
-          })}
+                </g>
+              );
+            })}
         </svg>
       </div>
     </div>

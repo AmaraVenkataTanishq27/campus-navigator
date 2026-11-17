@@ -62,19 +62,25 @@ export function generateMilestones(
   const nodes = graph.nodes;
   const milestones: Milestone[] = [];
 
+  const startId = pathNodeIds[0];
+  const destId = pathNodeIds[pathNodeIds.length - 1];
+  const startNode = nodes[startId];
+  const destNode = nodes[destId];
+
+  if (!startNode || !destNode) return [];
+
   if (pathNodeIds.length === 1) {
-    const singleNode = nodes[pathNodeIds[0]];
     return [
       {
         id: 'ms-0',
-        nodeId: pathNodeIds[0],
-        label: `You are already at ${singleNode.label}`,
-        subtext: `Floor ${singleNode.floor}`,
+        nodeId: startId,
+        label: `You are already at ${startNode.label}`,
+        subtext: startNode.floor === 0 ? 'Ground Floor' : `Floor ${startNode.floor}`,
         type: 'arrive',
         action: 'Arrived',
         icon: 'map-pin',
-        floor: singleNode.floor,
-        coords: { x: singleNode.x, y: singleNode.y },
+        floor: startNode.floor,
+        coords: { x: startNode.x, y: startNode.y },
         distanceToNextMeters: 0,
         cumulativeDistanceMeters: 0
       }
@@ -93,194 +99,94 @@ export function generateMilestones(
     } else if (u && v && u.floor === v.floor) {
       const dx = v.x - u.x;
       const dy = v.y - u.y;
-      d = Math.round((Math.sqrt(dx * dx + dy * dy) / PIXELS_PER_METER) * 10) / 10;
+      d = Math.round((Math.hypot(dx, dy) * 0.065) * 10) / 10;
     } else {
-      d = 6.0; // Vertical transition distance in meters equivalent
+      d = 6.0; // Vertical transition distance
     }
     segmentDistances.push(d);
   }
 
-  // Helper for cumulative and span distances
   const getSpanDistance = (startIdx: number, endIdx: number) => {
     return Math.round(segmentDistances.slice(startIdx, endIdx).reduce((a, b) => a + b, 0) * 10) / 10;
   };
 
-  // 2. Add Start Milestone
-  const startNode = nodes[pathNodeIds[0]];
+  const totalMeters = getSpanDistance(0, pathNodeIds.length - 1);
+
+  // Milestone 1: Start Room
   milestones.push({
     id: `ms-start`,
-    nodeId: pathNodeIds[0],
+    nodeId: startId,
     label: `Start at ${startNode.label}`,
-    subtext: `Floor ${startNode.floor} • Ready to begin`,
+    subtext: `${startNode.floor === 0 ? 'Ground Floor' : `Floor ${startNode.floor}`} • Ready to begin`,
     type: 'start',
     action: 'Depart',
     icon: 'navigation',
     floor: startNode.floor,
     coords: { x: startNode.x, y: startNode.y },
-    distanceToNextMeters: segmentDistances[0] || 0,
+    distanceToNextMeters: 0,
     cumulativeDistanceMeters: 0
   });
 
-  // 3. Process intermediate path nodes with grouping
-  let i = 1;
-
-  while (i < pathNodeIds.length - 1) {
+  // Check for floor changes along path
+  for (let i = 0; i < pathNodeIds.length - 1; i++) {
     const currId = pathNodeIds[i];
-    const prevId = pathNodeIds[i - 1];
     const nextId = pathNodeIds[i + 1];
-
     const currNode = nodes[currId];
-    const prevNode = nodes[prevId];
     const nextNode = nodes[nextId];
 
-    // Check if vertical floor change
-    if (currNode.floor !== nextNode.floor) {
-      const isElevator = currNode.type === 'elevator' || nextNode.type === 'elevator';
-      const isUp = nextNode.floor > currNode.floor;
-      const actionName = isElevator
-        ? `Take elevator ${isUp ? 'up' : 'down'} to Floor ${nextNode.floor}`
-        : `Take stairs ${isUp ? 'up' : 'down'} to Floor ${nextNode.floor}`;
+    if (currNode && nextNode && currNode.floor !== nextNode.floor) {
+      // Find the end of this continuous vertical transition
+      let j = i + 1;
+      while (j < pathNodeIds.length - 1 && nodes[pathNodeIds[j]].floor !== nodes[pathNodeIds[j + 1]].floor) {
+        j++;
+      }
+      const arrivalId = pathNodeIds[j];
+      const arrivalNode = nodes[arrivalId];
 
+      const isElevator = currNode.type === 'elevator' || nextNode.type === 'elevator';
+      const isUp = arrivalNode.floor > currNode.floor;
+      const targetFloorName = arrivalNode.floor === 0 ? 'Ground Floor' : `Floor ${arrivalNode.floor}`;
+
+      // Milestone 2: Directly when we change floor (take elevator/stairs to destination floor)
       milestones.push({
-        id: `ms-${i}`,
+        id: `ms-trans-depart-${i}`,
         nodeId: currId,
-        label: actionName,
-        subtext: `Transition from Floor ${currNode.floor} to Floor ${nextNode.floor}`,
+        label: `Take ${isElevator ? 'Elevator' : 'Stairs'} ${isUp ? 'up' : 'down'} to ${targetFloorName}`,
+        subtext: `Transition from ${currNode.floor === 0 ? 'Ground Floor' : `Floor ${currNode.floor}`} to ${targetFloorName}`,
         type: isElevator ? 'elevator' : 'stairs',
         action: isUp ? 'Ascend' : 'Descend',
         icon: isElevator ? 'chevrons-up-down' : 'footprints',
         floor: currNode.floor,
         coords: { x: currNode.x, y: currNode.y },
-        distanceToNextMeters: segmentDistances[i] || 0,
+        distanceToNextMeters: 0,
         cumulativeDistanceMeters: getSpanDistance(0, i)
       });
-      i++;
-      continue;
-    }
 
-    // Check if previous was a floor change landing on current floor
-    if (prevNode.floor !== currNode.floor) {
+      // Milestone 3: When we reach destination room floor
       milestones.push({
-        id: `ms-${i}-landing`,
-        nodeId: currId,
-        label: `Exit onto Floor ${currNode.floor}`,
-        subtext: `Arrived on Floor ${currNode.floor} at ${currNode.label}`,
+        id: `ms-trans-arrive-${j}`,
+        nodeId: arrivalId,
+        label: `Arrive on ${targetFloorName}`,
+        subtext: `Exit ${isElevator ? 'elevator' : 'stairs'} at ${arrivalNode.label}`,
         type: 'floor_change',
         action: 'Exit',
         icon: 'door-open',
-        floor: currNode.floor,
-        coords: { x: currNode.x, y: currNode.y },
-        distanceToNextMeters: segmentDistances[i] || 0,
-        cumulativeDistanceMeters: getSpanDistance(0, i)
+        floor: arrivalNode.floor,
+        coords: { x: arrivalNode.x, y: arrivalNode.y },
+        distanceToNextMeters: 0,
+        cumulativeDistanceMeters: getSpanDistance(0, j)
       });
-      i++;
-      continue;
+
+      i = j;
     }
-
-    // Check for junction turns
-    if (currNode.type === 'junction') {
-      const turn = computeTurnDirection(
-        { x: prevNode.x, y: prevNode.y },
-        { x: currNode.x, y: currNode.y },
-        { x: nextNode.x, y: nextNode.y }
-      );
-
-      if (turn !== 'straight') {
-        const turnLabel = getTurnLabel(turn);
-        milestones.push({
-          id: `ms-${i}`,
-          nodeId: currId,
-          label: `${turnLabel} at ${currNode.label}`,
-          subtext: `Floor ${currNode.floor} • Follow corridor towards ${nextNode.label}`,
-          type: 'junction',
-          action: turnLabel,
-          icon: turn.includes('left') ? 'corner-up-left' : 'corner-up-right',
-          floor: currNode.floor,
-          coords: { x: currNode.x, y: currNode.y },
-          distanceToNextMeters: segmentDistances[i] || 0,
-          cumulativeDistanceMeters: getSpanDistance(0, i)
-        });
-        i++;
-        continue;
-      }
-    }
-
-    // Check for consecutive room pass-bys along hallway
-    if (currNode.type === 'room') {
-      const passedRooms: string[] = [currNode.roomNumber || currNode.label];
-      const passedNodeIds: string[] = [currId];
-      let j = i + 1;
-
-      while (j < pathNodeIds.length - 1) {
-        const candNode = nodes[pathNodeIds[j]];
-        const candNext = nodes[pathNodeIds[j + 1]];
-        if (
-          candNode.type === 'room' &&
-          candNode.floor === currNode.floor &&
-          computeTurnDirection(
-            { x: nodes[pathNodeIds[j - 1]].x, y: nodes[pathNodeIds[j - 1]].y },
-            { x: candNode.x, y: candNode.y },
-            { x: candNext.x, y: candNext.y }
-          ) === 'straight'
-        ) {
-          passedRooms.push(candNode.roomNumber || candNode.label);
-          passedNodeIds.push(pathNodeIds[j]);
-          j++;
-        } else {
-          break;
-        }
-      }
-
-      if (passedRooms.length > 1) {
-        milestones.push({
-          id: `ms-group-${i}`,
-          nodeId: currId,
-          nodeIds: passedNodeIds,
-          label: `Walk straight — Pass ${passedRooms.join(', ')}`,
-          subtext: `Floor ${currNode.floor} • ${passedRooms.length} consecutive rooms along corridor`,
-          type: 'grouped_rooms',
-          action: 'Pass',
-          icon: 'arrow-up',
-          floor: currNode.floor,
-          coords: { x: currNode.x, y: currNode.y },
-          distanceToNextMeters: getSpanDistance(i, j),
-          cumulativeDistanceMeters: getSpanDistance(0, i),
-          groupedRooms: passedRooms
-        });
-        i = j;
-        continue;
-      } else {
-        milestones.push({
-          id: `ms-${i}`,
-          nodeId: currId,
-          label: `Pass ${currNode.label}`,
-          subtext: `Floor ${currNode.floor} • Keep straight along corridor`,
-          type: 'room',
-          action: 'Pass',
-          icon: 'compass',
-          floor: currNode.floor,
-          coords: { x: currNode.x, y: currNode.y },
-          distanceToNextMeters: segmentDistances[i] || 0,
-          cumulativeDistanceMeters: getSpanDistance(0, i)
-        });
-        i++;
-        continue;
-      }
-    }
-
-    // Default intermediate step
-    i++;
   }
 
-  // 4. Add Destination Milestone
-  const destNode = nodes[pathNodeIds[pathNodeIds.length - 1]];
-  const totalMeters = getSpanDistance(0, pathNodeIds.length - 1);
-
+  // Milestone 4: Directly at Destination Room
   milestones.push({
     id: `ms-dest`,
-    nodeId: pathNodeIds[pathNodeIds.length - 1],
+    nodeId: destId,
     label: `Arrive at ${destNode.label}`,
-    subtext: `Floor ${destNode.floor} • Destination reached on your ${destNode.x > 700 ? 'right' : 'left'}`,
+    subtext: `${destNode.floor === 0 ? 'Ground Floor' : `Floor ${destNode.floor}`} • Destination reached`,
     type: 'arrive',
     action: 'Arrive',
     icon: 'map-pin',
@@ -289,6 +195,14 @@ export function generateMilestones(
     distanceToNextMeters: 0,
     cumulativeDistanceMeters: totalMeters
   });
+
+  // Calculate distanceToNextMeters for each step
+  for (let m = 0; m < milestones.length - 1; m++) {
+    milestones[m].distanceToNextMeters = Math.max(
+      1.0,
+      Math.round((milestones[m + 1].cumulativeDistanceMeters - milestones[m].cumulativeDistanceMeters) * 10) / 10
+    );
+  }
 
   return milestones;
 }

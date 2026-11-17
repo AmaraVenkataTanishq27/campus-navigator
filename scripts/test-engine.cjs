@@ -105,132 +105,87 @@ function generateMilestones(graph, pathNodeIds) {
   if (!pathNodeIds || pathNodeIds.length === 0) return [];
 
   const nodes = graph.nodes;
-  const rawSteps = [];
+  const milestones = [];
 
-  for (let i = 0; i < pathNodeIds.length; i++) {
+  const startId = pathNodeIds[0];
+  const destId = pathNodeIds[pathNodeIds.length - 1];
+  const startNode = nodes[startId];
+  const destNode = nodes[destId];
+
+  if (!startNode || !destNode) return [];
+
+  // 1. Start Milestone
+  milestones.push({
+    nodeId: startId,
+    node: startNode,
+    type: 'start',
+    action: 'start',
+    label: `Start at ${startNode.label}`,
+    description: `Begin navigation on Floor ${startNode.floor}`,
+    icon: 'map-pin',
+    floor: startNode.floor
+  });
+
+  // Check for floor transitions
+  for (let i = 0; i < pathNodeIds.length - 1; i++) {
     const currId = pathNodeIds[i];
+    const nextId = pathNodeIds[i + 1];
     const currNode = nodes[currId];
-    const prevNode = i > 0 ? nodes[pathNodeIds[i - 1]] : null;
-    const nextNode = i < pathNodeIds.length - 1 ? nodes[pathNodeIds[i + 1]] : null;
+    const nextNode = nodes[nextId];
 
-    if (i === 0) {
-      rawSteps.push({
+    if (currNode && nextNode && currNode.floor !== nextNode.floor) {
+      let j = i + 1;
+      while (j < pathNodeIds.length - 1 && nodes[pathNodeIds[j]].floor !== nodes[pathNodeIds[j + 1]].floor) {
+        j++;
+      }
+      const arrivalId = pathNodeIds[j];
+      const arrivalNode = nodes[arrivalId];
+
+      const isElevator = currNode.type === 'elevator' || nextNode.type === 'elevator';
+      const isUp = arrivalNode.floor > currNode.floor;
+      const targetFloorName = arrivalNode.floor === 0 ? 'Ground Floor' : `Floor ${arrivalNode.floor}`;
+
+      // 2. Change Floor departure
+      milestones.push({
         nodeId: currId,
         node: currNode,
-        type: 'start',
-        action: 'start',
-        label: `Start at ${currNode.label}`,
-        description: `Begin navigation on Floor ${currNode.floor}`,
-        icon: 'map-pin',
-        floor: currNode.floor
-      });
-      continue;
-    }
-
-    if (i === pathNodeIds.length - 1) {
-      rawSteps.push({
-        nodeId: currId,
-        node: currNode,
-        type: 'arrive',
-        action: 'arrive',
-        label: `Arrive at ${currNode.label}`,
-        description: `Destination reached on Floor ${currNode.floor}`,
-        icon: 'flag',
-        floor: currNode.floor
-      });
-      continue;
-    }
-
-    if (prevNode && prevNode.floor !== currNode.floor) {
-      const isElevator = currNode.type === 'elevator' || prevNode.type === 'elevator';
-      const action = isElevator ? 'elevator' : 'stairs';
-      const dir = currNode.floor > prevNode.floor ? 'up' : 'down';
-      rawSteps.push({
-        nodeId: currId,
-        node: currNode,
-        type: 'floor_change',
-        action: `${action}_${dir}`,
-        label: `Take ${isElevator ? 'Elevator' : 'Stairs'} ${dir} to Floor ${currNode.floor}`,
-        description: `Transfer from Floor ${prevNode.floor} to Floor ${currNode.floor}`,
+        type: isElevator ? 'elevator' : 'stairs',
+        action: isUp ? 'elevator_up' : 'elevator_down',
+        label: `Take ${isElevator ? 'Elevator' : 'Stairs'} ${isUp ? 'up' : 'down'} to ${targetFloorName}`,
+        description: `Transition from Floor ${currNode.floor} to ${targetFloorName}`,
         icon: isElevator ? 'elevator' : 'stairs',
         floor: currNode.floor
       });
-      continue;
-    }
 
-    if (currNode.type === 'junction') {
-      const turn = computeTurn(prevNode, currNode, nextNode);
-      let turnPrompt = 'Continue straight';
-      let icon = 'arrow-up';
-      if (turn === 'left') {
-        turnPrompt = `Turn left at ${currNode.label}`;
-        icon = 'corner-up-left';
-      } else if (turn === 'right') {
-        turnPrompt = `Turn right at ${currNode.label}`;
-        icon = 'corner-up-right';
-      }
-      rawSteps.push({
-        nodeId: currId,
-        node: currNode,
-        type: 'junction',
-        action: turn,
-        label: turnPrompt,
-        description: `Follow hallway turn`,
-        icon: icon,
-        floor: currNode.floor
+      // 3. Arrival on destination floor
+      milestones.push({
+        nodeId: arrivalId,
+        node: arrivalNode,
+        type: 'floor_change',
+        action: 'exit',
+        label: `Arrive on ${targetFloorName}`,
+        description: `Exit ${isElevator ? 'elevator' : 'stairs'} at ${arrivalNode.label}`,
+        icon: 'door-open',
+        floor: arrivalNode.floor
       });
-      continue;
-    }
 
-    rawSteps.push({
-      nodeId: currId,
-      node: currNode,
-      type: currNode.type,
-      action: 'pass',
-      label: `Pass ${currNode.label}`,
-      description: `Milestone along corridor`,
-      icon: currNode.type === 'elevator' ? 'elevator' : currNode.type === 'stairs' ? 'stairs' : 'footprints',
-      floor: currNode.floor
-    });
+      i = j;
+    }
   }
 
-  const groupedMilestones = [];
-  let i = 0;
-  while (i < rawSteps.length) {
-    const step = rawSteps[i];
+  // 4. Destination Milestone
+  milestones.push({
+    nodeId: destId,
+    node: destNode,
+    type: 'arrive',
+    action: 'arrive',
+    label: `Arrive at ${destNode.label}`,
+    description: `Destination reached on Floor ${destNode.floor}`,
+    icon: 'flag',
+    floor: destNode.floor
+  });
 
-    if (step.type === 'room' && step.action === 'pass') {
-      const roomGroup = [step];
-      let j = i + 1;
-      while (j < rawSteps.length && rawSteps[j].type === 'room' && rawSteps[j].action === 'pass') {
-        roomGroup.push(rawSteps[j]);
-        j++;
-      }
-
-      if (roomGroup.length > 1) {
-        const roomNames = roomGroup.map(r => r.node.label).join(', ');
-        groupedMilestones.push({
-          nodeId: step.nodeId,
-          nodeIds: roomGroup.map(r => r.nodeId),
-          node: step.node,
-          type: 'grouped_rooms',
-          action: 'walk_straight',
-          label: `Walk straight — Pass ${roomNames}`,
-          description: `${roomGroup.length} visual milestones along hallway`,
-          icon: 'footprints',
-          floor: step.floor,
-          groupedRooms: roomGroup.map(r => r.node.label)
-        });
-        i = j;
-        continue;
-      }
-    }
-
-    groupedMilestones.push(step);
-    i++;
-  }
-
-  return groupedMilestones;
+  return milestones;
 }
 
 console.log('========================================================');
